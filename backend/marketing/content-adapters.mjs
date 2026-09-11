@@ -6,8 +6,9 @@ import { applyTemplate, loadTemplate } from './templates.mjs';
 
 const DEFAULT_PROMO_CTA = 'https://serpmonn.ru/promo';
 const DEFAULT_HONEY_CTA = 'https://vrnhoney.ru';
+const DEFAULT_GAMES_CTA = 'https://serpmonn.ru/games';
 
-/** Хештеги: запасной пул — только если модели не дали валидный набор. */
+/** Хештеги: запасной пул — если модели мало / штамп. */
 const HASHTAG_POOL = [
   '#Serpmonn',
   '#промокоды',
@@ -18,7 +19,16 @@ const HASHTAG_POOL = [
   '#подборка',
   '#сервисы',
   '#онлайн',
-  '#полезное'
+  '#полезное',
+  '#сервис',
+  '#выгода',
+  '#акции',
+  '#предложения',
+  '#promo',
+  '#deals',
+  '#coupons',
+  '#discounts',
+  '#savings'
 ];
 
 const HONEY_HASHTAG_POOL = [
@@ -29,7 +39,32 @@ const HONEY_HASHTAG_POOL = [
   '#полезное',
   '#здоровье',
   '#пасека',
-  '#интернетмагазин'
+  '#интернетмагазин',
+  '#мёдок',
+  '#натуральное',
+  '#доставка',
+  '#honey',
+  '#naturalhoney',
+  '#organic'
+];
+
+const GAMES_HASHTAG_POOL = [
+  '#Serpmonn',
+  '#игры',
+  '#браузерныеигры',
+  '#онлайнигры',
+  '#безскачивания',
+  '#досуг',
+  '#развлечения',
+  '#миниигры',
+  '#играй',
+  '#аркада',
+  '#бесплатныеигры',
+  '#games',
+  '#browsergames',
+  '#onlinegames',
+  '#minigames',
+  '#freeGames'
 ];
 
 /** @deprecated use pickHashtags — оставлен для совместимости импортов */
@@ -45,20 +80,104 @@ function hashSalt(s) {
   return h >>> 0;
 }
 
-/** 3–5 хештегов в случайном порядке (детерминировано от salt). */
-function pickHashtags(salt = '', pool = HASHTAG_POOL, alwaysTag = '#Serpmonn') {
-  const h = hashSalt(salt || Date.now());
-  const source = Array.isArray(pool) && pool.length ? pool : HASHTAG_POOL;
-  const tags = [...source];
+/** Настоящий Fisher–Yates (+ лёгкий seed для воспроизводимости в тестах). */
+function shuffleTags(list, seed) {
+  const tags = [...list];
+  let h = hashSalt(String(seed ?? '') + String(Date.now()) + String(Math.random()));
   for (let i = tags.length - 1; i > 0; i--) {
-    const j = (h + i * 2654435761) % (i + 1);
+    h = (Math.imul(h, 1664525) + 1013904223) >>> 0;
+    const j = h % (i + 1);
     [tags[i], tags[j]] = [tags[j], tags[i]];
   }
-  const always = alwaysTag || tags[0];
-  const rest = tags.filter((t) => t.toLowerCase() !== String(always).toLowerCase());
-  const count = 3 + (h % 3);
-  const picked = always ? [always, ...rest.slice(0, Math.max(2, count - 1))] : rest.slice(0, count);
-  return [...new Set(picked)].slice(0, 5);
+  return tags;
+}
+
+function poolForProduct(product) {
+  const p = String(product || '').toLowerCase();
+  if (p === 'honey') return HONEY_HASHTAG_POOL;
+  if (p === 'games') return GAMES_HASHTAG_POOL;
+  return HASHTAG_POOL;
+}
+
+function brandTagForProduct(product) {
+  return String(product || '').toLowerCase() === 'honey' ? '#VRNHoney' : '#Serpmonn';
+}
+
+/** Уникальные теги, порядок сохраняем. */
+function uniqueHashtags(tags) {
+  const out = [];
+  const seen = new Set();
+  for (const raw of tags || []) {
+    let t = String(raw || '').trim();
+    if (!t) continue;
+    if (!t.startsWith('#')) t = `#${t}`;
+    const k = t.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(t);
+  }
+  return out;
+}
+
+/**
+ * 3–5 хештегов: бренд обязателен, остальное из пула в случайном порядке.
+ * Порядок всего набора тоже перемешивается (бренд не всегда первый).
+ */
+function pickHashtags(salt = '', pool = HASHTAG_POOL, alwaysTag = '#Serpmonn') {
+  const source = Array.isArray(pool) && pool.length ? pool : HASHTAG_POOL;
+  const always = alwaysTag || source[0];
+  const rest = shuffleTags(
+    source.filter((t) => t.toLowerCase() !== String(always).toLowerCase()),
+    salt
+  );
+  const count = 3 + (hashSalt(salt + String(Math.random())) % 3); // 3..5
+  const picked = uniqueHashtags([always, ...rest.slice(0, Math.max(2, count - 1))]);
+  return shuffleTags(picked, `${salt}-order`).slice(0, 5);
+}
+
+/**
+ * Теги от модели: если штамп/мало — пул; иначе перемешать и подмешать 1–2 из пула.
+ */
+function resolveHashtags({ product, modelTags, salt }) {
+  const pool = poolForProduct(product);
+  const brand = brandTagForProduct(product);
+  const fromModel = uniqueHashtags(Array.isArray(modelTags) ? modelTags : []);
+  const boring = new Set(
+    [
+      '#промокоды',
+      '#скидки',
+      '#купоны',
+      '#экономия',
+      '#serpmonn',
+      '#игры',
+      '#браузерныеигры',
+      '#promo',
+      '#deals',
+      '#coupons',
+      '#games',
+      '#browsergames'
+    ].map((t) => t.toLowerCase())
+  );
+  const modelRest = fromModel.filter((t) => t.toLowerCase() !== brand.toLowerCase());
+  const tooBoring =
+    modelRest.length >= 2 && modelRest.every((t) => boring.has(t.toLowerCase()));
+
+  if (fromModel.length < 3 || tooBoring) {
+    return pickHashtags(salt, pool, brand);
+  }
+
+  const extras = shuffleTags(
+    pool.filter(
+      (t) =>
+        t.toLowerCase() !== brand.toLowerCase() &&
+        !fromModel.some((m) => m.toLowerCase() === t.toLowerCase())
+    ),
+    `${salt}-extra`
+  ).slice(0, 1 + (hashSalt(salt) % 2)); // 1–2 свежих из пула
+
+  const mixed = uniqueHashtags([brand, ...shuffleTags(modelRest, salt), ...extras]);
+  const count = Math.min(5, Math.max(3, mixed.length));
+  return shuffleTags(mixed.slice(0, count), `${salt}-final`);
 }
 
 function stripHashtags(text) {
@@ -70,18 +189,18 @@ function stripHashtags(text) {
 }
 
 function withTrailingHashtags(body, tags) {
-  const list = Array.isArray(tags) && tags.length ? tags : pickHashtags(body);
+  const list = uniqueHashtags(Array.isArray(tags) && tags.length ? tags : pickHashtags(body));
   const clean = stripHashtags(body);
   const line = list.join(' ');
   if (!clean) return line;
   return `${clean}\n\n${line}`;
 }
 
-export { stripHashtags, withTrailingHashtags, pickHashtags, PROMO_HASHTAGS, HASHTAG_POOL };
+export { stripHashtags, withTrailingHashtags, pickHashtags, resolveHashtags, uniqueHashtags, PROMO_HASHTAGS, HASHTAG_POOL };
 
 /**
  * Промокоды: рекламируем Serpmonn, не чужие бренды/коды.
- * Текст: GigaChat → Ollama. Картинка: GigaChat.
+ * Текст: GigaChat → Ollama. Картинка (опционально): GigaChat — не для VK.
  */
 export async function fromPromocodes(campaign, { slot, digestDate, withImage = true } = {}) {
   const cta = String(campaign.cta_url || '').trim() || DEFAULT_PROMO_CTA;
@@ -105,11 +224,12 @@ export async function fromPromocodes(campaign, { slot, digestDate, withImage = t
 
   let body = stripHashtags(gen.body);
   // CTA не вшиваем в body: иначе в VK получается две ссылки (текст + cta_url)
-  // Хештеги: от модели (GigaChat/Ollama) → иначе запасной пул
-  const hashtags =
-    Array.isArray(gen.hashtags) && gen.hashtags.length >= 3
-      ? gen.hashtags
-      : pickHashtags(`${digestDate || ''}-${slot || ''}-${gen.title || ''}`);
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'promocodes',
+    modelTags: gen.hashtags,
+    salt
+  });
   body = withTrailingHashtags(body, hashtags);
 
   return {
@@ -129,8 +249,7 @@ export async function fromPromocodes(campaign, { slot, digestDate, withImage = t
       brandOnly: true,
       voice: 'company_impersonal',
       hashtags,
-      hashtagsSource:
-        Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
       copyGenerated: gen.generated,
       copyModel: gen.model,
       copyEngine: gen.engine,
@@ -167,14 +286,12 @@ export async function fromHoney(campaign, { slot, digestDate, withImage = true }
 
   let body = stripHashtags(gen.body);
   // CTA только в cta_url — без дубля в тексте
-  const hashtags =
-    Array.isArray(gen.hashtags) && gen.hashtags.length >= 3
-      ? gen.hashtags
-      : pickHashtags(
-        `${digestDate || ''}-${slot || ''}-${gen.title || ''}`,
-        HONEY_HASHTAG_POOL,
-        '#VRNHoney'
-      );
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-honey-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'honey',
+    modelTags: gen.hashtags,
+    salt
+  });
   body = withTrailingHashtags(body, hashtags);
 
   return {
@@ -195,8 +312,68 @@ export async function fromHoney(campaign, { slot, digestDate, withImage = true }
       voice: 'company_impersonal',
       lockedChannels: ['vk_vrnhoney'],
       hashtags,
-      hashtagsSource:
-        Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      copyGenerated: gen.generated,
+      copyModel: gen.model,
+      copyEngine: gen.engine,
+      copyError: gen.error || null,
+      imageEngine: imageMeta?.engine || null,
+      imageError: imageMeta?.error || null,
+      imageFileId: imageMeta?.fileId || null
+    }
+  };
+}
+
+/**
+ * Игры Serpmonn → https://serpmonn.ru/games
+ */
+export async function fromGames(campaign, { slot, digestDate, withImage = true } = {}) {
+  const cta = String(campaign.cta_url || '').trim() || DEFAULT_GAMES_CTA;
+
+  const gen = await generateMarketingCopy({
+    product: 'games',
+    format: 'text',
+    ctaUrl: cta,
+    salt: `${digestDate || ''}-${slot || ''}-games`
+  });
+
+  let media_path = null;
+  let imageMeta = null;
+  if (withImage) {
+    imageMeta = await generateMarketingImage({
+      product: 'games',
+      title: gen.title
+    });
+    media_path = imageMeta.media_path || null;
+  }
+
+  let body = stripHashtags(gen.body);
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-games-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'games',
+    modelTags: gen.hashtags,
+    salt
+  });
+  body = withTrailingHashtags(body, hashtags);
+
+  return {
+    product: 'games',
+    format: 'text',
+    title: stripHashtags(gen.title),
+    body,
+    cta_url: cta,
+    channels: campaign.channels || ['vk', 'telegram', 'youtube'],
+    media_path,
+    meta: {
+      campaignId: campaign.id,
+      campaignSlug: campaign.slug,
+      slot,
+      digestDate,
+      source: 'games_brand',
+      brandOnly: true,
+      voice: 'company_impersonal',
+      hashtags,
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
       copyGenerated: gen.generated,
       copyModel: gen.model,
       copyEngine: gen.engine,
@@ -288,6 +465,9 @@ export async function buildContentForCampaign(campaign, opts = {}) {
   }
   if (campaign.source === 'honey') {
     return fromHoney(campaign, opts);
+  }
+  if (campaign.source === 'games') {
+    return fromGames(campaign, opts);
   }
   return fromTemplate(campaign, opts);
 }

@@ -69,6 +69,38 @@ export async function healthCheck() {
   }
 }
 
+/** Из URL Shorts / watch → video id */
+export function parseYoutubeVideoId(url) {
+  const s = String(url || '').trim();
+  if (!s) return null;
+  let m = s.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/i);
+  if (m) return m[1];
+  m = s.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/i);
+  if (m) return m[1];
+  m = s.match(/[?&]v=([a-zA-Z0-9_-]{6,})/i);
+  if (m) return m[1];
+  m = s.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/i);
+  if (m) return m[1];
+  return null;
+}
+
+/** Просмотры ролика (statistics.viewCount). */
+export async function fetchYoutubeViewCount(externalUrl) {
+  if (!isConfigured()) return null;
+  const videoId = parseYoutubeVideoId(externalUrl);
+  if (!videoId) return null;
+  const access = await getAccessToken();
+  const r = await fetch(
+    `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${encodeURIComponent(videoId)}`,
+    { headers: { Authorization: `Bearer ${access}` }, signal: AbortSignal.timeout(20000) }
+  );
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error?.message || `YouTube videos ${r.status}`);
+  const views = data.items?.[0]?.statistics?.viewCount;
+  if (views == null) return null;
+  return Number(views) || 0;
+}
+
 export async function publish(item) {
   if (!isConfigured()) {
     return { ok: false, error: 'YouTube не подключён' };
@@ -84,14 +116,20 @@ export async function publish(item) {
     const title = String(item.title || 'Serpmonn').slice(0, 100);
     const description = [item.body, item.cta_url].filter(Boolean).join('\n\n').slice(0, 5000);
     const publishAt = item.publish_at ? new Date(item.publish_at) : null;
+    // AI disclosure: status.containsSyntheticMedia (YouTube A/S / GenAI label)
     const status =
-      publishAt && publishAt > new Date()
+      publishAt && !Number.isNaN(publishAt.getTime()) && publishAt > new Date()
         ? {
             privacyStatus: 'private',
             publishAt: publishAt.toISOString(),
-            selfDeclaredMadeForKids: false
+            selfDeclaredMadeForKids: false,
+            containsSyntheticMedia: true
           }
-        : { privacyStatus: 'public', selfDeclaredMadeForKids: false };
+        : {
+            privacyStatus: 'public',
+            selfDeclaredMadeForKids: false,
+            containsSyntheticMedia: true
+          };
 
     const meta = JSON.stringify({
       snippet: {

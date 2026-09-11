@@ -45,7 +45,7 @@ export async function ensureCampaignTables() {
       slug VARCHAR(64) NOT NULL,
       name VARCHAR(256) NOT NULL,
       goal VARCHAR(512) NULL,
-      source ENUM('promocodes','honey','template') NOT NULL DEFAULT 'template',
+      source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template',
       template_id VARCHAR(64) NULL,
       cta_url VARCHAR(1024) NULL,
       channels_json JSON NOT NULL,
@@ -71,14 +71,19 @@ export async function ensureCampaignTables() {
          AND COLUMN_NAME = 'source'`
     );
     const ct = String(cols?.[0]?.ct || '');
-    if (ct && !ct.includes("'honey'")) {
+    if (ct && !ct.includes("'games'")) {
       await query(
         `ALTER TABLE marketing_campaigns
-         MODIFY COLUMN source ENUM('promocodes','honey','template') NOT NULL DEFAULT 'template'`
+         MODIFY COLUMN source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template'`
+      );
+    } else if (ct && !ct.includes("'honey'")) {
+      await query(
+        `ALTER TABLE marketing_campaigns
+         MODIFY COLUMN source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template'`
       );
     }
   } catch (err) {
-    console.warn('[marketing] campaign source ENUM honey:', err.message || err);
+    console.warn('[marketing] campaign source ENUM:', err.message || err);
   }
 
   campaignsReady = true;
@@ -91,12 +96,14 @@ export function normalizeCampaignChannels(source, channels) {
   const list = (Array.isArray(channels) ? channels : [])
     .map(String)
     .filter(Boolean);
-  return list.length ? list : ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram'];
+  return list.length
+    ? list
+    : ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram', 'youtube'];
 }
 
 function mapSource(source) {
   const s = String(source || '');
-  if (s === 'promocodes' || s === 'honey') return s;
+  if (s === 'promocodes' || s === 'honey' || s === 'games') return s;
   return 'template';
 }
 
@@ -226,9 +233,12 @@ function slugify(name) {
     .slice(0, 64) || `campaign-${Date.now()}`;
 }
 
-/** Сиды: Промокоды (Serpmonn) + Мёд (только VK vrnhoney). */
+/** Сиды: Промокоды + Мёд + Игры (serpmonn.ru/games). */
 export async function seedDefaultCampaigns() {
   await ensureCampaignTables();
+
+  /** Все авто-площадки Serpmonn (включая VK VRNHoney). */
+  const SERPMONN_PLATFORMS = ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram', 'youtube'];
 
   const promo = {
     slug: 'promocodes-vk',
@@ -237,7 +247,7 @@ export async function seedDefaultCampaigns() {
     source: 'promocodes',
     template_id: null,
     cta_url: 'https://serpmonn.ru/promo',
-    channels: ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram'],
+    channels: [...SERPMONN_PLATFORMS],
     slots: ['10:00', '14:00', '19:00'],
     mode: 'digest',
     paused: 0,
@@ -247,13 +257,15 @@ export async function seedDefaultCampaigns() {
   const existing = await getCampaign(promo.slug);
   let main;
   if (existing) {
-    // Не перетираем posts_per_day / slots / channels — их задают в админке
+    const ch = Array.isArray(existing.channels) ? [...existing.channels] : [];
+    if (!ch.includes('youtube')) ch.push('youtube');
     main = await updateCampaign(existing.id, {
       name: promo.name,
       goal: promo.goal,
       paused: false,
       source: 'promocodes',
-      cta_url: promo.cta_url
+      cta_url: promo.cta_url,
+      channels: ch
     });
   } else {
     main = await createCampaign(promo);
@@ -276,7 +288,6 @@ export async function seedDefaultCampaigns() {
   const honeyExisting = await getCampaign(honey.slug);
   let honeyCamp;
   if (honeyExisting) {
-    // channels для мёда всё равно нормализуются в vk_vrnhoney
     honeyCamp = await updateCampaign(honeyExisting.id, {
       name: honey.name,
       goal: honey.goal,
@@ -288,13 +299,41 @@ export async function seedDefaultCampaigns() {
     honeyCamp = await createCampaign(honey);
   }
 
-  // Старый сид Neli больше не генерируем — ставим на паузу, если остался
+  const games = {
+    slug: 'games-serpmonn',
+    name: 'Игры',
+    goal: 'Бренд Serpmonn: привести в раздел браузерных игр serpmonn.ru/games',
+    source: 'games',
+    template_id: null,
+    cta_url: 'https://serpmonn.ru/games',
+    channels: [...SERPMONN_PLATFORMS],
+    slots: ['12:00', '17:00'],
+    mode: 'digest',
+    paused: 0,
+    posts_per_day: 2
+  };
+
+  const gamesExisting = await getCampaign(games.slug);
+  let gamesCamp;
+  if (gamesExisting) {
+    // Каналы не трогаем — их включают/выключают в админке
+    gamesCamp = await updateCampaign(gamesExisting.id, {
+      name: games.name,
+      goal: games.goal,
+      paused: false,
+      source: 'games',
+      cta_url: games.cta_url
+    });
+  } else {
+    gamesCamp = await createCampaign(games);
+  }
+
   const neli = await getCampaign('neli-vk');
   if (neli && !neli.paused) {
     await updateCampaign(neli.id, { paused: true, name: 'Neli' });
   }
 
-  return [main, honeyCamp].filter(Boolean);
+  return [main, honeyCamp, gamesCamp].filter(Boolean);
 }
 
 export { slugify };
