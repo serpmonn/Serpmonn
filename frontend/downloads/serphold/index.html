@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serphold — башенная защита для Android | Serpmonn</title>
+  <meta name="description" content="Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачай APK на Serpmonn.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://serpmonn.ru/serphold">
+  <link rel="alternate" hreflang="ru" href="https://serpmonn.ru/serphold">
+  <link rel="alternate" hreflang="en" href="https://serpmonn.ru/serphold?lang=en">
+  <meta property="og:title" content="Serphold — Android">
+  <meta property="og:description" content="Защити крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/downloads/serphold/icon-1024.png">
+  <meta property="og:url" content="https://serpmonn.ru/serphold">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/frontend/downloads/serphold/favicon.png" sizes="48x48">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=serphold-landing4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Source+Sans+3:wght@500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Source+Sans+3:wght@500;700&display=swap"></noscript>
+  <style>
+    :root {
+      --bg: #1a140e;
+      --text: #f0e6d2;
+      --muted: #b8a88a;
+      --gold: #c9a227;
+      --wood: #8b5a2b;
+      --line: rgba(201, 162, 39, 0.28);
+      --font: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+      --display: "Cinzel", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      background:
+        radial-gradient(900px 520px at 10% -8%, rgba(201, 162, 39, 0.14), transparent 55%),
+        radial-gradient(700px 480px at 95% 12%, rgba(98, 58, 28, 0.35), transparent 50%),
+        linear-gradient(180deg, #2a1f16 0%, var(--bg) 42%, #100c08 100%);
+    }
+    a { color: inherit; }
+    .page {
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 4.5rem 0 4rem;
+    }
+    .lang-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+    .lang-btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.28);
+      color: var(--muted);
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .lang-btn[aria-pressed="true"] {
+      color: #1a1208;
+      background: linear-gradient(120deg, var(--gold), #e0c35a);
+      border-color: transparent;
+    }
+    .hero {
+      min-height: min(72vh, 680px);
+      display: grid;
+      align-content: end;
+      gap: 1.1rem;
+      padding: 1.2rem 0 2.5rem;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 -8% auto;
+      height: 70%;
+      background: url("/frontend/downloads/serphold/poster-ru.jpg") center/cover no-repeat;
+      opacity: 0.32;
+      filter: saturate(1.05) contrast(1.05);
+      mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
+      -webkit-mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    html[lang="en"] .hero::before {
+      background-image: url("/frontend/downloads/serphold/poster-en.jpg");
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 18px;
+      box-shadow: 0 0 0 1px rgba(201,162,39,0.4), 0 12px 40px rgba(0,0,0,0.45);
+    }
+    .brand {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      text-transform: uppercase;
+      color: var(--text);
+      text-shadow: 0 2px 0 rgba(0,0,0,0.35);
+    }
+    .lead {
+      margin: 0;
+      max-width: 36rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      align-items: center;
+      margin-top: 0.35rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.4rem;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(120deg, var(--gold), #e0c35a 45%, var(--wood));
+      color: #1a1208;
+      box-shadow: 0 10px 28px rgba(201, 162, 39, 0.22);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+    .btn-ghost:hover { border-color: rgba(201,162,39,0.55); }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    section { margin-top: 3.2rem; }
+    .section-title {
+      margin: 0 0 0.45rem;
+      font-family: var(--display);
+      font-size: clamp(1.35rem, 3vw, 1.8rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .section-note {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      max-width: 42rem;
+    }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.95rem;
+      align-items: start;
+    }
+    .shots figure { margin: 0; text-align: center; }
+    .shots img {
+      display: block;
+      width: min(100%, 280px);
+      height: auto;
+      max-height: none;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #241910;
+    }
+    .shots figcaption {
+      margin-top: 0.45rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .roads {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+    .road {
+      padding: 1.1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.22);
+    }
+    .road h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--display);
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+    }
+    .road p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem;
+      align-items: start;
+    }
+    .video-card h3 {
+      margin: 0 0 0.65rem;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .video-card video {
+      display: block;
+      width: min(100%, 320px);
+      margin: 0 auto;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #000;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+    }
+    .footer-cta {
+      margin-top: 3.5rem;
+      padding: 1.6rem 0 0;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 0.85rem;
+    }
+    @media (max-width: 900px) {
+      .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .roads { grid-template-columns: 1fr; }
+      .videos { grid-template-columns: 1fr; }
+      .video-card video { width: min(100%, 280px); }
+    }
+    @media (max-width: 560px) {
+      .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .shots img { width: 100%; }
+      .hero-icon { width: 72px; height: 72px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .btn-primary:hover { transition: none; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="menu-container"></div>
+  <main class="page">
+    <div class="lang-bar" role="group" aria-label="Language">
+      <button type="button" class="lang-btn" data-set-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" class="lang-btn" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
+
+    <section class="hero" aria-labelledby="serphold-title">
+      <img class="hero-icon" src="/frontend/downloads/serphold/icon-176.png" width="88" height="88" alt="Serphold" decoding="async">
+      <h1 id="serphold-title" class="brand" data-i18n="brand">Serphold</h1>
+      <p class="lead" data-i18n="lead">Защити крепость от орды. Ставь лучников, пушки и магов на траву, выбирай дорогу и держи стены до последней волны.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.0.0.apk" download="Serphold-1.0.0.apk" data-i18n="downloadApk">Скачать APK</a>
+        <a class="btn btn-ghost" href="#gameplay" data-i18n="watchGameplay">Смотреть геймплей</a>
+      </div>
+      <p class="meta" data-i18n="meta">Android · бесплатно · Serpmonn · версия 1.0.0 · 3 карты × 20 волн</p>
+    </section>
+
+    <section aria-labelledby="roads-title">
+      <h2 id="roads-title" class="section-title" data-i18n="roadsTitle">Три дороги</h2>
+      <p class="section-note" data-i18n="roadsNote">Каждая карта — свой путь к крепости. Пройди все три для полной кампании.</p>
+      <div class="roads">
+        <article class="road">
+          <h3 data-i18n="road1Title">Извилистая</h3>
+          <p data-i18n="road1Body">Классические изгибы — учись строить оборону.</p>
+        </article>
+        <article class="road">
+          <h3 data-i18n="road2Title">Северная тропа</h3>
+          <p data-i18n="road2Body">Длиннее путь — больше времени стрелять.</p>
+        </article>
+        <article class="road">
+          <h3 data-i18n="road3Title">Штурм ворот</h3>
+          <p data-i18n="road3Body">Тугие петли — важны узкие места.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="shots" aria-labelledby="shots-title">
+      <h2 id="shots-title" class="section-title" data-i18n="shotsTitle">Скриншоты</h2>
+      <p class="section-note" data-i18n="shotsNote">Лагерь, поле боя и осада — как выглядит Serphold на телефоне.</p>
+      <div class="shots">
+        <figure>
+          <img src="/frontend/downloads/serphold/shots/01-menu.jpg?v=full2" alt="" width="720" height="1601" loading="eager" data-i18n-alt="altMenu">
+          <figcaption data-i18n="capMenu">Лагерь</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/serphold/shots/02-map.jpg?v=full2" alt="" width="720" height="1601" loading="lazy" data-i18n-alt="altMap">
+          <figcaption data-i18n="capMap">Дорога</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/serphold/shots/03-wave.jpg?v=full2" alt="" width="720" height="1601" loading="lazy" data-i18n-alt="altWave">
+          <figcaption data-i18n="capWave">Волна</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/serphold/shots/04-towers.jpg?v=full2" alt="" width="720" height="1601" loading="lazy" data-i18n-alt="altTowers">
+          <figcaption data-i18n="capTowers">Осада</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="gameplay" aria-labelledby="videos-title">
+      <h2 id="videos-title" class="section-title" data-i18n="videosTitle">Геймплей</h2>
+      <p class="section-note" data-i18n="videosNote">Видео с телефона — русский и английский интерфейс.</p>
+      <div class="videos">
+        <div class="video-card">
+          <h3 data-i18n="videoRu">Русский</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/serphold/poster-ru.jpg">
+            <source src="/frontend/downloads/serphold/gameplay-ru.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-card">
+          <h3 data-i18n="videoEn">English</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/serphold/poster-en.jpg">
+            <source src="/frontend/downloads/serphold/gameplay-en.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-cta">
+      <p class="lead" style="max-width:30rem" data-i18n="footerLead">Готов держать стены — скачай APK и установи на Android.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.0.0.apk" download="Serphold-1.0.0.apk" data-i18n="downloadName">Скачать Serphold</a>
+      </div>
+    </div>
+  </main>
+  <script src="/frontend/scripts/menu.js" defer></script>
+  <script>
+    (function () {
+      var I18N = {
+        ru: {
+          docTitle: "Serphold — башенная защита для Android | Serpmonn",
+          docDesc: "Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачай APK на Serpmonn.",
+          ogDesc: "Защити крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.",
+          brand: "Serphold",
+          lead: "Защити крепость от орды. Ставь лучников, пушки и магов на траву, выбирай дорогу и держи стены до последней волны.",
+          downloadApk: "Скачать APK",
+          watchGameplay: "Смотреть геймплей",
+          meta: "Android · бесплатно · Serpmonn · версия 1.0.0 · 3 карты × 20 волн",
+          roadsTitle: "Три дороги",
+          roadsNote: "Каждая карта — свой путь к крепости. Пройди все три для полной кампании.",
+          road1Title: "Извилистая",
+          road1Body: "Классические изгибы — учись строить оборону.",
+          road2Title: "Северная тропа",
+          road2Body: "Длиннее путь — больше времени стрелять.",
+          road3Title: "Штурм ворот",
+          road3Body: "Тугие петли — важны узкие места.",
+          shotsTitle: "Скриншоты",
+          shotsNote: "Лагерь, поле боя и осада — как выглядит Serphold на телефоне.",
+          capMenu: "Лагерь",
+          capMap: "Дорога",
+          capWave: "Волна",
+          capTowers: "Осада",
+          altMenu: "Меню Serphold с выбором дороги",
+          altMap: "Карта Извилистая в Serphold",
+          altWave: "Волна врагов в Serphold",
+          altTowers: "Башни и враги в Serphold",
+          videosTitle: "Геймплей",
+          videosNote: "Видео с телефона — русский и английский интерфейс.",
+          videoRu: "Русский",
+          videoEn: "English",
+          footerLead: "Готов держать стены — скачай APK и установи на Android.",
+          downloadName: "Скачать Serphold"
+        },
+        en: {
+          docTitle: "Serphold — tower defense for Android | Serpmonn",
+          docDesc: "Serphold — mobile tower defense for Android: 3 roads, 20 waves, archers, cannons and mages. Download the APK on Serpmonn.",
+          ogDesc: "Hold the walls. Three roads, twenty waves. Android APK on Serpmonn.",
+          brand: "Serphold",
+          lead: "Hold the fortress against the horde. Place archers, cannons and mages on the grass, pick a road, and keep the walls up through the last wave.",
+          downloadApk: "Download APK",
+          watchGameplay: "Watch gameplay",
+          meta: "Android · free · Serpmonn · version 1.0.0 · 3 maps × 20 waves",
+          roadsTitle: "Three roads",
+          roadsNote: "Each map is a different path to the keep. Clear all three for the full campaign.",
+          road1Title: "Serpentine",
+          road1Body: "Classic bends — learn how to build.",
+          road2Title: "Northern trail",
+          road2Body: "Longer path — more time to shoot.",
+          road3Title: "Gate assault",
+          road3Body: "Tight loops — choke points matter.",
+          shotsTitle: "Screenshots",
+          shotsNote: "Camp, battlefield and siege — how Serphold looks on a phone.",
+          capMenu: "Camp",
+          capMap: "Road",
+          capWave: "Wave",
+          capTowers: "Siege",
+          altMenu: "Serphold menu with road selection",
+          altMap: "Serpentine map in Serphold",
+          altWave: "Enemy wave in Serphold",
+          altTowers: "Towers and enemies in Serphold",
+          videosTitle: "Gameplay",
+          videosNote: "Phone recordings — Russian and English UI.",
+          videoRu: "Russian",
+          videoEn: "English",
+          footerLead: "Ready to hold the walls — download the APK and install on Android.",
+          downloadName: "Download Serphold"
+        }
+      };
+
+      function applyLang(lang) {
+        var pack = I18N[lang] || I18N.ru;
+        document.documentElement.lang = lang;
+        document.title = pack.docTitle;
+        var desc = document.querySelector('meta[name="description"]');
+        if (desc) desc.setAttribute("content", pack.docDesc);
+        var og = document.querySelector('meta[property="og:description"]');
+        if (og) og.setAttribute("content", pack.ogDesc);
+
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n");
+          if (pack[key] != null) el.textContent = pack[key];
+        });
+        document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n-alt");
+          if (pack[key] != null) el.setAttribute("alt", pack[key]);
+        });
+        document.querySelectorAll("[data-set-lang]").forEach(function (btn) {
+          btn.setAttribute("aria-pressed", btn.getAttribute("data-set-lang") === lang ? "true" : "false");
+        });
+        try { localStorage.setItem("serphold-landing-lang", lang); } catch (e) {}
+        var url = new URL(window.location.href);
+        if (lang === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+      }
+
+      document.querySelectorAll("[data-set-lang]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          applyLang(btn.getAttribute("data-set-lang"));
+        });
+      });
+
+      var start = "ru";
+      try {
+        var q = new URLSearchParams(window.location.search).get("lang");
+        if (q === "en" || q === "ru") start = q;
+        else {
+          var saved = localStorage.getItem("serphold-landing-lang");
+          if (saved === "en" || saved === "ru") start = saved;
+          else if ((navigator.language || "").toLowerCase().indexOf("ru") !== 0) start = "en";
+        }
+      } catch (e) {}
+      applyLang(start);
+    })();
+  </script>
+</body>
+</html>

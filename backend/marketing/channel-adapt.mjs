@@ -5,6 +5,7 @@
 import { stripHashtags, withTrailingHashtags, pickHashtags, uniqueHashtags } from './content-adapters.mjs';
 import { sanitizeCompanyVoice } from './generate-copy.mjs';
 import { isVkChannelId } from './channels/vk.mjs';
+import { applyAdMarking } from './ad-mark.mjs';
 
 function withUtm(ctaUrl, channelId, digestDate) {
   const raw = String(ctaUrl || '').trim();
@@ -103,6 +104,37 @@ export function adaptContentForChannels(master, channelIds, { digestDate } = {})
 
     if (id === 'youtube') {
       const hook = firstHook(bodyRaw, title);
+      const enTitle = sanitizeCompanyVoice(
+        String(master.meta?.enTitle || title || hook || 'Serpmonn')
+      ).slice(0, 100);
+      const enBody = sanitizeCompanyVoice(
+        String(master.meta?.enBody || bodyRaw || '')
+      );
+      const ruBody = sanitizeCompanyVoice(bodyRaw);
+      const tags = uniqueHashtags([
+        ...(Array.isArray(master.meta?.hashtags) ? master.meta.hashtags : []),
+        '#Shorts',
+        '#Serpmonn'
+      ]).slice(0, 6);
+      const desc = [
+        enBody || enTitle,
+        ruBody && ruBody !== enBody ? ruBody : '',
+        cta ? `More: ${cta}` : '',
+        tags.join(' ')
+      ]
+        .filter(Boolean)
+        .join('\n\n')
+        .slice(0, 4000);
+      out.youtube = {
+        title: enTitle,
+        body: desc,
+        cta_url: cta
+      };
+      continue;
+    }
+
+    if (id === 'rutube') {
+      const hook = firstHook(bodyRaw, title);
       const tags = uniqueHashtags([
         ...(Array.isArray(master.meta?.hashtags) ? master.meta.hashtags : []),
         '#Shorts',
@@ -116,15 +148,35 @@ export function adaptContentForChannels(master, channelIds, { digestDate } = {})
         .filter(Boolean)
         .join('\n\n')
         .slice(0, 4000);
-      out.youtube = {
+      out.rutube = {
         title: sanitizeCompanyVoice(title || hook || 'Serpmonn').slice(0, 100),
         body: desc,
+        cta_url: cta,
+        checklist: [
+          'Открой https://studio.rutube.ru/',
+          'Загрузи вертикальное видео (Shorts) на канал Serpmonn Ads',
+          'Вставь заголовок и описание из превью',
+          'Опубликуй: https://rutube.ru/channel/59136572/',
+          'Верни ссылку на ролик и охват в отчёт'
+        ]
+      };
+      continue;
+    }
+
+    if (id === 'ok') {
+      const tags = uniqueHashtags(
+        master.meta?.hashtags || pickHashtags(`${digestDate || ''}-${title}-${id}-${Date.now()}`)
+      );
+      const body = withTrailingHashtags(bodyRaw, tags);
+      out.ok = {
+        title,
+        body: [body, cta].filter(Boolean).join('\n\n'),
         cta_url: cta
       };
       continue;
     }
 
-    if (id === 'manual' || id === 'ok' || id === 'rutube') {
+    if (id === 'manual') {
       out[id] = {
         title,
         body: [bodyRaw, cta].filter(Boolean).join('\n\n'),
@@ -153,8 +205,9 @@ export function adaptContentForChannels(master, channelIds, { digestDate } = {})
 export function payloadForChannel(item, channelId) {
   const adaptations = item?.meta?.channelAdaptations || {};
   const adapted = adaptations[channelId];
+  let payload;
   if (!adapted) {
-    return {
+    payload = {
       title: item.title,
       body: item.body,
       cta_url: item.cta_url,
@@ -164,12 +217,14 @@ export function payloadForChannel(item, channelId) {
       id: item.id,
       meta: item.meta
     };
+  } else {
+    payload = {
+      ...item,
+      title: adapted.title || item.title,
+      body: adapted.body || item.body,
+      cta_url: adapted.cta_url || item.cta_url,
+      checklist: adapted.checklist || null
+    };
   }
-  return {
-    ...item,
-    title: adapted.title || item.title,
-    body: adapted.body || item.body,
-    cta_url: adapted.cta_url || item.cta_url,
-    checklist: adapted.checklist || null
-  };
+  return applyAdMarking(payload, channelId);
 }

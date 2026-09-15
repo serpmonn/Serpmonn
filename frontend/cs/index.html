@@ -145,9 +145,10 @@
 <link rel="stylesheet" href="/frontend/styles/main.css?v=promo41">
 <link rel="stylesheet" href="/frontend/styles/media.css?v=lcp2">
 <link rel="stylesheet" href="/frontend/styles/background.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp3">
-<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp5">
+<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp4">
+<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp4">
+<link rel="stylesheet" href="/frontend/styles/ad-top-banner.css?v=cls1">
 <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2" media="print" onload="this.media='all'">
 <noscript>
   <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2">
@@ -181,29 +182,27 @@
         webvisor: true,
         ecommerce: 'dataLayer'
       });
+    }
 
-      fetch('https://api.ipify.org?format=json')
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (typeof ym === 'undefined') return;
-          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
-          ym(METRIKA_ID, 'hit', window.location.href, {
-            params: { ip_address: data.ip }
-          });
-        })
-        .catch(function () {});
+    function scheduleMetrika() {
+      var delayMs = 12000;
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMetrika, delayMs); }, { timeout: delayMs + 3000 });
+      } else {
+        setTimeout(loadMetrika, delayMs);
+      }
     }
 
     if (document.readyState === 'complete') {
-      setTimeout(loadMetrika, 1);
+      scheduleMetrika();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 1);
-      });
+      window.addEventListener('load', scheduleMetrika);
     }
   })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+
 
 <script type="application/ld+json">
 {
@@ -267,7 +266,7 @@
       
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/Serpmonn-96x96.png?v=3d2" alt="Serpmonn" class="logo" title="Serpmonn" width="65" height="65" decoding="async" fetchpriority="high">
+    <img src="/frontend/images/Serpmonn-96x96.png?v=3d2" alt="Serpmonn" class="logo" title="Serpmonn" width="65" height="65" decoding="sync" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="Zeptejte se AI na cokoli..."

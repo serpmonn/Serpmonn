@@ -994,6 +994,15 @@ function gameOver(reason) {
   stopPlayTimer();
   ygStop();
   ui.dialogue.hidden = true;
+  if (/[?&]rec=1(?:&|$)/.test(location.search) && window.__rec) {
+    ui.hud.hidden = true;
+    if (ui.goFade) ui.goFade.hidden = true;
+    canvas.classList.remove('is-dying');
+    showMsg('Almost…', 'serpmonn', function () {}, { deathReason: reason });
+    const ok = document.getElementById('msg-ok');
+    if (ok) ok.style.display = 'none';
+    return;
+  }
   ui.hud.hidden = true;
   canvas.classList.add('is-dying');
   if (ui.goFade) {
@@ -3461,6 +3470,59 @@ if (/[?&]rec=1(?:&|$)/.test(location.search)) {
       }
       advanceDialogue();
       return true;
+    },
+    bootChase() {
+      try {
+        localStorage.removeItem(SAVE_KEY);
+      } catch (_) { /* ignore */ }
+      adShownThisDeath = false;
+      if (typeof setLang === 'function') setLang('en');
+      heroName = 'Neli';
+      ui.title.hidden = true;
+      if (ui.msg) ui.msg.hidden = true;
+      ui.hud.hidden = false;
+      if (ui.hudName) ui.hudName.hidden = true;
+      if (ui.hudHint) ui.hudHint.hidden = true;
+      if (ui.btnPause) ui.btnPause.hidden = true;
+      if (ui.clues) ui.clues.hidden = true;
+      creaks = 0;
+      clues.clear();
+      stopEscape();
+      if (typeof startPlayTimer === 'function') startPlayTimer(0);
+      setMode('play');
+      enterLiving('kitchen');
+      startEscape();
+      house.escapeLeft = 5;
+      house.escapeTick = true;
+      refreshHud();
+      ygStart();
+      return true;
+    },
+    restartChase() {
+      adShownThisDeath = false;
+      if (ui.msg) ui.msg.hidden = true;
+      if (ui.goFade) {
+        ui.goFade.classList.remove('is-on');
+        ui.goFade.hidden = true;
+      }
+      canvas.classList.remove('is-dying');
+      setMode('play');
+      ui.hud.hidden = false;
+      enterLiving('kitchen');
+      startEscape();
+      house.escapeLeft = 7;
+      house.escapeTick = true;
+      refreshHud();
+      ygStart();
+      return true;
+    },
+    doorTarget() {
+      return { x: 420, y: 600 };
+    },
+    killNow() {
+      house.escapeActive = true;
+      house.escapeLeft = 0.04;
+      refreshHud();
     },
   };
 }

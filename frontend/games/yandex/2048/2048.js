@@ -264,7 +264,7 @@
       this.overlayScore.textContent = tpl.replace('{score}', String(this.score));
       this.overlay.classList.remove('hidden');
 
-      if (!this.adShownThisRound && window.showFullScreenAd) {
+      if (!this.adShownThisRound && window.showFullScreenAd && !/[?&]rec=1(?:&|$)/.test(location.search)) {
         this.adShownThisRound = true;
         setTimeout(() => {
           try {
@@ -290,14 +290,64 @@
     }
   }
 
+  function attachRec(game) {
+    if (!/[?&]rec=1(?:&|$)/.test(location.search)) return;
+    window.__rec = {
+      getState() {
+        return { board: [...game.board], score: game.score, alive: game.alive };
+      },
+      setBoard(cells, score) {
+        game.board = cells.map((n) => Number(n) || 0);
+        if (typeof score === 'number') {
+          game.score = score;
+          if (score > game.best) game.best = score;
+        }
+        game.alive = true;
+        game.hideOverlay();
+        game.updateDisplay();
+      },
+      slide(dir) {
+        if (!game.alive) return false;
+        game.saveState();
+        let moved = false;
+        if (dir === 'ArrowUp') moved = game.moveUp();
+        else if (dir === 'ArrowDown') moved = game.moveDown();
+        else if (dir === 'ArrowLeft') moved = game.moveLeft();
+        else if (dir === 'ArrowRight') moved = game.moveRight();
+        if (!moved) {
+          game.history.pop();
+          return false;
+        }
+        game.updateBestScore();
+        game.updateDisplay();
+        return true;
+      },
+      restart() {
+        game.newGame(false);
+      },
+      fail() {
+        window.i18n = { gameOver: 'Almost…', yourScore: 'serpmonn', playAgain: 'serpmonn' };
+        const h2 = document.querySelector('#overlay h2');
+        if (h2) h2.textContent = 'Almost…';
+        const btn = document.getElementById('play-again');
+        if (btn) btn.style.display = 'none';
+        game.gameOver();
+        if (h2) h2.textContent = 'Almost…';
+        game.overlayScore.textContent = 'serpmonn';
+      },
+    };
+  }
+
   window.__ygOnReady = function () {
     window.game2048 = new Game2048();
+    attachRec(window.game2048);
   };
 
   if (window.__ygBoot) {
     window.__ygBoot();
   } else {
     window.game2048 = new Game2048();
+    attachRec(window.game2048);
   }
 
   window.addEventListener('beforeunload', () => {

@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { mkdir, readFile, access, writeFile, unlink } from 'fs/promises';
+import { mkdir, readFile, access, writeFile, unlink, readdir } from 'fs/promises';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { constants as fsConstants } from 'fs';
@@ -10,6 +10,19 @@ export const MARKETING_ROOT = __dirname;
 export const OUT_DIR = join(__dirname, 'out');
 export const BRAND_DIR = join(__dirname, 'brand');
 export const CLIPS_DIR = join(__dirname, 'assets', 'clips');
+export const AUDIO_DIR = join(__dirname, 'assets', 'audio');
+
+const AUDIO_BED_BY_PRODUCT = {
+  games: 'games',
+  neon_runner: 'neon_runner',
+  serphold: 'serphold',
+  promocodes: 'promocodes',
+  partners: 'partners',
+  honey: 'honey'
+};
+
+/** Счётчик ротации bed-вариантов по продукту (в рамках процесса). */
+const bedRotateIdx = new Map();
 
 async function exists(p) {
   try {
@@ -51,7 +64,7 @@ function escapeDrawtext(s) {
 }
 
 /** Короткий экранный хук: максимум ~2 строки, без канцелярита. */
-export function formatOnScreenTitle(title, { lineLen = 20, maxLines = 2 } = {}) {
+export function formatOnScreenTitle(title, { lineLen = 20, maxLines = 2, lang = 'ru' } = {}) {
   let t = String(title || '')
     .replace(/\s+/g, ' ')
     .replace(/[….]+$/g, '')
@@ -75,8 +88,8 @@ export function formatOnScreenTitle(title, { lineLen = 20, maxLines = 2 } = {}) 
     t = neat.length >= 12 ? `${neat}…` : `${cut.trim()}…`;
   }
 
-  // Заглавная первая буква (не CRY)
-  t = t.charAt(0).toLocaleUpperCase('ru-RU') + t.slice(1);
+  const locale = lang === 'en' ? 'en-US' : 'ru-RU';
+  t = t.charAt(0).toLocaleUpperCase(locale) + t.slice(1);
 
   const words = t.split(' ').filter(Boolean);
   const lines = [];
@@ -120,13 +133,43 @@ function ctaLabel(ctaUrl) {
   }
 }
 
-async function buildCaptionOverlay({ title, ctaUrl }) {
-  const onScreen = formatOnScreenTitle(title, { lineLen: 22, maxLines: 2 });
+async function buildCaptionOverlay({ title, titleSecondary = '', ctaUrl, lang = 'ru' }) {
+  const bilingual = Boolean(String(titleSecondary || '').trim());
+  const onScreen = formatOnScreenTitle(title, {
+    lineLen: bilingual ? 24 : 22,
+    maxLines: 2,
+    lang: bilingual ? 'en' : lang
+  });
+  let onScreen2 = '';
+  if (bilingual) {
+    onScreen2 = formatOnScreenTitle(titleSecondary, {
+      lineLen: 26,
+      maxLines: 2,
+      lang: 'ru'
+    });
+    // одинаковый текст — не дублируем
+    if (onScreen2.replace(/\s+/g, ' ').toLowerCase() === onScreen.replace(/\s+/g, ' ').toLowerCase()) {
+      onScreen2 = '';
+    }
+  }
   const cta = ctaLabel(ctaUrl);
   const out = join(OUT_DIR, `_captions-${randomBytes(6).toString('hex')}.png`);
   const script = join(MARKETING_ROOT, 'caption_overlay.py');
-  await run('python3', [script, '--title', onScreen.replace(/\n/g, ' '), '--cta', cta, '--out', out]);
-  return { path: out, onScreenTitle: onScreen };
+  const args = [
+    script,
+    '--title',
+    onScreen.replace(/\n/g, ' '),
+    '--cta',
+    cta,
+    '--out',
+    out
+  ];
+  if (onScreen2) args.push('--title2', onScreen2.replace(/\n/g, ' '));
+  await run('python3', args);
+  return {
+    path: out,
+    onScreenTitle: onScreen2 ? `${onScreen}\n${onScreen2}` : onScreen
+  };
 }
 
 export async function loadBrand() {
@@ -149,6 +192,93 @@ async function resolveBrandLogo(brand) {
   return join(BRAND_DIR, 'logo.png');
 }
 
+/**
+ * Похожие пулы для лёгкого overlap (~20% чужой bed).
+ * honey почти изолирован (только default).
+ */
+const AUDIO_OVERLAP = {
+  games: ['neon_runner', 'default'],
+  neon_runner: ['games', 'default'],
+  serphold: ['default'],
+  promocodes: ['partners', 'default'],
+  partners: ['promocodes', 'default'],
+  honey: ['default'],
+  default: ['games', 'promocodes']
+};
+
+function hashSalt(salt) {
+  let h = 0;
+  const s = String(salt ?? '');
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+/**
+ * Bed по продукту: варианты `games-1.mp3` … чередуются.
+ * ~20% — bed из похожего пула (overlap).
+ * @param {string} product
+ * @param {{ salt?: string|number, overlapChance?: number }} [opts]
+ */
+export async function resolveAudioBed(product, { salt, overlapChance = 0.2 } = {}) {
+  const key = AUDIO_BED_BY_PRODUCT[String(product || '').toLowerCase()] || 'default';
+
+  async function listVariants(base) {
+    let names = [];
+    try {
+      names = await readdir(AUDIO_DIR);
+    } catch {
+      return [];
+    }
+    const numbered = names
+      .filter((n) => new RegExp(`^${base}-\\d+\\.(mp3|wav|m4a|aac)$`, 'i').test(n))
+      .sort((a, b) => {
+        const na = Number((a.match(/-(\d+)\./) || [])[1] || 0);
+        const nb = Number((b.match(/-(\d+)\./) || [])[1] || 0);
+        return na - nb;
+      });
+    if (numbered.length) return numbered.map((n) => join(AUDIO_DIR, n));
+    for (const ext of ['mp3', 'wav', 'm4a', 'aac']) {
+      const abs = join(AUDIO_DIR, `${base}.${ext}`);
+      if (await exists(abs)) return [abs];
+    }
+    return [];
+  }
+
+  const h = salt != null && String(salt).length ? hashSalt(salt) : Date.now() >>> 0;
+  const chance = Math.min(0.5, Math.max(0, Number(overlapChance) || 0));
+  // отдельный микс для решения overlap, чтобы не коррелировать с выбором файла
+  const overlapRoll = Math.imul(h ^ 0x9e3779b9, 2654435761) >>> 0;
+  const useOverlap = chance > 0 && overlapRoll % 1000 < Math.round(chance * 1000);
+
+  let poolKey = key;
+  if (useOverlap) {
+    const neighbors = (AUDIO_OVERLAP[key] || []).filter(Boolean);
+    if (neighbors.length) {
+      poolKey = neighbors[h % neighbors.length];
+    }
+  }
+
+  let variants = await listVariants(poolKey);
+  if (!variants.length && poolKey !== key) {
+    variants = await listVariants(key);
+  }
+  if (!variants.length && key !== 'default') {
+    variants = await listVariants('default');
+  }
+  if (!variants.length) return null;
+
+  let idx;
+  if (salt != null && String(salt).length) {
+    idx = Math.floor(h / 1000) % variants.length;
+  } else {
+    const rotKey = `${key}>${poolKey}`;
+    const cur = bedRotateIdx.get(rotKey) || 0;
+    idx = cur % variants.length;
+    bedRotateIdx.set(rotKey, cur + 1);
+  }
+  return variants[idx];
+}
+
 /** blur + fit + лёгкий Ken Burns → именованный выход. */
 function buildSceneChain(inputIdx, tag, w, h, frames, fps) {
   const bg = `bg${tag}`;
@@ -168,17 +298,21 @@ function buildSceneChain(inputIdx, tag, w, h, frames, fps) {
 
 /**
  * Рендер вертикального Shorts (1080×1920):
- * 1–2 картинки (xfade посередине) + круглое лого + нижняя плашка + текст.
- * @returns {{ mediaPath: string, absPath: string, durationSec: number, onScreenTitle: string, stillCount: number }}
+ * 1–2 картинки (xfade) + лого + подписи + bed по продукту.
+ * @returns {{ mediaPath: string, absPath: string, durationSec: number, onScreenTitle: string, stillCount: number, audioBed: string|null }}
  */
 export async function renderShort({
   product = 'neli',
   title = 'Serpmonn',
+  titleSecondary = '',
   subtitle = '',
   ctaUrl = '',
   sourceImage,
   sourceImages,
-  durationSec
+  durationSec,
+  lang = 'ru',
+  withAudio = true,
+  audioSalt = ''
 } = {}) {
   await mkdir(OUT_DIR, { recursive: true });
   const brand = await loadBrand();
@@ -188,6 +322,11 @@ export async function renderShort({
   const fps = brand.fps || 30;
   const logo = await resolveBrandLogo(brand);
   const logoScale = Number(brand.logoWidth) || 180;
+  const audioBed = withAudio
+    ? await resolveAudioBed(product, {
+        salt: audioSalt || `${product}-${title}-${Date.now()}`
+      })
+    : null;
 
   const stillAbsList = [];
   const fromArr = Array.isArray(sourceImages) ? sourceImages : [];
@@ -223,13 +362,19 @@ export async function renderShort({
   const rel = `out/${product}-${stamp}.mp4`;
   const abs = join(MARKETING_ROOT, rel);
 
-  const caption = await buildCaptionOverlay({ title, ctaUrl });
+  const caption = await buildCaptionOverlay({
+    title,
+    titleSecondary,
+    ctaUrl,
+    lang
+  });
   const frames = Math.max(1, Math.round(dur * fps));
   const fadeDur = Math.min(1.0, Math.max(0.5, dur * 0.08));
   const fadeOffset = Math.max(0.5, dur / 2 - fadeDur / 2);
 
   const logoIdx = dual ? 2 : 1;
   const capIdx = dual ? 3 : 2;
+  const audioIdx = dual ? 4 : 3;
   const parts = [];
 
   if (dual) {
@@ -257,17 +402,31 @@ export async function renderShort({
     `[withlogo][cap]overlay=0:0:format=auto,format=yuv420p[vout]`
   );
 
+  const fadeOutStart = Math.max(0.2, dur - 0.5);
+  if (audioBed) {
+    parts.push(
+      `[${audioIdx}:a]atrim=0:${dur},asetpts=PTS-STARTPTS,` +
+        `afade=t=in:st=0:d=0.35,afade=t=out:st=${fadeOutStart}:d=0.45,` +
+        `volume=0.32[aout]`
+    );
+  }
+
   const args = ['-y'];
   for (const still of uniqueStills) {
     args.push('-loop', '1', '-t', String(dur), '-i', still);
   }
   args.push('-loop', '1', '-t', String(dur), '-i', logo);
   args.push('-loop', '1', '-t', String(dur), '-i', caption.path);
+  if (audioBed) {
+    args.push('-stream_loop', '-1', '-t', String(dur), '-i', audioBed);
+  }
+  args.push('-filter_complex', parts.join(';'), '-map', '[vout]');
+  if (audioBed) {
+    args.push('-map', '[aout]', '-c:a', 'aac', '-b:a', '128k');
+  } else {
+    args.push('-an');
+  }
   args.push(
-    '-filter_complex',
-    parts.join(';'),
-    '-map',
-    '[vout]',
     '-c:v',
     'libx264',
     '-pix_fmt',
@@ -296,7 +455,8 @@ export async function renderShort({
     absPath: abs,
     durationSec: dur,
     onScreenTitle: caption.onScreenTitle,
-    stillCount: uniqueStills.length
+    stillCount: uniqueStills.length,
+    audioBed: audioBed ? audioBed.replace(MARKETING_ROOT + '/', '') : null
   };
 }
 

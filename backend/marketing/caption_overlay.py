@@ -68,7 +68,30 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int, max_lines
     return lines[:max_lines]
 
 
-def make_overlay(title: str, cta: str, out_path: str) -> None:
+SECONDARY = (210, 216, 228, 230)  # RU-строка чуть мягче EN
+
+
+def _measure_block(draw, lines, font, line_gap: int):
+    sizes = []
+    for line in lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        sizes.append((bbox[2] - bbox[0], bbox[3] - bbox[1]))
+    block_h = sum(h for _, h in sizes) + line_gap * max(0, len(lines) - 1)
+    return sizes, block_h
+
+
+def _draw_block(draw, lines, sizes, font, y0, fill, line_gap: int) -> int:
+    y = y0
+    for i, line in enumerate(lines):
+        tw, th = sizes[i]
+        x = (W - tw) // 2
+        draw.text((x + 3, y + 4), line, font=font, fill=(0, 0, 0, 160))
+        draw.text((x, y), line, font=font, fill=fill)
+        y += th + line_gap
+    return y
+
+
+def make_overlay(title: str, cta: str, out_path: str, title2: str = "") -> None:
     base = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(base)
 
@@ -78,16 +101,24 @@ def make_overlay(title: str, cta: str, out_path: str) -> None:
         a = int(min(210, (t**1.45) * 220))
         draw.line([(0, y), (W, y)], fill=(6, 8, 14, a))
 
-    title_font = load_font(64, "bold")
+    bilingual = bool((title2 or "").strip())
     max_w = W - 140
-    lines = wrap_text((title or "Serpmonn").strip(), title_font, max_w, max_lines=2)
+    line_gap = 8 if bilingual else 10
 
-    sizes = []
-    for line in lines:
-        bbox = draw.textbbox((0, 0), line, font=title_font)
-        sizes.append((bbox[2] - bbox[0], bbox[3] - bbox[1]))
-    line_gap = 10
-    block_h = sum(h for _, h in sizes) + line_gap * max(0, len(lines) - 1)
+    # EN (или единственный язык) — крупнее; RU — чуть меньше и мягче
+    title_font = load_font(56 if bilingual else 64, "bold")
+    lines = wrap_text((title or "Serpmonn").strip(), title_font, max_w, max_lines=2)
+    sizes, block_h = _measure_block(draw, lines, title_font, line_gap)
+
+    title2_font = None
+    lines2: list[str] = []
+    sizes2: list[tuple[int, int]] = []
+    block2_h = 0
+    gap_blocks = 14
+    if bilingual:
+        title2_font = load_font(40, "semi")
+        lines2 = wrap_text(title2.strip(), title2_font, max_w, max_lines=2)
+        sizes2, block2_h = _measure_block(draw, lines2, title2_font, line_gap)
 
     cta_text = (cta or "").strip().replace("https://", "").replace("http://", "")
     cta_font = load_font(28, "medium")
@@ -98,10 +129,15 @@ def make_overlay(title: str, cta: str, out_path: str) -> None:
         cb = draw.textbbox((0, 0), cta_text, font=cta_font)
         cta_h = (cb[3] - cb[1]) + underline_gap + underline_h
 
-    gap_title_cta = 36
-    total = block_h + (gap_title_cta + cta_h if cta_text else 0)
-    y0 = int(H * 0.72) - total // 2
-    y0 = max(int(H * 0.64), min(y0, int(H * 0.78)))
+    gap_title_cta = 28 if bilingual else 36
+    total = block_h
+    if bilingual:
+        total += gap_blocks + block2_h
+    if cta_text:
+        total += gap_title_cta + cta_h
+
+    y0 = int(H * 0.70) - total // 2
+    y0 = max(int(H * 0.58), min(y0, int(H * 0.76)))
 
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     gd = ImageDraw.Draw(glow)
@@ -113,13 +149,11 @@ def make_overlay(title: str, cta: str, out_path: str) -> None:
     base = Image.alpha_composite(base, glow)
     draw = ImageDraw.Draw(base)
 
-    y = y0
-    for i, line in enumerate(lines):
-        tw, th = sizes[i]
-        x = (W - tw) // 2
-        draw.text((x + 3, y + 4), line, font=title_font, fill=(0, 0, 0, 160))
-        draw.text((x, y), line, font=title_font, fill=WHITE)
-        y += th + line_gap
+    y = _draw_block(draw, lines, sizes, title_font, y0, WHITE, line_gap)
+    if bilingual and title2_font:
+        y = _draw_block(
+            draw, lines2, sizes2, title2_font, y - line_gap + gap_blocks, SECONDARY, line_gap
+        )
 
     if cta_text:
         y += gap_title_cta - line_gap
@@ -140,10 +174,11 @@ def make_overlay(title: str, cta: str, out_path: str) -> None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--title", required=True)
+    ap.add_argument("--title2", default="", help="Вторая строка (RU при EN title)")
     ap.add_argument("--cta", default="")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
-    make_overlay(args.title, args.cta, args.out)
+    make_overlay(args.title, args.cta, args.out, title2=args.title2)
 
 
 if __name__ == "__main__":

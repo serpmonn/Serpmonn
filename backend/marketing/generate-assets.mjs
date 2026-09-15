@@ -1,7 +1,7 @@
 /** Картинки для маркетинговых постов (GigaChat / Kandinsky). */
 
-import { readdir } from 'fs/promises';
-import { mkdir, writeFile } from 'fs/promises';
+import { readdirSync } from 'fs';
+import { readdir, mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import {
   generateImageWithGigaChat,
@@ -13,6 +13,71 @@ import {
 import { MARKETING_ROOT, resolveMarketingMedia } from './render-short.mjs';
 
 const FALLBACK_IMAGE = 'brand/logo.png';
+
+/** Статичные brand-кадры (последний рубеж). */
+const STILL_POOL = [
+  'brand/serpmonn-ads-banner-v2.png',
+  'brand/serpmonn-ads-3d-mockup.png',
+  'brand/serpmonn-ads-3d-logo.png',
+  'brand/serpmonn-3d-logo-realistic.png',
+  'brand/serpmonn-3d-logo-standing.png',
+  'brand/serpmonn-ads-avatar-800.png',
+  'brand/serpmonn-banner.png',
+  'assets/clips/neli-promo.png',
+  FALLBACK_IMAGE
+];
+
+/** CC0-сток по продукту: assets/stills/{product}/01.jpg … */
+export function productStillPool(product = '') {
+  const p = String(product || '').toLowerCase() || 'default';
+  const dir = join(MARKETING_ROOT, 'assets/stills', p);
+  try {
+    return readdirSync(dir)
+      .filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
+      .sort()
+      .map((f) => `assets/stills/${p}/${f}`);
+  } catch {
+    if (p === 'default') return [];
+    return productStillPool('default');
+  }
+}
+
+/**
+ * Следующий ещё не использованный still (относительный путь).
+ * Порядок: CC0-сток продукта → brand-пул.
+ * @param {string[]} exclude
+ * @param {string} [product]
+ */
+export function pickAlternateStill(exclude = [], product = '') {
+  const skip = new Set((exclude || []).map(String).filter(Boolean));
+  const p = String(product || '').toLowerCase();
+  const pool = [
+    ...productStillPool(p),
+    ...STILL_POOL
+  ];
+  if (p === 'neon_runner' || p === 'serphold' || p === 'games') {
+    pool.push('brand/serpmonn-ads-3d-mockup.png', 'brand/serpmonn-ads-banner-v2.png');
+  }
+  if (p === 'partners') {
+    pool.push('brand/serpmonn-ads-banner-compose.png');
+  }
+  for (const rel of pool) {
+    if (skip.has(rel)) continue;
+    if (resolveMarketingMedia(rel)) return rel;
+  }
+  return null;
+}
+
+/** Случайный CC0 still продукта (или null). */
+export function pickProductStill(product = '', exclude = []) {
+  const skip = new Set((exclude || []).map(String).filter(Boolean));
+  const pool = productStillPool(product).filter(
+    (rel) => !skip.has(rel) && resolveMarketingMedia(rel)
+  );
+  if (!pool.length) return null;
+  const i = Math.floor(Math.random() * pool.length);
+  return pool[i];
+}
 
 function imagePromptForProduct(product, title, variant = 0) {
   const p = String(product || '').toLowerCase();
@@ -46,6 +111,11 @@ function imagePromptForProduct(product, title, variant = 0) {
       'неоновый бесконечный раннер, силуэт бегущего персонажа, киберпанк свечение, ' +
       'тёмный фон с розово-голубыми неоновыми линиями, без текста на картинке, ' +
       'без чужих логотипов, вертикальный формат для Shorts';
+  } else if (p === 'serphold') {
+    base =
+      'Нарисуй иллюстрацию мобильной tower defense игры Serphold: ' +
+      'крепость, извилистая дорога, лучники и маги на траве, тёплые коричнево-зелёные тона, ' +
+      'фэнтези-минимализм, без текста на картинке, без чужих логотипов, вертикальный формат для Shorts';
   } else {
     base =
       `Нарисуй рекламную иллюстрацию` +
@@ -83,6 +153,8 @@ async function latestGeneratedPostImage(product) {
 async function pickFallbackMedia(product) {
   const recent = await latestGeneratedPostImage(product);
   if (recent) return recent;
+  const stock = pickProductStill(product);
+  if (stock) return stock;
   if (resolveMarketingMedia(FALLBACK_IMAGE)) return FALLBACK_IMAGE;
   if (resolveMarketingMedia('assets/clips/neli-promo.png')) {
     return 'assets/clips/neli-promo.png';
@@ -94,7 +166,11 @@ async function pickFallbackMedia(product) {
  * @returns {Promise<{ media_path: string|null, engine: string|null, error?: string, fileId?: string }>}
  */
 export async function generateMarketingImage({ product, title, variant = 0 } = {}) {
-  const fbPath = await pickFallbackMedia(product);
+  let fbPath = await pickFallbackMedia(product);
+  if (Number(variant) > 0 && fbPath) {
+    const alt = pickAlternateStill([fbPath], product);
+    if (alt) fbPath = alt;
+  }
 
   if (!isGigaChatConfigured()) {
     return {
@@ -107,7 +183,7 @@ export async function generateMarketingImage({ product, title, variant = 0 } = {
   try {
     const prompt = imagePromptForProduct(product, title, variant);
     const img = await enqueueGigaChat(
-      () => generateImageWithGigaChat(prompt, { timeoutMs: 45_000 }),
+      () => generateImageWithGigaChat(prompt, { timeoutMs: 120_000 }),
       { label: `image-v${variant}` }
     );
     const ext = /png/i.test(img.contentType)
@@ -150,7 +226,12 @@ export async function generateMarketingImages({ product, title, count = 2 } = {}
       media_paths.push(one.media_path);
     }
   }
-  // если оба раза один fallback — хотя бы один путь
+  // Гарантируем ≥2 разных кадра для Shorts
+  while (media_paths.length < n) {
+    const alt = pickAlternateStill(media_paths, product);
+    if (!alt) break;
+    media_paths.push(alt);
+  }
   if (!media_paths.length && items[0]?.media_path) {
     media_paths.push(items[0].media_path);
   }

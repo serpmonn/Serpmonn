@@ -348,4 +348,23 @@
     reset();
     draw();
   }
+
+  try {
+    if (new URLSearchParams(location.search).get('rec')) {
+      window.__rec = {
+        getState() {
+          return {
+            snake: (snake || []).map((s) => ({ x: s.x, y: s.y })),
+            food: food ? { x: food.x, y: food.y } : null,
+            dir: dir ? { x: dir.x, y: dir.y } : { x: 1, y: 0 },
+            score,
+            alive,
+            paused,
+            grid: GRID_SIZE,
+          };
+        },
+        setDir: setDirection,
+      };
+    }
+  } catch (_) {}
 })();

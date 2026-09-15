@@ -295,29 +295,27 @@
         webvisor: true,
         ecommerce: 'dataLayer'
       });
+    }
 
-      fetch('https://api.ipify.org?format=json')
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (typeof ym === 'undefined') return;
-          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
-          ym(METRIKA_ID, 'hit', window.location.href, {
-            params: { ip_address: data.ip }
-          });
-        })
-        .catch(function () {});
+    function scheduleMetrika() {
+      var delayMs = 12000;
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMetrika, delayMs); }, { timeout: delayMs + 3000 });
+      } else {
+        setTimeout(loadMetrika, delayMs);
+      }
     }
 
     if (document.readyState === 'complete') {
-      setTimeout(loadMetrika, 1);
+      scheduleMetrika();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 1);
-      });
+      window.addEventListener('load', scheduleMetrika);
     }
   })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+
 
     
     <!-- Top.Mail.Ru counter -->
@@ -351,7 +349,26 @@
     <!-- /Top.Mail.Ru counter -->
     
     <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=55" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+  (function () {
+    function loadMailAds() {
+      if (document.querySelector('script[src*="ads-async.js"]')) return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://ad.mail.ru/static/ads-async.js';
+      document.head.appendChild(s);
+    }
+    function schedule() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMailAds, 2000); }, { timeout: 5000 });
+      } else {
+        setTimeout(loadMailAds, 2500);
+      }
+    }
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule);
+  })();
+</script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>

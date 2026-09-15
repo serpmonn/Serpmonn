@@ -222,6 +222,9 @@ export function createVkChannel(def) {
           message,
           guid: `mkt-${def.id}-${item.id || Date.now()}-${Date.now()}`
         };
+        if (item?.meta?.isAd) {
+          params.mark_as_ads = 1;
+        }
         const publishDate = scheduledPublishUnix(item);
         if (publishDate) params.publish_date = publishDate;
 

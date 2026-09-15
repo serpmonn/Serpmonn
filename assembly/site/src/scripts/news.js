@@ -237,9 +237,12 @@ export async function loadNews() {
   if (!block || !heroWrap || !feed) return;
 
   const finishEmpty = () => {
-    block.classList.remove('news-block--pending');
-    block.classList.add('news-block--empty');
-    block.style.display = 'none';
+    // Delay collapse past typical CLS window so empty news don't shift the page on load
+    setTimeout(() => {
+      block.classList.remove('news-block--pending');
+      block.classList.add('news-block--empty');
+      block.style.display = 'none';
+    }, 2500);
   };
 
   try {

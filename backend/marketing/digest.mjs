@@ -13,7 +13,8 @@ import { publishQueueItem } from './dispatcher.mjs';
 import { getChannel } from './channels/index.mjs';
 import { isVkChannelId } from './channels/vk.mjs';
 import { renderShort, resolveMarketingMedia } from './render-short.mjs';
-import { generateMarketingImage } from './generate-assets.mjs';
+import { generateMarketingImage, pickAlternateStill } from './generate-assets.mjs';
+import { translateMarketingToEnglish } from './generate-copy.mjs';
 import {
   createQueueItem,
   ensureMarketingTables,
@@ -90,11 +91,12 @@ function isImageMediaPath(p) {
 }
 
 /**
- * Для Shorts нужно ≥2 разных still (если получится).
+ * Для Shorts нужно ≥2 разных still.
  * @returns {Promise<string[]>} relative paths
  */
 async function ensureVideoStills(content) {
   const meta = content?.meta && typeof content.meta === 'object' ? content.meta : {};
+  const product = content?.product || 'promocodes';
   const stills = [];
   const push = (rel) => {
     const r = String(rel || '').trim();
@@ -110,14 +112,24 @@ async function ensureVideoStills(content) {
 
   while (stills.length < 2) {
     const img = await generateMarketingImage({
-      product: content?.product || 'promocodes',
+      product,
       title: content?.title || 'Serpmonn',
       variant: stills.length
     });
     if (!img.media_path) break;
     const before = stills.length;
     push(img.media_path);
-    if (stills.length === before) break;
+    if (stills.length === before) {
+      // генератор вернул дубликат — берём статичный alternate
+      const alt = pickAlternateStill(stills, product);
+      if (alt) push(alt);
+      else break;
+    }
+  }
+  while (stills.length < 2) {
+    const alt = pickAlternateStill(stills, product);
+    if (!alt) break;
+    push(alt);
   }
   return stills.slice(0, 2);
 }
@@ -131,14 +143,26 @@ async function renderVideoForSlot(content, channelId) {
   const sourceImages = stillRels
     .map((rel) => resolveMarketingMedia(rel))
     .filter(Boolean);
+  const isYoutube = channelId === 'youtube';
+  const lang = isYoutube ? 'en+ru' : 'ru';
+  const overlayTitle = isYoutube
+    ? content?.meta?.enTitle || content.title || 'Serpmonn'
+    : content.title || 'Serpmonn';
+  // YouTube: EN крупно + RU ниже; RuTube и др. — только RU
+  const overlaySecondary =
+    isYoutube && content?.title && content.title !== overlayTitle
+      ? content.title
+      : '';
   const rendered = await renderShort({
     product: content.product || 'promocodes',
-    title: content.title || 'Serpmonn',
-    subtitle: 'Serpmonn',
+    title: overlayTitle,
+    titleSecondary: overlaySecondary,
     ctaUrl: content.cta_url || '',
     sourceImages,
     sourceImage: sourceImages[0],
-    durationSec: 12
+    durationSec: 12,
+    lang: isYoutube ? 'en' : 'ru',
+    audioSalt: `${channelId}-${content.product || ''}-${content.meta?.digestDate || ''}-${content.meta?.slot || content.title || ''}`
   });
   return {
     media_path: rendered.mediaPath,
@@ -149,7 +173,10 @@ async function renderVideoForSlot(content, channelId) {
       sourceStill: stillRels[0] || content.media_path || null,
       sourceStills: stillRels,
       stillCount: rendered.stillCount,
-      renderChannel: channelId
+      renderChannel: channelId,
+      lang,
+      onScreenTitle: rendered.onScreenTitle || null,
+      audioBed: rendered.audioBed || null
     }
   };
 }
@@ -296,17 +323,19 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
           continue;
         }
 
-        // VK — только текст. TG — фото. YouTube — still для ffmpeg Shorts.
+        // VK — только текст. TG — фото. YouTube/RuTube video — картинки только в ensureVideoStills
+        // (не генерим в buildContent, иначе двойной вызов GigaChat + cooldown).
         const needsVideo = channelNeedsVideo(channelId);
         const needsImage =
-          needsVideo ||
-          (!isVkChannelId(channelId) &&
-            (campaign.source === 'promocodes' ||
-              campaign.source === 'honey' ||
-              campaign.source === 'games' ||
-              campaign.source === 'partners' ||
-              campaign.source === 'neon_runner' ||
-              Boolean(useAi)));
+          !needsVideo &&
+          !isVkChannelId(channelId) &&
+          (campaign.source === 'promocodes' ||
+            campaign.source === 'honey' ||
+            campaign.source === 'games' ||
+            campaign.source === 'partners' ||
+            campaign.source === 'neon_runner' ||
+            campaign.source === 'serphold' ||
+            Boolean(useAi));
 
         const content = await buildContentForCampaign(campaign, {
           slot,
@@ -317,11 +346,25 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
             campaign.source === 'honey' ||
             campaign.source === 'games' ||
             campaign.source === 'partners' ||
-            campaign.source === 'neon_runner',
+            campaign.source === 'neon_runner' ||
+            campaign.source === 'serphold',
           withImage: needsImage
         });
 
         if (needsVideo) {
+          if (channelId === 'youtube') {
+            const en = await translateMarketingToEnglish({
+              title: content.title,
+              body: content.body,
+              product: content.product || campaign.source
+            });
+            content.meta = {
+              ...(content.meta || {}),
+              enTitle: en.title,
+              enBody: en.body,
+              enEngine: en.engine || null
+            };
+          }
           const rendered = await renderVideoForSlot(content, channelId);
           content.format = rendered.format;
           content.media_path = rendered.media_path;
@@ -358,7 +401,9 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
             theme: content.title || 'Тема дня',
             channelAdaptations: adaptations,
             assignedPlatform: channelId,
-            platformPool
+            platformPool,
+            // Дайджест — промо; снять галочку можно в админке
+            isAd: content.meta?.isAd !== false
           }
         });
 

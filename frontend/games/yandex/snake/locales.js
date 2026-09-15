@@ -47,6 +47,10 @@ window.resolveSerpmonnLocale = function (ysdk) {
   try {
     if (ysdk && ysdk.environment && ysdk.environment.i18n && ysdk.environment.i18n.lang) {
       code = String(ysdk.environment.i18n.lang).toLowerCase().slice(0, 2);
+    } else {
+      // Draft / local only: ?lang=en|ru when SDK lang is absent.
+      const q = new URLSearchParams(location.search || '').get('lang');
+      if (q) code = String(q).toLowerCase().slice(0, 2);
     }
   } catch (_) {}
   // Declared languages in console: RU + EN. Anything else → RU.

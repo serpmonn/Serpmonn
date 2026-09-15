@@ -213,32 +213,10 @@ export async function reachReport(from, to) {
 }
 
 /**
- * Еженедельный разбор: что усиливать (каналы / слоты).
+ * Охват за период + разбивка по слотам (без текстовых советов в админке).
  */
 export async function buildReachFeedback(from, to) {
   const reach = await reachReport(from, to);
-  const tips = [];
-
-  if (!reach.totalReach) {
-    tips.push(
-      'Охвата пока нет в данных: нажми «Обновить охват VK/YT» или введи reach вручную для Дзен/manual.'
-    );
-  } else {
-    const top = reach.topChannels[0];
-    if (top && top.reachPerPost > 0) {
-      tips.push(
-        `Лучший reach/пост: ${top.channel_id} (${top.reachPerPost}). Усиливай этот канал и похожие форматы.`
-      );
-    }
-    const weak = [...reach.byChannel]
-      .filter((c) => c.posts >= 2)
-      .sort((a, b) => a.reachPerPost - b.reachPerPost)[0];
-    if (weak && top && weak.channel_id !== top.channel_id) {
-      tips.push(
-        `Слабее остальных: ${weak.channel_id} (${weak.reachPerPost}/пост). Проверь хук, время и нативность текста.`
-      );
-    }
-  }
 
   // слоты из meta опубликованных постов
   let slotTips = [];
@@ -270,23 +248,14 @@ export async function buildReachFeedback(from, to) {
             ? Math.round((Number(s.reach_sum) || 0) / Number(s.posts))
             : 0
       }));
-    if (slotTips[0]?.reachPerPost) {
-      tips.push(
-        `Лучшее время по охвату: ${slotTips[0].slot} (${slotTips[0].reachPerPost}/пост). Новые площадки подключай после стабильного охвата текущих.`
-      );
-    }
   } catch {
     /* meta/json may fail on old rows */
   }
 
-  tips.push(
-    'Сначала усиливай включённые площадки с лучшим reach; новые каналы — когда текущие стабильны 2+ недели.'
-  );
-
   return {
     ...reach,
     bySlot: slotTips,
-    tips,
+    tips: [],
     northStar: {
       label: 'Σ reach',
       value: reach.totalReach,

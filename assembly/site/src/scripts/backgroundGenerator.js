@@ -59,7 +59,35 @@ export function generateCombinedBackground() {
         rafId = requestAnimationFrame(draw);
     }
 
-    draw();
+    const start = () => {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // One static frame — no continuous RAF on reduced-motion devices
+        t = 0;
+        const w = canvas.width, h = canvas.height;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        blobs.forEach((b, i) => {
+          const x = b.x * w;
+          const y = b.y * h;
+          const r = b.r * Math.min(w, h);
+          const [R, G, B] = b.c;
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+          grad.addColorStop(0, `rgba(${R},${G},${B},0.18)`);
+          grad.addColorStop(1, `rgba(${R},${G},${B},0)`);
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+        });
+        return;
+      }
+      draw();
+    };
+
+    // Defer RAF until after first paint / idle — less main-thread contention for LCP/INP
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(start, { timeout: 2000 });
+    } else {
+      setTimeout(start, 500);
+    }
 
     // Экспортируем стоп-функцию на случай если понадобится
     canvas._stop = () => { cancelAnimationFrame(rafId); };

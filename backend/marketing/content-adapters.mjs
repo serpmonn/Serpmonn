@@ -9,6 +9,7 @@ const DEFAULT_HONEY_CTA = 'https://vrnhoney.ru';
 const DEFAULT_GAMES_CTA = 'https://serpmonn.ru/games';
 const DEFAULT_PARTNERS_CTA = 'https://serpmonn.ru/partners';
 const DEFAULT_NEON_CTA = 'https://serpmonn.ru/neon-runner';
+const DEFAULT_SERPHOLD_CTA = 'https://serpmonn.ru/serphold';
 
 /** Хештеги: запасной пул — если модели мало / штамп. */
 const HASHTAG_POOL = [
@@ -104,6 +105,23 @@ const NEON_HASHTAG_POOL = [
   '#indiegames'
 ];
 
+const SERPHOLD_HASHTAG_POOL = [
+  '#Serpmonn',
+  '#Serphold',
+  '#Серпхолд',
+  '#androidигры',
+  '#towerdefense',
+  '#башеннаязащита',
+  '#мобильныеигры',
+  '#APK',
+  '#бесплатныеигры',
+  '#стратегия',
+  '#игры',
+  '#android',
+  '#mobilegames',
+  '#indiegames'
+];
+
 /** @deprecated use pickHashtags — оставлен для совместимости импортов */
 const PROMO_HASHTAGS = HASHTAG_POOL.slice(0, 5);
 
@@ -135,6 +153,7 @@ function poolForProduct(product) {
   if (p === 'games') return GAMES_HASHTAG_POOL;
   if (p === 'partners') return PARTNERS_HASHTAG_POOL;
   if (p === 'neon_runner') return NEON_HASHTAG_POOL;
+  if (p === 'serphold') return SERPHOLD_HASHTAG_POOL;
   return HASHTAG_POOL;
 }
 
@@ -555,6 +574,70 @@ export async function fromNeonRunner(campaign, { slot, digestDate, withImage = t
 }
 
 /**
+ * Serphold (Android tower defense, Yandex Ads) → https://serpmonn.ru/serphold
+ */
+export async function fromSerphold(campaign, { slot, digestDate, withImage = true } = {}) {
+  const cta = String(campaign.cta_url || '').trim() || DEFAULT_SERPHOLD_CTA;
+
+  const gen = await generateMarketingCopy({
+    product: 'serphold',
+    format: 'text',
+    ctaUrl: cta,
+    salt: `${digestDate || ''}-${slot || ''}-serphold`
+  });
+
+  let media_path = null;
+  let imageMeta = null;
+  if (withImage) {
+    imageMeta = await generateMarketingImage({
+      product: 'serphold',
+      title: gen.title
+    });
+    media_path = imageMeta.media_path || null;
+  }
+
+  let body = stripHashtags(gen.body);
+  if (cta && !body.includes('serpmonn.ru')) {
+    body = `${body}\n\n${cta}`;
+  }
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-serphold-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'serphold',
+    modelTags: gen.hashtags,
+    salt
+  });
+  body = withTrailingHashtags(body, hashtags);
+
+  return {
+    product: 'serphold',
+    format: 'text',
+    title: stripHashtags(gen.title),
+    body,
+    cta_url: cta,
+    channels: campaign.channels || ['vk', 'telegram', 'youtube'],
+    media_path,
+    meta: {
+      campaignId: campaign.id,
+      campaignSlug: campaign.slug,
+      slot,
+      digestDate,
+      source: 'serphold_apk',
+      brandOnly: true,
+      voice: 'company_impersonal',
+      hashtags,
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      copyGenerated: gen.generated,
+      copyModel: gen.model,
+      copyEngine: gen.engine,
+      copyError: gen.error || null,
+      imageEngine: imageMeta?.engine || null,
+      imageError: imageMeta?.error || null,
+      imageFileId: imageMeta?.fileId || null
+    }
+  };
+}
+
+/**
  * Контент из JSON-шаблона (+ опционально ИИ).
  */
 export async function fromTemplate(campaign, { slot, digestDate, useAi = true, withImage = false } = {}) {
@@ -643,6 +726,9 @@ export async function buildContentForCampaign(campaign, opts = {}) {
   }
   if (campaign.source === 'neon_runner') {
     return fromNeonRunner(campaign, opts);
+  }
+  if (campaign.source === 'serphold') {
+    return fromSerphold(campaign, opts);
   }
   return fromTemplate(campaign, opts);
 }

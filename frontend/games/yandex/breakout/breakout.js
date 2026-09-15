@@ -324,9 +324,27 @@
         };
       },
       setPaddle,
+      setPaddleX(x) {
+        paddle.x = Math.max(4, Math.min(Number(x) || 0, W - paddle.w - 4));
+        paddle.vx = 0;
+      },
       start,
       pause,
       reset,
+      setLives(n) {
+        lives = Math.max(0, Number(n) || 0);
+        $('lives').textContent = String(lives);
+      },
+      threat() {
+        paddle.x = 8;
+        ball.x = W / 2 + 18;
+        ball.y = 132;
+        ball.vx = 1.05;
+        ball.vy = 2.35;
+        running = true;
+        ygStart();
+        draw();
+      },
     };
   }
 

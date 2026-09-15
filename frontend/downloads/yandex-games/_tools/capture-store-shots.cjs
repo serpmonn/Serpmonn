@@ -449,23 +449,14 @@ function writeShotSet(storeDir, lang, files) {
   for (let i = 0; i < 3; i++) {
     const n = String(i + 1).padStart(2, '0');
     const shot = path.join(storeDir, `shot-${lang}-${n}.png`);
-    const mobile = path.join(storeDir, `mobile-${lang}-${n}.png`);
     fs.copyFileSync(files[i], shot);
-    fs.copyFileSync(files[i], mobile);
+    // mobile-* are written separately at 9:16 — do not copy 16:9 here
   }
-  // snake legacy names (CONSOLE may still reference them)
+  // snake legacy desktop names
   if (path.basename(storeDir) === 'snake' && lang === 'ru') {
     fs.copyFileSync(files[0], path.join(storeDir, 'shot-01-play.png'));
     fs.copyFileSync(files[1], path.join(storeDir, 'shot-02-score.png'));
     fs.copyFileSync(files[2], path.join(storeDir, 'shot-03-en.png'));
-    fs.copyFileSync(files[0], path.join(storeDir, 'mobile-01-play.png'));
-    fs.copyFileSync(files[1], path.join(storeDir, 'mobile-02-score.png'));
-    fs.copyFileSync(files[2], path.join(storeDir, 'mobile-03-ru.png'));
-  }
-  if (path.basename(storeDir) === 'snake' && lang === 'en') {
-    fs.copyFileSync(files[0], path.join(storeDir, 'mobile-en-01.png'));
-    fs.copyFileSync(files[1], path.join(storeDir, 'mobile-en-02.png'));
-    fs.copyFileSync(files[2], path.join(storeDir, 'mobile-en-03.png'));
   }
 }
 
