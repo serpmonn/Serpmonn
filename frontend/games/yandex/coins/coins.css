@@ -1,0 +1,160 @@
+/* coins.css - Стили для игры "Монетки" */
+
+/* CSS переменные для цветовой схемы игры */
+:root { 
+    --bg: #0e0f12;           /* Основной фон страницы */
+    --board: #14171b;        /* Фон игрового поля */
+    --player: #ffcc00;       /* Цвет игрока */
+    --coin: #ffd54f;         /* Цвет монеток */
+    --bad: #e74c3c;          /* Цвет препятствий/ловушек */
+    --text: #f2f2f2;         /* Цвет текста */
+}
+
+/* Базовые стили для html и body */
+html, body { 
+    width: 100%;             /* Полная ширина */
+    height: 100%;            /* Полная высота */
+    background: var(--bg);   /* Фон из CSS переменной */
+    overflow: hidden;        /* Скрываем прокрутку */
+}
+
+/* Стили основного body */
+body { 
+    margin: 0;               /* Убираем внешние отступы */
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* Системные шрифты */
+    color: var(--text);      /* Цвет текста из переменной */
+}
+
+/* Основной контейнер контента */
+.page { 
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 12px;
+    box-sizing: border-box;
+}
+.logo { border-radius: 6px; }
+header h1 { font-size: 1.35rem; line-height: 1.2; }
+.hint {
+  color: #cfcfcf;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.35;
+}
+.btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 14px;
+}
+@media (max-width: 800px) {
+  .wrap { grid-template-columns: 1fr; }
+}
+
+
+/* Стили шапки страницы */
+header { 
+    display: flex;           /* Flexbox для выравнивания */
+    align-items: center;     /* Вертикальное выравнивание по центру */
+    gap: 12px;               /* Расстояние между элементами */
+    margin: 10px 0 16px;     /* Внешние отступы */
+}
+
+/* Заголовок в шапке */
+header h1 { 
+    font-size: 1.6rem;       /* Размер шрифта */
+    margin: 0;               /* Убираем отступы */
+}
+
+/* Основная сетка страницы */
+.wrap { 
+    display: grid;           /* CSS Grid для раскладки */
+    grid-template-columns: 1fr 320px; /* Две колонки: игровое поле и панель управления */
+    gap: 16px;               /* Расстояние между колонками */
+    align-items: start;      /* Выравнивание по верху */
+}
+
+/* Стили панелей (игровое поле и управление) */
+.panel { 
+    background: #121417;     /* Темный фон панели */
+    border: 1px solid #23262a; /* Граница панели */
+    border-radius: 10px;     /* Скругленные углы */
+    padding: 12px 14px;      /* Внутренние отступы */
+}
+
+/* Стили игрового холста */
+canvas { 
+    background: var(--board); /* Фон из переменной */
+    width: 100%;             /* Адаптивная ширина */
+    max-width: 640px;        /* Максимальная ширина */
+    height: auto;            /* Автоматическая высота */
+    border-radius: 10px;     /* Скругленные углы */
+    border: 1px solid #23262a; /* Граница */
+    box-shadow: 0 8px 30px rgba(0,0,0,.25); /* Тень для глубины */
+    display: block;          /* Блочный элемент */
+    margin: 0 auto;          /* Центрирование */
+}
+
+/* Сетка для блока статистики */
+.stats { 
+    display: grid;           /* CSS Grid */
+    grid-template-columns: repeat(3, 1fr); /* Три колонки одинаковой ширины */
+    gap: 10px;               /* Расстояние между элементами */
+}
+
+/* Стили отдельного элемента статистики */
+.stat { 
+    background: #15181c;     /* Темный фон */
+    border: 1px solid #232a33; /* Граница */
+    border-radius: 8px;      /* Скругленные углы */
+    padding: 8px 10px;       /* Внутренние отступы */
+    text-align: center;      /* Выравнивание текста по центру */
+}
+
+/* Контейнер для кнопок управления */
+.controls { 
+    display: flex;           /* Flexbox для кнопок */
+    gap: 8px;                /* Расстояние между кнопками */
+    justify-content: center; /* Центрирование по горизонтали */
+    margin-top: 10px;        /* Отступ сверху */
+}
+
+/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-visible,
+.btn:active {
+    background: #16202a;
+    border: 1px solid #243241;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:focus,
+.btn.primary:focus-visible,
+.btn.primary:active {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+    color: #fff;
+}
+
+/* Стили подсказки */
+.hint { 
+    color: #cfcfcf;          /* Серый цвет текста */
+    font-size: .95rem;       /* Размер шрифта */
+    text-align: center;      /* Выравнивание по центру */
+    margin-top: 10px;        /* Отступ сверху */
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 960px) { 
+    .wrap {
+        grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    }
+}

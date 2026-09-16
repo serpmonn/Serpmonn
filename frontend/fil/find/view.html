@@ -130,11 +130,11 @@
 <meta name="twitter:title" content="">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-<link rel="icon" href="/frontend/images/favicon.svg?v=3" type="image/svg+xml">
+<link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
 <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=3">
-<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=3">
-<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=6">
+<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=6">
+<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=4">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
 
 
@@ -179,29 +179,27 @@
         webvisor: true,
         ecommerce: 'dataLayer'
       });
+    }
 
-      fetch('https://api.ipify.org?format=json')
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (typeof ym === 'undefined') return;
-          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
-          ym(METRIKA_ID, 'hit', window.location.href, {
-            params: { ip_address: data.ip }
-          });
-        })
-        .catch(function () {});
+    function scheduleMetrika() {
+      var delayMs = 12000;
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMetrika, delayMs); }, { timeout: delayMs + 3000 });
+      } else {
+        setTimeout(loadMetrika, delayMs);
+      }
     }
 
     if (document.readyState === 'complete') {
-      setTimeout(loadMetrika, 1);
+      scheduleMetrika();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 1);
-      });
+      window.addEventListener('load', scheduleMetrika);
     }
   })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+
 
 <script type="application/ld+json">
 {
@@ -211,7 +209,7 @@
   "url": "https://serpmonn.ru/",
   "logo": {
     "@type": "ImageObject",
-    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png",
+    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png?v=3d2",
     "width": 96,
     "height": 96
   }
@@ -336,7 +334,7 @@
   <button id="accept-cookies" class="cookie-button"></button>
   <button id="decline-cookies" class="cookie-button"></button>
 </div>
-    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp2" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp3" defer></script>
 <script type="module" src="/frontend/scripts/scripts.js?v=split1" defer></script>
 <script type="module" src="/frontend/scripts/cookies.js?v=promo8" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js?v=promo35" defer></script>

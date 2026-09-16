@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Толстая крыса Serpmonn</title>
+  <meta name="description" content="Кликай по лабиринту — крыса бежит к еде и толстеет.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="rat.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page rat-game">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" class="logo">
+      <h1 data-i18n="heading">Толстая крыса Serpmonn</h1>
+    </header>
+
+    <div class="scoreboard">
+      <div class="score-item" data-i18n-eaten>
+        <div class="score-label">Съедено</div>
+        <div class="score-value" id="eaten">0</div>
+      </div>
+      <div class="score-item" data-i18n-weight>
+        <div class="score-label">Вес кг</div>
+        <div class="score-value" id="weight">0.1</div>
+      </div>
+      <div class="score-item" data-i18n-best>
+        <div class="score-label">Рекорд</div>
+        <div class="score-value" id="best">0</div>
+      </div>
+    </div>
+
+    <div class="fat-bar-wrap"><div class="fat-bar" id="fatBar"></div></div>
+
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="c" width="420" height="420" aria-label="Game"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-title" data-i18n="overlayTitle">FAT RAT</div>
+        <div class="overlay-sub" data-i18n-html="overlaySub">
+          Кликай по лабиринту — крыса бежит к еде.<br>
+          Чем толще крыса — тем медленнее движется.<br>
+          <span style="color:#a78bfa">Фиолетовая еда</span> — супербуст ×3!<br>
+          Цель: максимально разжиреть крысу!
+        </div>
+        <div class="overlay-score" id="overlayScore" hidden></div>
+        <button type="button" class="btn" id="startBtn" data-i18n="start">НАЧАТЬ</button>
+      </div>
+    </div>
+
+    <div class="hint" data-i18n="hint">[клик / тап] — укажи еду крысе</div>
+  </div>
+  <script src="rat.js" defer></script>
+</body>
+</html>

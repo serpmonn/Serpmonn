@@ -1,17 +1,16 @@
-/* Shared compact top ad banner (no reserved height while loading) */
+/* Shared compact top ad banner — reserve mobile height to limit CLS */
 .ad-top-banner {
   text-align: center;
   margin: 4px 0 8px;
-  min-height: 0;
-  /* body is often display:flex; column — without this, min-height:0 + overflow:hidden
-     lets the flex item shrink to 0px and clips the loaded RTB creative */
+  min-height: 100px;
+  /* body is often display:flex; column — without flex-shrink:0 the slot can collapse */
   flex-shrink: 0;
-  transition: opacity 0.3s ease, margin 0.3s ease;
+  transition: opacity 0.3s ease, margin 0.3s ease, min-height 0.2s ease;
   overflow: hidden;
 }
 
 .ad-top-banner.ad-loaded {
-  min-height: auto;
+  min-height: 100px;
 }
 
 .ad-top-banner.loading .mrg-tag {
@@ -32,7 +31,7 @@
   width: 100% !important;
   max-width: 970px;
   height: auto !important;
-  min-height: 0;
+  min-height: 90px;
   opacity: 1;
   display: inline-block;
   vertical-align: top;
@@ -41,7 +40,7 @@
 .ad-top-banner.loading .yandex-rtb-slot {
   width: 100% !important;
   max-width: 970px;
-  min-height: 0;
+  min-height: 90px;
   opacity: 1;
   display: inline-block;
 }
@@ -49,6 +48,7 @@
 .ad-top-banner.hidden {
   display: none !important;
   height: 0;
+  min-height: 0;
   margin: 0;
 }
 
@@ -70,12 +70,17 @@
 }
 
 @media (max-width: 768px) {
+  .ad-top-banner {
+    min-height: 90px;
+  }
+
   .ad-top-banner.ad-loaded .mrg-tag,
   .ad-top-banner:not(.loading):not(.hidden) .mrg-tag,
   .ad-top-banner.ad-loaded .yandex-rtb-slot,
   .ad-top-banner:not(.loading):not(.hidden) .yandex-rtb-slot,
   .ad-top-banner.loading .yandex-rtb-slot {
     max-width: 320px;
+    min-height: 80px;
   }
 }
 

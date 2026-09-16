@@ -130,14 +130,14 @@
 <meta name="twitter:title" content="Serpmonn — マルチモーダルAI検索、画像、動画、ニュース">
 <meta name="twitter:description" content="Serpmonn — テキスト、画像、動画を横断するマルチモーダルAI検索に加え、ニュース、ゲーム、プロモコード、オンラインツールを提供します。">
 <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-<link rel="icon" href="/frontend/images/favicon.svg?v=3" type="image/svg+xml">
+<link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
 <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=3">
-<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=3">
-<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=6">
+<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=6">
+<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=4">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
 
-<link rel="preload" as="image" href="/frontend/images/Serpmonn-96x96.png" fetchpriority="high">
+<link rel="preload" as="image" href="/frontend/images/Serpmonn-96x96.png?v=3d2" fetchpriority="high">
 
 
 <link rel="stylesheet" href="/frontend/styles/base.css?v=lcp2">
@@ -145,9 +145,10 @@
 <link rel="stylesheet" href="/frontend/styles/main.css?v=promo41">
 <link rel="stylesheet" href="/frontend/styles/media.css?v=lcp2">
 <link rel="stylesheet" href="/frontend/styles/background.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp3">
-<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp5">
+<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp4">
+<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp4">
+<link rel="stylesheet" href="/frontend/styles/ad-top-banner.css?v=cls1">
 <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2" media="print" onload="this.media='all'">
 <noscript>
   <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2">
@@ -181,29 +182,27 @@
         webvisor: true,
         ecommerce: 'dataLayer'
       });
+    }
 
-      fetch('https://api.ipify.org?format=json')
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (typeof ym === 'undefined') return;
-          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
-          ym(METRIKA_ID, 'hit', window.location.href, {
-            params: { ip_address: data.ip }
-          });
-        })
-        .catch(function () {});
+    function scheduleMetrika() {
+      var delayMs = 12000;
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMetrika, delayMs); }, { timeout: delayMs + 3000 });
+      } else {
+        setTimeout(loadMetrika, delayMs);
+      }
     }
 
     if (document.readyState === 'complete') {
-      setTimeout(loadMetrika, 1);
+      scheduleMetrika();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 1);
-      });
+      window.addEventListener('load', scheduleMetrika);
     }
   })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+
 
 <script type="application/ld+json">
 {
@@ -213,7 +212,7 @@
   "url": "https://serpmonn.ru/",
   "logo": {
     "@type": "ImageObject",
-    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png",
+    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png?v=3d2",
     "width": 96,
     "height": 96
   }
@@ -267,7 +266,7 @@
       
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/Serpmonn-96x96.png" alt="Serpmonn" class="logo" title="Serpmonn" width="65" height="65" decoding="async" fetchpriority="high">
+    <img src="/frontend/images/Serpmonn-96x96.png?v=3d2" alt="Serpmonn" class="logo" title="Serpmonn" width="65" height="65" decoding="sync" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="AIに何でも聞いてください..."
@@ -491,12 +490,7 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
-<script>
-  if (window.vkBridge) {
-    vkBridge.send('VKWebAppInit');
-  }
-</script>
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js" defer onload="window.vkBridge&&vkBridge.send('VKWebAppInit')"></script>
 
     </main>
     <div id="cookie-consent" class="cookie-consent">
@@ -504,7 +498,7 @@
   <button id="accept-cookies" class="cookie-button">同意する</button>
   <button id="decline-cookies" class="cookie-button">拒否する</button>
 </div>
-    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp2" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp3" defer></script>
 <script type="module" src="/frontend/scripts/scripts.js?v=split1" defer></script>
 <script type="module" src="/frontend/scripts/cookies.js?v=promo8" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js?v=promo35" defer></script>

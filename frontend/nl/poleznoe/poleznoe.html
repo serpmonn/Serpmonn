@@ -247,29 +247,27 @@
         webvisor: true,
         ecommerce: 'dataLayer'
       });
+    }
 
-      fetch('https://api.ipify.org?format=json')
-        .then(function (response) { return response.json(); })
-        .then(function (data) {
-          if (typeof ym === 'undefined') return;
-          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
-          ym(METRIKA_ID, 'hit', window.location.href, {
-            params: { ip_address: data.ip }
-          });
-        })
-        .catch(function () {});
+    function scheduleMetrika() {
+      var delayMs = 12000;
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMetrika, delayMs); }, { timeout: delayMs + 3000 });
+      } else {
+        setTimeout(loadMetrika, delayMs);
+      }
     }
 
     if (document.readyState === 'complete') {
-      setTimeout(loadMetrika, 1);
+      scheduleMetrika();
     } else {
-      window.addEventListener('load', function () {
-        setTimeout(loadMetrika, 1);
-      });
+      window.addEventListener('load', scheduleMetrika);
     }
   })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+
 
 </head>
 <body>

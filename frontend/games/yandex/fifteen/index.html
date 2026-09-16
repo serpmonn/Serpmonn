@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Пятнашки Serpmonn</title>
+  <meta name="description" content="Собери плитки 1–15 по порядку.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="fifteen.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" class="logo">
+      <h1 data-i18n="heading">Пятнашки Serpmonn</h1>
+    </header>
+    <div class="wrap">
+      <div class="panel board-wrap">
+        <div id="game" class="game-board" aria-label="Board"></div>
+        <div id="end-overlay" class="end-overlay hidden"><div id="end-message" class="end-message"></div></div>
+        <div class="hint" data-i18n="hint">Стрелки / WASD / свайп — ход · клик по плитке · R — заново</div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat" data-i18n-moves>Ходы<br><b id="moves">0</b></div>
+          <div class="stat" data-i18n-time>Время<br><b id="time">0</b></div>
+          <div class="stat" data-i18n-best>Рекорд<br><b id="best">0</b></div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn primary" id="btnNewGame" data-i18n="newGame">Новая игра</button>
+          <button type="button" class="btn" id="btnReset" data-i18n="reset">Сбросить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="fifteen.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Падающие фигуры Serpmonn</title>
+  <meta name="description" content="Ловите падающие фигуры красной платформой. 10 промахов — конец игры.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="redsquare2.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body class="rs2-page">
+  <div class="instruction-overlay" id="instructionOverlay">
+    <div class="instruction-content">
+      <h2 class="instruction-title" data-i18n="howToTitle">Как играть в «Падающие фигуры»?</h2>
+      <ul class="instruction-list">
+        <li data-i18n="howTo1"><strong>Управление:</strong> стрелки или касание — двигайте красный квадрат влево и вправо</li>
+        <li data-i18n="howTo2"><strong>Цель:</strong> ловите падающие фигуры платформой внизу</li>
+        <li data-i18n="howTo3"><strong>Очки:</strong> +1 за каждую пойманную фигуру</li>
+        <li data-i18n="howTo4"><strong>Промахи:</strong> фигура упала на пол — промах</li>
+        <li data-i18n="howTo5"><strong>Конец игры:</strong> после 10 промахов</li>
+        <li data-i18n="howTo6"><strong>Пауза:</strong> кнопка «Пауза» или пробел</li>
+      </ul>
+      <button type="button" class="instruction-button" id="understandBtn" data-i18n="understand">Понятно, начинаем!</button>
+    </div>
+  </div>
+
+  <div class="game-shell">
+    <header class="game-hud" aria-live="polite">
+      <h1 class="game-title" data-i18n="heading">Падающие фигуры Serpmonn</h1>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="score">Очки</span>
+        <span class="hud-value" id="scoreValue">0</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="level">Уровень</span>
+        <span class="hud-value" id="levelValue">1</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="misses">Промахи</span>
+        <span class="hud-value" id="missesValue">0/10</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="best">Рекорд</span>
+        <span class="hud-value" id="bestValue">0</span>
+      </div>
+    </header>
+
+    <div class="game-stage" id="gameStage">
+      <canvas id="gameCanvas"></canvas>
+      <div class="pause-overlay" id="pauseOverlay" hidden>
+        <span data-i18n="pauseOverlay">Пауза</span>
+      </div>
+    </div>
+
+    <div class="game-dock">
+      <div class="actions" id="gameActions">
+        <button type="button" class="action-btn action-start" id="startBtn" data-i18n="start" hidden>Начать игру</button>
+        <button type="button" class="action-btn action-pause" id="pauseBtn" data-i18n="pause" hidden>Пауза</button>
+        <button type="button" class="action-btn action-restart" id="restartBtn" data-i18n="restart" hidden>Заново</button>
+        <button type="button" class="action-btn action-sound" id="soundBtn" data-i18n="sound" aria-pressed="true">Звук</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="score" hidden>Очки:0</div>
+  <div id="missed" hidden>Промахи:0</div>
+
+  <script src="redsquare2.js" defer></script>
+</body>
+</html>

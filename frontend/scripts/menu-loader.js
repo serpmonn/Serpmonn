@@ -3,7 +3,23 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t, loadMessages } from './i18n-loader.js';
-import { initFindingsModals, openActivityModal } from '/frontend/scripts/findings-modals.js';
+
+/** Lazy findings-modals — keep ~84KB off the critical path */
+let findingsModalsPromise = null;
+function loadFindingsModals() {
+  if (!findingsModalsPromise) {
+    findingsModalsPromise = import('/frontend/scripts/findings-modals.js');
+  }
+  return findingsModalsPromise;
+}
+
+function whenIdle(fn, timeout = 2500) {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(() => { fn(); }, { timeout });
+  } else {
+    setTimeout(fn, Math.min(timeout, 1200));
+  }
+}
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -668,6 +684,7 @@ fetch(primaryMenuPath)
         try {
           const resp = await fetch('/auth/protected', { credentials: 'include' });
           if (!resp.ok) return;
+          const { openActivityModal } = await loadFindingsModals();
           await openActivityModal('inbox');
         } catch {
           /* ignore */
@@ -678,9 +695,16 @@ fetch(primaryMenuPath)
     updateAuthMenuState();
     initActivityBell();
 
-    initFindingsModals({
-      onInboxRead: refreshUnreadUi,
-      onNotificationsRead: refreshUnreadUi,
+    whenIdle(async () => {
+      try {
+        const { initFindingsModals } = await loadFindingsModals();
+        initFindingsModals({
+          onInboxRead: refreshUnreadUi,
+          onNotificationsRead: refreshUnreadUi,
+        });
+      } catch (e) {
+        console.warn('findings-modals deferred init failed', e);
+      }
     });
 
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========

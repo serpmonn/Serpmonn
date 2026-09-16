@@ -33,6 +33,17 @@ function isNoSiteAdsContext() {
   return isVkMiniContext() || isAndroidAppContext();
 }
 
+function injectMailAdsScript() {
+  if (document.querySelector('script[src*="ads-async.js"]')) {
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = MAIL_ADS_SRC;
+  script.async = true;
+  document.head.appendChild(script);
+}
+
 export function pushMailAdTag() {
   if (isNoSiteAdsContext()) return;
   (window.MRGtag = window.MRGtag || []).push({});
@@ -50,12 +61,17 @@ export function ensureMailAdsScript() {
 
   window.__mailAdsRequested = true;
 
-  if (document.querySelector('script[src*="ads-async.js"]')) {
-    return;
-  }
+  const schedule = () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(injectMailAdsScript, 2000), { timeout: 5000 });
+    } else {
+      setTimeout(injectMailAdsScript, 2500);
+    }
+  };
 
-  const script = document.createElement('script');
-  script.src = MAIL_ADS_SRC;
-  script.async = true;
-  document.head.appendChild(script);
+  if (document.readyState === 'complete') {
+    schedule();
+  } else {
+    window.addEventListener('load', schedule, { once: true });
+  }
 }

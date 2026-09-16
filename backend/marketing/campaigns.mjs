@@ -45,7 +45,7 @@ export async function ensureCampaignTables() {
       slug VARCHAR(64) NOT NULL,
       name VARCHAR(256) NOT NULL,
       goal VARCHAR(512) NULL,
-      source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template',
+      source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template',
       template_id VARCHAR(64) NULL,
       cta_url VARCHAR(1024) NULL,
       channels_json JSON NOT NULL,
@@ -71,15 +71,30 @@ export async function ensureCampaignTables() {
          AND COLUMN_NAME = 'source'`
     );
     const ct = String(cols?.[0]?.ct || '');
-    if (ct && !ct.includes("'games'")) {
+    if (ct && !ct.includes("'serphold'")) {
       await query(
         `ALTER TABLE marketing_campaigns
-         MODIFY COLUMN source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template'`
+         MODIFY COLUMN source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template'`
+      );
+    } else if (ct && !ct.includes("'neon_runner'")) {
+      await query(
+        `ALTER TABLE marketing_campaigns
+         MODIFY COLUMN source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template'`
+      );
+    } else if (ct && !ct.includes("'partners'")) {
+      await query(
+        `ALTER TABLE marketing_campaigns
+         MODIFY COLUMN source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template'`
+      );
+    } else if (ct && !ct.includes("'games'")) {
+      await query(
+        `ALTER TABLE marketing_campaigns
+         MODIFY COLUMN source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template'`
       );
     } else if (ct && !ct.includes("'honey'")) {
       await query(
         `ALTER TABLE marketing_campaigns
-         MODIFY COLUMN source ENUM('promocodes','honey','games','template') NOT NULL DEFAULT 'template'`
+         MODIFY COLUMN source ENUM('promocodes','honey','games','partners','neon_runner','serphold','template') NOT NULL DEFAULT 'template'`
       );
     }
   } catch (err) {
@@ -98,12 +113,21 @@ export function normalizeCampaignChannels(source, channels) {
     .filter(Boolean);
   return list.length
     ? list
-    : ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram', 'youtube'];
+    : ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram', 'youtube', 'rutube', 'ok'];
 }
 
 function mapSource(source) {
   const s = String(source || '');
-  if (s === 'promocodes' || s === 'honey' || s === 'games') return s;
+  if (
+    s === 'promocodes' ||
+    s === 'honey' ||
+    s === 'games' ||
+    s === 'partners' ||
+    s === 'neon_runner' ||
+    s === 'serphold'
+  ) {
+    return s;
+  }
   return 'template';
 }
 
@@ -233,12 +257,35 @@ function slugify(name) {
     .slice(0, 64) || `campaign-${Date.now()}`;
 }
 
-/** Сиды: Промокоды + Мёд + Игры (serpmonn.ru/games). */
+/** Сиды: Промокоды + Мёд + Игры + Партнёрская сеть + Neon Runner. */
 export async function seedDefaultCampaigns() {
   await ensureCampaignTables();
 
-  /** Все авто-площадки Serpmonn (включая VK VRNHoney). */
-  const SERPMONN_PLATFORMS = ['vk', 'vk_blog', 'vk_ads', 'vk_vrnhoney', 'telegram', 'youtube'];
+  /** Площадки Serpmonn (включая VK VRNHoney + YouTube/RuTube Ads). */
+  const SERPMONN_PLATFORMS = [
+    'vk',
+    'vk_blog',
+    'vk_ads',
+    'vk_vrnhoney',
+    'telegram',
+    'youtube',
+    'rutube',
+    'ok'
+  ];
+
+  async function ensureSerpmonnChannels(camp) {
+    if (!camp?.id) return camp;
+    const ch = Array.isArray(camp.channels) ? [...camp.channels] : [];
+    let changed = false;
+    for (const id of SERPMONN_PLATFORMS) {
+      if (!ch.includes(id)) {
+        ch.push(id);
+        changed = true;
+      }
+    }
+    if (!changed) return camp;
+    return updateCampaign(camp.id, { channels: ch });
+  }
 
   const promo = {
     slug: 'promocodes-vk',
@@ -257,16 +304,14 @@ export async function seedDefaultCampaigns() {
   const existing = await getCampaign(promo.slug);
   let main;
   if (existing) {
-    const ch = Array.isArray(existing.channels) ? [...existing.channels] : [];
-    if (!ch.includes('youtube')) ch.push('youtube');
     main = await updateCampaign(existing.id, {
       name: promo.name,
       goal: promo.goal,
       paused: false,
       source: 'promocodes',
-      cta_url: promo.cta_url,
-      channels: ch
+      cta_url: promo.cta_url
     });
+    main = await ensureSerpmonnChannels(main);
   } else {
     main = await createCampaign(promo);
   }
@@ -316,7 +361,7 @@ export async function seedDefaultCampaigns() {
   const gamesExisting = await getCampaign(games.slug);
   let gamesCamp;
   if (gamesExisting) {
-    // Каналы не трогаем — их включают/выключают в админке
+    // Каналы дотягиваем до SERPMONN_PLATFORMS; выключить можно в админке площадок
     gamesCamp = await updateCampaign(gamesExisting.id, {
       name: games.name,
       goal: games.goal,
@@ -324,16 +369,105 @@ export async function seedDefaultCampaigns() {
       source: 'games',
       cta_url: games.cta_url
     });
+    gamesCamp = await ensureSerpmonnChannels(gamesCamp);
   } else {
     gamesCamp = await createCampaign(games);
   }
 
-  const neli = await getCampaign('neli-vk');
-  if (neli && !neli.paused) {
-    await updateCampaign(neli.id, { paused: true, name: 'Neli' });
+  const partners = {
+    slug: 'partners-serpmonn',
+    name: 'Партнёрская сеть',
+    goal: 'Бренд Serpmonn: привести в партнёрскую сеть (рекламодатели и паблишеры)',
+    source: 'partners',
+    template_id: null,
+    cta_url: 'https://serpmonn.ru/partners',
+    channels: [...SERPMONN_PLATFORMS],
+    slots: ['15:00'],
+    mode: 'digest',
+    paused: 0,
+    posts_per_day: 1
+  };
+
+  const partnersExisting = await getCampaign(partners.slug);
+  let partnersCamp;
+  if (partnersExisting) {
+    partnersCamp = await updateCampaign(partnersExisting.id, {
+      name: partners.name,
+      goal: partners.goal,
+      paused: false,
+      source: 'partners',
+      cta_url: partners.cta_url
+    });
+    partnersCamp = await ensureSerpmonnChannels(partnersCamp);
+  } else {
+    partnersCamp = await createCampaign(partners);
   }
 
-  return [main, honeyCamp, gamesCamp].filter(Boolean);
+  const neon = {
+    slug: 'neon-runner',
+    name: 'Neon Runner',
+    goal: 'Android-игра Neon Runner (APK с Yandex РСЯ): скачивание с serpmonn.ru',
+    source: 'neon_runner',
+    template_id: null,
+    cta_url: 'https://serpmonn.ru/neon-runner',
+    channels: [...SERPMONN_PLATFORMS],
+    slots: ['16:00'],
+    mode: 'digest',
+    paused: 0,
+    posts_per_day: 1
+  };
+
+  const neonExisting = await getCampaign(neon.slug);
+  let neonCamp;
+  if (neonExisting) {
+    neonCamp = await updateCampaign(neonExisting.id, {
+      name: neon.name,
+      goal: neon.goal,
+      paused: false,
+      source: 'neon_runner',
+      cta_url: neon.cta_url
+    });
+    neonCamp = await ensureSerpmonnChannels(neonCamp);
+  } else {
+    neonCamp = await createCampaign(neon);
+  }
+
+  const serphold = {
+    slug: 'serphold',
+    name: 'Serphold',
+    goal: 'Android tower defense Serphold (APK с Yandex РСЯ): скачивание с serpmonn.ru/serphold',
+    source: 'serphold',
+    template_id: null,
+    cta_url: 'https://serpmonn.ru/serphold',
+    channels: [...SERPMONN_PLATFORMS],
+    slots: ['17:00'],
+    mode: 'digest',
+    paused: 0,
+    posts_per_day: 1
+  };
+
+  const serpholdExisting = await getCampaign(serphold.slug);
+  let serpholdCamp;
+  if (serpholdExisting) {
+    serpholdCamp = await updateCampaign(serpholdExisting.id, {
+      name: serphold.name,
+      goal: serphold.goal,
+      paused: false,
+      source: 'serphold',
+      cta_url: serphold.cta_url
+    });
+    serpholdCamp = await ensureSerpmonnChannels(serpholdCamp);
+  } else {
+    serpholdCamp = await createCampaign(serphold);
+  }
+
+  // Neli — игра внутри раздела «Игры», не отдельный рекламный продукт
+  const neli = await getCampaign('neli-vk');
+  if (neli && !neli.paused) {
+    await updateCampaign(neli.id, { paused: true, name: 'Neli (в играх)' });
+  }
+
+  return [main, honeyCamp, gamesCamp, partnersCamp, neonCamp, serpholdCamp].filter(Boolean);
 }
 
 export { slugify };

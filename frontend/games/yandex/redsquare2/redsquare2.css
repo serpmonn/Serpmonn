@@ -1,0 +1,370 @@
+/* redsquare2.css — Yandex Games build (offline, bundled) */
+
+.rs2-page {
+  --rs-bg: #12161c;
+  --rs-bg-2: #1a222d;
+  --rs-panel: #243041;
+  --rs-panel-edge: #35485f;
+  --rs-text: #f3f0ea;
+  --rs-muted: #9aabbf;
+  --rs-accent: #f47059;
+  --rs-accent-2: #ff8f78;
+  --rs-ok: #3dba7a;
+  --rs-warn: #e0a24a;
+  --rs-arena: #0e1319;
+  --rs-grid: rgba(255, 255, 255, 0.045);
+  --rs-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  margin: 0;
+  min-height: 100dvh;
+  height: 100dvh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  padding: 0.35rem 0.5rem 0.6rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: var(--rs-text);
+  font-family: var(--rs-font);
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(61, 140, 200, 0.2), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 90% 15%, rgba(244, 112, 89, 0.18), transparent 50%),
+    linear-gradient(180deg, var(--rs-bg-2), var(--rs-bg));
+}
+
+.game-shell {
+  width: min(1100px, 100%);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.game-hud {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem 0.5rem;
+  padding: 0.45rem 0.6rem;
+  background: color-mix(in srgb, var(--rs-panel) 88%, transparent);
+  border: 1px solid var(--rs-panel-edge);
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+.game-title {
+  grid-column: 1 / -1;
+  margin: 0 0 0.1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--rs-text);
+}
+
+.hud-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.hud-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--rs-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--rs-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-stage {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 280px;
+  height: auto;
+  margin: 0;
+  border: 2px solid var(--rs-panel-edge);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--rs-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rs-grid) 1px, transparent 1px),
+    radial-gradient(ellipse at center, #17202b 0%, var(--rs-arena) 70%);
+  background-size: 28px 28px, 28px 28px, auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  touch-action: none;
+}
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 12, 18, 0.62);
+  color: var(--rs-text);
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  z-index: 5;
+}
+
+.pause-overlay[hidden] {
+  display: none !important;
+}
+
+.game-dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.action-btn {
+  margin: 0;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  min-height: 42px;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-btn[hidden] {
+  display: none !important;
+}
+
+.action-start,
+.action-start:hover,
+.action-start:focus,
+.action-start:active {
+  background: var(--rs-accent);
+  border-color: #ff9b88;
+  color: #fff;
+}
+
+.action-pause,
+.action-pause:hover,
+.action-pause:focus,
+.action-pause:active {
+  background: var(--rs-warn);
+  color: #1a1408;
+}
+
+.action-restart,
+.action-restart:hover,
+.action-restart:focus,
+.action-restart:active {
+  background: var(--rs-ok);
+  color: #fff;
+}
+
+.action-sound,
+.action-sound:hover,
+.action-sound:focus,
+.action-sound:active {
+  background: transparent;
+  color: var(--rs-text);
+  border-color: var(--rs-panel-edge);
+}
+
+.action-sound[aria-pressed="false"] {
+  color: var(--rs-muted);
+}
+
+#score,
+#missed {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Result modal */
+.rs2-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(8, 12, 18, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  font-family: var(--rs-font);
+}
+
+.rs2-modal-content {
+  background: #1e2836;
+  color: #f3f0ea;
+  padding: 1.4rem 1.3rem;
+  border-radius: 12px;
+  border: 1px solid #35485f;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+
+.rs2-modal-content h2 {
+  margin: 0 0 0.5rem;
+}
+
+.rs2-modal-content p {
+  margin: 0.35rem 0;
+  color: #c5d0de;
+}
+
+.rs2-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.rs2-modal-content button {
+  margin-top: 0;
+  padding: 0.65rem 1.3rem;
+  background: #f47059;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Instruction overlay (bundled from instruction.css) */
+.instruction-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 12, 18, 0.82);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: #f3f0ea;
+  font-family: var(--rs-font);
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.instruction-overlay[hidden],
+.instruction-overlay.is-hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.instruction-content {
+  max-width: min(460px, 92vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.35rem 1.25rem;
+  background: #1e2836;
+  border: 1px solid #35485f;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  color: #f3f0ea;
+  pointer-events: auto;
+  touch-action: pan-y manipulation;
+}
+
+.instruction-title {
+  margin: 0 0 0.75rem;
+  color: #f3f0ea;
+  font-size: clamp(1.15rem, 4vw, 1.45rem);
+  font-weight: 700;
+}
+
+.instruction-list {
+  text-align: left;
+  margin: 0.5rem 0 0.25rem;
+  padding-left: 1.1rem;
+  line-height: 1.55;
+  color: #c5d0de;
+  font-size: 0.95rem;
+}
+
+.instruction-list li {
+  margin: 0.4rem 0;
+}
+
+.instruction-button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.25rem;
+  min-height: 44px;
+  background: #f47059;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  position: relative;
+  z-index: 2;
+}
+
+.instruction-button:hover {
+  background: #ff8f78;
+}
+
+@media (max-width: 480px) {
+  .game-hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .game-title {
+    font-size: 0.95rem;
+  }
+
+  .game-stage {
+    min-height: 240px;
+  }
+}

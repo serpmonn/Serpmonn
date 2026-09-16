@@ -7,7 +7,26 @@
   <title>Нэли — демо</title>
   <base href="/frontend/games/neli/">
   <link rel="stylesheet" href="neli.css?v=37">
-  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+  <script>
+  (function () {
+    function loadMailAds() {
+      if (document.querySelector('script[src*="ads-async.js"]')) return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://ad.mail.ru/static/ads-async.js';
+      document.head.appendChild(s);
+    }
+    function schedule() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { setTimeout(loadMailAds, 2000); }, { timeout: 5000 });
+      } else {
+        setTimeout(loadMailAds, 2500);
+      }
+    }
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule);
+  })();
+</script>
 </head>
 <body>
   <div id="app">

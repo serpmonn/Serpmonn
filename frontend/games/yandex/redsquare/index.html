@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Квадратное бегство Serpmonn</title>
+  <meta name="description" content="Управляйте красным квадратом, собирайте бонусы и избегайте столкновений.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="redsquare.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body class="rs-page">
+  <div class="instruction-overlay" id="instructionOverlay">
+    <div class="instruction-content">
+      <h2 data-i18n="howToTitle">Как играть в «Квадратное бегство»?</h2>
+      <div class="instruction-list">
+        <p data-i18n="howTo1">1. Управляйте красным квадратом кнопками, стрелками или свайпами</p>
+        <p data-i18n="howTo2">2. Избегайте синих квадратов и серых препятствий</p>
+        <p data-i18n="howTo3">3. Собирайте золотые бонусы для дополнительных очков</p>
+        <p data-i18n="howTo4">4. Чем дольше держитесь — тем больше очков</p>
+        <p data-i18n="howTo5">5. Пауза — кнопка или пробел</p>
+        <p data-i18n="howTo6">6. У вас 3 жизни. После удара — короткая неуязвимость. Бонусы подряд дают комбо.</p>
+      </div>
+      <button class="instruction-button" id="understandBtn" type="button" data-i18n="understand">Всё понятно!</button>
+    </div>
+  </div>
+
+  <div class="game-shell">
+    <header class="game-hud" aria-live="polite">
+      <h1 class="game-title" data-i18n="heading">Квадратное бегство Serpmonn</h1>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="score">Очки</span>
+        <span class="hud-value" id="scoreValue">0</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="level">Уровень</span>
+        <span class="hud-value" id="levelValue">1</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label" data-i18n="best">Рекорд</span>
+        <span class="hud-value" id="bestValue">0</span>
+      </div>
+      <div class="hud-block hud-lives">
+        <span class="hud-label" data-i18n="lives">Жизни</span>
+        <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
+      </div>
+      <div class="hud-progress" title="Level">
+        <div class="hud-progress-bar" id="progressBar"></div>
+      </div>
+      <div class="hud-combo" id="comboDisplay" hidden>
+        <span id="comboValue">×1</span>
+      </div>
+    </header>
+
+    <div class="game-area" id="gameArea">
+      <div class="player" id="player"></div>
+      <div class="obstacle" style="top: 20%; left: 20%;"></div>
+      <div class="obstacle" style="top: 80%; left: 80%;"></div>
+      <div class="pause-overlay" id="pauseOverlay" hidden>
+        <span>Пауза</span>
+      </div>
+      <div class="level-toast" id="levelToast" hidden></div>
+    </div>
+
+    <div class="game-dock">
+      <div class="controls" aria-label="D-pad">
+        <button type="button" class="button pad-up" id="up" aria-label="Up">↑</button>
+        <button type="button" class="button pad-left" id="left" aria-label="Left">←</button>
+        <button type="button" class="button pad-down" id="down" aria-label="Down">↓</button>
+        <button type="button" class="button pad-right" id="right" aria-label="Right">→</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="action-btn action-start" id="start" data-i18n="start">Начать игру</button>
+        <button type="button" class="action-btn action-pause" id="pauseBtn" data-i18n="pause" hidden>Пауза</button>
+        <button type="button" class="action-btn action-restart" id="restart" data-i18n="restart" hidden>Заново</button>
+        <button type="button" class="action-btn action-sound" id="soundBtn" data-i18n="sound" aria-pressed="true">Звук</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="score" id="score" hidden>Очки:0</div>
+
+  <script src="redsquare.js" defer></script>
+</body>
+</html>

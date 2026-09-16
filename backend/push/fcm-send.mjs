@@ -190,10 +190,18 @@ async function sendOneToken(accessToken, projectId, token, payload) {
 
 function isInvalidToken(result) {
   const fcmCode = String(result?.fcmErrorCode || '').toUpperCase();
-  if (fcmCode === 'UNREGISTERED') return true;
+  if (
+    fcmCode === 'UNREGISTERED'
+    || fcmCode === 'SENDER_ID_MISMATCH'
+    || fcmCode === 'INVALID_ARGUMENT'
+  ) {
+    return true;
+  }
   const hay = `${result?.code || ''} ${result?.message || ''}`.toUpperCase();
   return hay.includes('REGISTRATION_TOKEN_NOT_REGISTERED')
-    || hay.includes('INVALID_REGISTRATION_TOKEN');
+    || hay.includes('INVALID_REGISTRATION_TOKEN')
+    || hay.includes('SENDERID MISMATCH')
+    || hay.includes('SENDER_ID_MISMATCH');
 }
 
 export async function warmUpFcm() {

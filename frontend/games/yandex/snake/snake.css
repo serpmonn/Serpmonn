@@ -158,12 +158,10 @@ canvas {
     margin-top: 10px;        /* Отступ сверху */
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 960px) { 
+/* Мобильные: раскладка и оверлей — в index.html (portrait media).
+   Здесь только не прячем d-pad: на тач-устройствах кнопки нужны. */
+@media (max-width: 960px) {
     .wrap {
-        grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    }
-    .controls {
-        display: none;       /* Скрываем кнопки управления на мобильных */
+        grid-template-columns: 1fr;
     }
 }

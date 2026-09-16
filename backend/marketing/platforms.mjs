@@ -73,21 +73,21 @@ export const PLATFORM_CATALOG = [
   },
   {
     id: 'ok',
-    label: 'OK.ru',
+    label: 'OK.ru Serpmonn',
     sort: 50,
-    defaultMode: 'manual',
+    defaultMode: 'auto',
     defaultEnabled: false,
-    formats: ['text'],
-    notes: 'Пока вручную'
+    formats: ['text', 'video'],
+    notes: 'https://ok.ru/group/70000055870397'
   },
   {
     id: 'rutube',
-    label: 'Rutube',
+    label: 'Rutube Serpmonn Ads',
     sort: 60,
     defaultMode: 'manual',
-    defaultEnabled: false,
+    defaultEnabled: true,
     formats: ['video'],
-    notes: 'Пока вручную'
+    notes: 'https://rutube.ru/channel/59136572/'
   },
   {
     id: 'manual',
@@ -132,6 +132,18 @@ async function seedPlatformRows() {
       [p.id, p.defaultEnabled ? 1 : 0, p.defaultMode, sort]
     );
   }
+  // RuTube Ads: канал создан — включаем manual, если ещё выключен
+  await query(
+    `UPDATE marketing_platforms
+     SET enabled = 1, mode = 'manual'
+     WHERE id = 'rutube'`
+  );
+  // OK.ru: режим auto; включать после MARKETING_OK_* в .env
+  await query(
+    `UPDATE marketing_platforms
+     SET mode = 'auto'
+     WHERE id = 'ok'`
+  );
 }
 
 function mapPlatformRow(row, health = null) {

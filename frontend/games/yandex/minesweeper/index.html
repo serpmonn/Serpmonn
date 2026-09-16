@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Сапёр Serpmonn</title>
+  <meta name="description" content="Открой все клетки без мин.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="minesweeper.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" class="logo">
+      <h1 data-i18n="heading">Сапёр Serpmonn</h1>
+    </header>
+    <div class="wrap">
+      <div class="panel board-wrap">
+        <div id="board" class="board" aria-label="Board"></div>
+        <div id="end-overlay" class="end-overlay hidden"><div id="end-message" class="end-message"></div></div>
+        <div class="hint" data-i18n="hint">ЛКМ — открыть · ПКМ / Shift — флаг · R — заново</div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat" data-i18n-mines>Мины<br><b id="minesLeft">15</b></div>
+          <div class="stat" data-i18n-time>Время<br><b id="time">0</b></div>
+          <div class="stat" data-i18n-best>Лучшее<br><b id="best">—</b></div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn primary" id="btnStart" data-i18n="start">Старт</button>
+          <button type="button" class="btn" id="btnReset" data-i18n="reset">Заново</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="minesweeper.js" defer></script>
+</body>
+</html>

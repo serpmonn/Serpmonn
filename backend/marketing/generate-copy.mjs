@@ -86,13 +86,70 @@ const GAMES_FALLBACKS = [
   }
 ];
 
+const PARTNERS_FALLBACKS = [
+  {
+    title: 'Партнёрская сеть Serpmonn',
+    body:
+      'Рекламодатели размещают офферы, владельцы площадок ставят ссылки и получают оплату за заявки и продажи.\nПодключение — в партнёрской сети Serpmonn.'
+  },
+  {
+    title: 'Оплата за результат',
+    body:
+      'В партнёрской сети Serpmonn деньги идут за реальные заявки и продажи, а не только за показы.\nУдобно и рекламодателям, и паблишерам.'
+  },
+  {
+    title: 'Офферы и партнёрские ссылки',
+    body:
+      'Serpmonn объединяет рекламодателей и площадки в одной партнёрской сети.\nСтатистика и ссылки — в личном кабинете.'
+  }
+];
+
+const NEON_FALLBACKS = [
+  {
+    title: 'Neon Runner на Android',
+    body:
+      'Бесконечный неоновый раннер Neon Runner — аркада для Android.\nСкачать APK можно на serpmonn.ru/neon-runner.'
+  },
+  {
+    title: 'Аркада Neon Runner',
+    body:
+      'Neon Runner — мобильный endless runner с неоновым стилем.\nУстановка APK доступна на сайте Serpmonn.'
+  },
+  {
+    title: 'Скачать Neon Runner',
+    body:
+      'Короткие забеги в неоновом мире Neon Runner.\nAPK для Android — на serpmonn.ru/neon-runner.'
+  }
+];
+
+const SERPHOLD_FALLBACKS = [
+  {
+    title: 'Serphold на Android',
+    body:
+      'Serphold (Серпхолд) — tower defense для Android: 3 дороги и 20 волн.\nСкачать APK: serpmonn.ru/serphold'
+  },
+  {
+    title: 'Защити крепость в Serphold',
+    body:
+      'Ставь лучников, пушки и магов — держи стены до последней волны.\nAPK на serpmonn.ru/serphold'
+  },
+  {
+    title: 'Скачать Serphold',
+    body:
+      'Бесплатная башенная защита от Serpmonn для Android.\nЛендинг и APK: https://serpmonn.ru/serphold'
+  }
+];
+
 const BRAND_FALLBACKS = {
   promocodes: PROMO_FALLBACKS[0],
   honey: HONEY_FALLBACKS[0],
   games: GAMES_FALLBACKS[0],
+  partners: PARTNERS_FALLBACKS[0],
+  neon_runner: NEON_FALLBACKS[0],
+  serphold: SERPHOLD_FALLBACKS[0],
   neli: {
     title: 'Neli на Serpmonn',
-    body: 'Короткая браузерная игра Neli доступна без установки на Serpmonn.'
+    body: 'Короткая браузерная игра Neli доступна в разделе игр Serpmonn — без установки.'
   },
   default: {
     title: 'Serpmonn',
@@ -137,30 +194,67 @@ const PRODUCT_BRIEFS = {
     facts: [
       'Serpmonn — сервис с разделом браузерных мини-игр',
       'Игры запускаются в браузере без установки приложений',
+      'Neli и другие игры — внутри раздела игр, не отдельные продукты рекламы',
       'Цель поста: привести на https://serpmonn.ru/games',
       'Можно: Serpmonn, игры, мини-игры, браузер, досуг, без скачивания',
       'ЗАПРЕЩЕНО: чужие игровые бренды, названия чужих игр (кроме общих слов), магазины приложений'
     ]
   },
-  neli: {
-    name: 'Neli',
+  partners: {
+    name: 'Партнёрская сеть Serpmonn',
     lang: 'ru',
-    brandOnly: false,
+    brandOnly: true,
     brandName: 'Serpmonn',
     facts: [
-      'Браузерная игра на Serpmonn',
-      'Без установки',
-      'Бренд: Serpmonn'
+      'Партнёрская сеть Serpmonn: рекламодатели размещают офферы, паблишеры ставят ссылки на площадках',
+      'Оплата за заявки и продажи (CPA), а не просто за показы',
+      'Есть вход и регистрация, роли: рекламодатель и паблишер',
+      'Цель поста: привести на https://serpmonn.ru/partners',
+      'В тексте и на кадре Shorts прикрепляй/показывай ссылку serpmonn.ru/partners',
+      'Можно: Serpmonn, партнёрская сеть, офферы, паблишеры, рекламодатели, конверсии, статистика',
+      'ЗАПРЕЩЕНО: чужие CPA-сети по имени, обещания «гарантированного дохода», конкретные суммы выплат'
     ]
   },
-  partners: {
-    name: 'Serpmonn Partners',
-    lang: 'en',
-    brandOnly: false,
+  neon_runner: {
+    name: 'Neon Runner — Android-игра',
+    lang: 'ru',
+    brandOnly: true,
     brandName: 'Serpmonn',
     facts: [
-      'Partner / affiliate network of Serpmonn',
-      'Landing: serpmonn.ru partners'
+      'Neon Runner — бесплатный endless runner / аркада для Android от Serpmonn',
+      'Скачивание APK: https://serpmonn.ru/neon-runner',
+      'В APK встроена реклама Yandex РСЯ (interstitial / rewarded)',
+      'Цель поста: привести к скачиванию APK Neon Runner',
+      'Можно: Neon Runner, Android, аркада, раннер, неон, Serpmonn, APK',
+      'ЗАПРЕЩЕНО: чужие игровые бренды, обещания «без рекламы», выдуманные рейтинги магазинов',
+      'Не путать с браузерными играми раздела serpmonn.ru/games — это отдельное Android-приложение'
+    ]
+  },
+  serphold: {
+    name: 'Serphold — Android tower defense',
+    lang: 'ru',
+    brandOnly: true,
+    brandName: 'Serpmonn',
+    facts: [
+      'Serphold (Серпхолд) — бесплатная tower defense для Android от Serpmonn',
+      '3 дороги, 20 волн, башни: лучник, пушка, маг',
+      'Скачивание / лендинг: https://serpmonn.ru/serphold',
+      'В APK реклама Yandex РСЯ (interstitial / rewarded)',
+      'Цель поста: привести к скачиванию Serphold',
+      'Можно: Serphold, Серпхолд, Android, tower defense, крепость, башни, Serpmonn, APK',
+      'ЗАПРЕЩЕНО: чужие игровые бренды, обещания «без рекламы», выдуманные рейтинги магазинов',
+      'Не путать с браузерными играми раздела serpmonn.ru/games — это отдельное Android-приложение'
+    ]
+  },
+  neli: {
+    name: 'Neli (игра в разделе Serpmonn)',
+    lang: 'ru',
+    brandOnly: true,
+    brandName: 'Serpmonn',
+    facts: [
+      'Neli — браузерная игра внутри раздела игр Serpmonn, не отдельный рекламный продукт',
+      'Без установки',
+      'CTA лучше вести на раздел игр: https://serpmonn.ru/games'
     ]
   },
   app: {
@@ -190,9 +284,26 @@ function briefFor(product) {
 
 function fallbackFor(product, salt = '') {
   const key = String(product || '').toLowerCase();
-  if (key === 'promocodes' || key === 'honey' || key === 'games') {
+  if (
+    key === 'promocodes' ||
+    key === 'honey' ||
+    key === 'games' ||
+    key === 'partners' ||
+    key === 'neon_runner' ||
+    key === 'serphold'
+  ) {
     const pool =
-      key === 'honey' ? HONEY_FALLBACKS : key === 'games' ? GAMES_FALLBACKS : PROMO_FALLBACKS;
+      key === 'honey'
+        ? HONEY_FALLBACKS
+        : key === 'games'
+          ? GAMES_FALLBACKS
+          : key === 'partners'
+            ? PARTNERS_FALLBACKS
+            : key === 'neon_runner'
+              ? NEON_FALLBACKS
+              : key === 'serphold'
+                ? SERPHOLD_FALLBACKS
+              : PROMO_FALLBACKS;
     let h = 0;
     const s = String(salt || Date.now());
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
@@ -687,6 +798,110 @@ export async function generateMarketingCopy({
         ? `GigaChat cooldown: ${getGigaChatCooldownReason() || 'wait'}`
         : 'generation failed')
   };
+}
+
+const EN_PRODUCT_FALLBACKS = {
+  promocodes: {
+    title: 'Promo codes in one place — Serpmonn',
+    body: 'Find current deals faster in the Serpmonn promo section.\nOne page instead of dozens of tabs.'
+  },
+  honey: {
+    title: 'Natural honey from VRNHoney',
+    body: 'Quality honey from trusted apiaries.\nBrowse and order at vrnhoney.ru.'
+  },
+  games: {
+    title: 'Browser games on Serpmonn',
+    body: 'Quick mini-games in your browser — no install.\nOpen Serpmonn Games and play.'
+  },
+  partners: {
+    title: 'Serpmonn Partner Network',
+    body: 'Connect advertisers and publishers in one network.\nGrow with tracked offers on Serpmonn.'
+  },
+  neon_runner: {
+    title: 'Neon Runner — endless neon run',
+    body: 'Fast arcade runner with neon vibes.\nDownload the APK from serpmonn.ru.'
+  },
+  serphold: {
+    title: 'Serphold — tower defense',
+    body: 'Defend your fortress in Serphold.\nDownload the Android APK on serpmonn.ru.'
+  }
+};
+
+function isMostlyEnglish(text) {
+  const s = String(text || '');
+  const letters = s.replace(/[^A-Za-zА-Яа-яЁё]/g, '');
+  if (!letters.length) return false;
+  const latin = (s.match(/[A-Za-z]/g) || []).length;
+  return latin / letters.length >= 0.7;
+}
+
+function englishFallback(product, title, body) {
+  const fb = EN_PRODUCT_FALLBACKS[String(product || '').toLowerCase()] || {
+    title: 'Serpmonn',
+    body: 'Discover Serpmonn tools, games and offers.'
+  };
+  const t = String(title || '').trim();
+  if (t && isMostlyEnglish(t)) {
+    return {
+      title: t.slice(0, 100),
+      body: isMostlyEnglish(body) ? String(body).slice(0, 900) : fb.body
+    };
+  }
+  return { title: fb.title, body: fb.body };
+}
+
+/**
+ * EN-копия для YouTube Shorts (международный канал Ads).
+ * @returns {Promise<{ title: string, body: string, engine: string }>}
+ */
+export async function translateMarketingToEnglish({
+  title = '',
+  body = '',
+  product = ''
+} = {}) {
+  const fb = englishFallback(product, title, body);
+  if (isMostlyEnglish(title) && isMostlyEnglish(body || title)) {
+    return {
+      title: String(title).slice(0, 100),
+      body: String(body || title).slice(0, 900),
+      engine: 'passthrough'
+    };
+  }
+
+  const prompt =
+    'You are a native English marketing copywriter. ' +
+    'Rewrite the ad below in ENGLISH only (Latin alphabet). ' +
+    'Do NOT use Russian words. Keep brand names Serpmonn and VRNHoney. ' +
+    'No hashtags. Reply ONLY valid JSON: {"title":"...","body":"..."}.\n\n' +
+    `Product: ${product || 'serpmonn'}\n` +
+    `Source title: ${String(title || '').slice(0, 160)}\n` +
+    `Source body:\n${String(body || '').slice(0, 800)}`;
+
+  const engines = [];
+  if (isGigaChatConfigured()) {
+    engines.push({ name: 'gigachat', run: (p) => tryGigaChat(p) });
+  }
+  engines.push({ name: 'ollama', run: (p) => tryOllama(p) });
+
+  for (const eng of engines) {
+    try {
+      const out = await eng.run(prompt);
+      const parsed = extractJson(out.content);
+      const enTitle = sanitizeCompanyVoice(String(parsed?.title || '').trim()).slice(0, 100);
+      const enBody = sanitizeCompanyVoice(String(parsed?.body || '').trim()).slice(0, 900);
+      if (enTitle && isMostlyEnglish(enTitle)) {
+        return {
+          title: enTitle,
+          body: enBody && isMostlyEnglish(enBody) ? enBody : fb.body,
+          engine: eng.name
+        };
+      }
+      console.warn('[marketing] en-translate rejected non-English from', eng.name, enTitle);
+    } catch (err) {
+      console.warn('[marketing] en-translate', eng.name, err.message);
+    }
+  }
+  return { ...fb, engine: 'fallback' };
 }
 
 export async function marketingOllamaHealth() {
