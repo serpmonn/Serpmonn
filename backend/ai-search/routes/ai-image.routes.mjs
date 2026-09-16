@@ -136,9 +136,17 @@ function registerAiImageRoutes(router) {
         '.png': 'image/png',
         '.webp': 'image/webp',
       };
+      const fileName = String(req.params.name || '').replace(/[^a-zA-Z0-9._-]/g, '') || `serpmonn-ai${ext || '.jpg'}`;
+      const asAttachment =
+        String(req.query.download || req.query.dl || '').trim() === '1' ||
+        String(req.query.download || req.query.dl || '').toLowerCase() === 'true';
       res.setHeader('Content-Type', types[ext] || 'application/octet-stream');
       res.setHeader('Content-Length', st.size);
       res.setHeader('Cache-Control', 'private, max-age=86400');
+      res.setHeader(
+        'Content-Disposition',
+        `${asAttachment ? 'attachment' : 'inline'}; filename="${fileName}"`
+      );
       return res.sendFile(abs);
     } catch (err) {
       return res.status(404).json({ error: 'Not found' });

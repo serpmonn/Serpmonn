@@ -410,37 +410,56 @@ public class MainActivity extends BridgeActivity {
         return pushPermOutcome;
       }
 
-      /** FCM token or ERR:… */
+      /**
+       * FCM token or ERR:… Must schedule Firebase on the main looper — calling
+       * getToken() directly from the WebView JS bridge thread hangs/fails on
+       * some OEMs (observed: TECNO), so the Web UI never reaches /fcm/register.
+       */
       @JavascriptInterface
       public String registerPushToken() {
         AtomicReference<String> out = new AtomicReference<>("ERR:timeout");
         CountDownLatch latch = new CountDownLatch(1);
+        uiHandler.post(
+            () -> {
+              try {
+                FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+                FirebaseMessaging.getInstance()
+                    .getToken()
+                    .addOnCompleteListener(
+                        task -> {
+                          if (task.isSuccessful() && task.getResult() != null) {
+                            out.set(task.getResult());
+                            Log.i(
+                                TAG,
+                                "FCM token ok, len=" + task.getResult().length());
+                          } else {
+                            Exception err = task.getException();
+                            String msg =
+                                err != null ? err.getMessage() : "token_failed";
+                            Log.e(TAG, "FCM getToken failed", err);
+                            out.set(
+                                "ERR:" + (msg != null ? msg : "token_failed"));
+                          }
+                          latch.countDown();
+                        });
+              } catch (Exception e) {
+                Log.e(TAG, "FCM getToken exception", e);
+                String msg = e.getMessage();
+                out.set(
+                    "ERR:"
+                        + e.getClass().getSimpleName()
+                        + (msg != null ? (":" + msg) : ""));
+                latch.countDown();
+              }
+            });
         try {
-          FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-          FirebaseMessaging.getInstance()
-              .getToken()
-              .addOnCompleteListener(
-                  task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                      out.set(task.getResult());
-                      Log.i(TAG, "FCM token ok, len=" + task.getResult().length());
-                    } else {
-                      Exception err = task.getException();
-                      String msg = err != null ? err.getMessage() : "token_failed";
-                      Log.e(TAG, "FCM getToken failed", err);
-                      out.set("ERR:" + (msg != null ? msg : "token_failed"));
-                    }
-                    latch.countDown();
-                  });
           if (!latch.await(25, TimeUnit.SECONDS)) {
             Log.e(TAG, "FCM getToken timeout");
             return "ERR:timeout";
           }
-        } catch (Exception e) {
-          Log.e(TAG, "FCM getToken exception", e);
-          String msg = e.getMessage();
-          return "ERR:" + e.getClass().getSimpleName()
-              + (msg != null ? (":" + msg) : "");
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return "ERR:interrupted";
         }
         return out.get();
       }

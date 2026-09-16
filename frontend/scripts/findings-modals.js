@@ -23,7 +23,7 @@ import {
   renderNotificationItem,
   renderActivityEmpty,
   downloadDmMedia,
-} from './dm-chat.js?v=45';
+} from './dm-chat.js?v=47';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -1431,6 +1431,23 @@ function ensureMediaDownloadHandlers(modal) {
   if (!modal || modal.dataset.mediaDownloadBound) return;
   modal.dataset.mediaDownloadBound = '1';
   modal.addEventListener('click', async (event) => {
+    const link = event.target.closest?.('a.finding-dm-bubble__link');
+    if (link) {
+      const href = String(link.getAttribute('href') || '').trim();
+      if (!/^https?:\/\//i.test(href)) return;
+      try {
+        const Browser = window.Capacitor?.Plugins?.Browser;
+        if (Browser?.open) {
+          event.preventDefault();
+          event.stopPropagation();
+          await Browser.open({ url: href });
+          return;
+        }
+      } catch (_) {
+        /* fall through to default <a target=_blank> */
+      }
+      return;
+    }
     const btn = event.target.closest('[data-action="download-media"]');
     if (!btn) return;
     event.preventDefault();

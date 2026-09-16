@@ -259,6 +259,61 @@ function renderMediaDownload(url, t, filename = '') {
   return `<button type="button" class="finding-dm-media__download" data-action="download-media" data-media-url="${escapeHtml(url)}" data-media-name="${escapeHtml(name)}" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">${DM_DOWNLOAD_ICON}</button>`;
 }
 
+function isSafeHttpUrl(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch (_) {
+    return false;
+  }
+}
+
+function stripLinkTrail(rawUrl) {
+  let url = String(rawUrl || '');
+  let trail = '';
+  while (/[),.;:!?»”']/.test(url.slice(-1))) {
+    trail = url.slice(-1) + trail;
+    url = url.slice(0, -1);
+  }
+  return { url, trail };
+}
+
+function toHttpHref(matched) {
+  const s = String(matched || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s)) return s;
+  return `https://${s}`;
+}
+
+/** Escape text and turn URLs / bare domains into safe clickable links. */
+function linkifyDmBody(text) {
+  const raw = String(text || '');
+  // http(s), www., or bare domains like serpmonn.ru / serpmonn.ru/path
+  const re =
+    /(?:https?:\/\/[^\s<]+|www\.[^\s<]+|(?<![@\w./-])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?:\/[^\s<]*)?)/gi;
+  let out = '';
+  let last = 0;
+  let m;
+  while ((m = re.exec(raw))) {
+    // Don't linkify email local-parts: skip if preceded by @
+    if (m.index > 0 && raw[m.index - 1] === '@') {
+      continue;
+    }
+    out += escapeHtml(raw.slice(last, m.index));
+    const stripped = stripLinkTrail(m[0]);
+    const href = toHttpHref(stripped.url);
+    if (stripped.url && isSafeHttpUrl(href)) {
+      out += `<a class="finding-dm-bubble__link" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(stripped.url)}</a>`;
+      out += escapeHtml(stripped.trail);
+    } else {
+      out += escapeHtml(m[0]);
+    }
+    last = m.index + m[0].length;
+  }
+  out += escapeHtml(raw.slice(last));
+  return out;
+}
+
 export function renderChatMessage(msg, t) {
   const mineCls = msg.isMine ? ' finding-dm-bubble--mine' : ' finding-dm-bubble--theirs';
   const hasAudio = isSafeDmAudioUrl(msg.audioUrl);
@@ -268,7 +323,7 @@ export function renderChatMessage(msg, t) {
   const voiceOnly = hasAudio && !hasBody && !hasPhoto && !hasFinding;
   const voiceCls = voiceOnly ? ' finding-dm-bubble--voice' : '';
   const bodyHtml = hasBody
-    ? `<p class="finding-dm-bubble__text">${escapeHtml(msg.body)}</p>`
+    ? `<p class="finding-dm-bubble__text">${linkifyDmBody(msg.body)}</p>`
     : '';
   const findingHtml = hasFinding
     ? `<button type="button" class="finding-dm-attachment" data-action="open-finding" data-public-id="${escapeHtml(msg.finding.publicId)}">

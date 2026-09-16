@@ -107,6 +107,75 @@ async function requestAiImage({ prompt, locale }) {
   return { response, data };
 }
 
+function aiImageFileName(url) {
+  try {
+    const part = String(url || '').split('/').pop() || '';
+    if (/^[a-f0-9-]{36}\.(jpg|jpeg|png|webp)$/i.test(part)) return part;
+  } catch (_) {}
+  return `serpmonn-ai-${Date.now()}.jpg`;
+}
+
+async function downloadAiImage(url, filename) {
+  const name = filename || aiImageFileName(url);
+  let absUrl = String(url || '');
+  try {
+    absUrl = new URL(absUrl, location.origin).href;
+  } catch (_) {}
+
+  if (window.SpnAndroid?.downloadFile) {
+    try {
+      const result = window.SpnAndroid.downloadFile(absUrl, name);
+      if (String(result || '').startsWith('OK')) return true;
+    } catch (_) { /* fall through */ }
+  }
+
+  try {
+    const res = await fetch(absUrl, { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) throw new Error('http');
+    const blob = await res.blob();
+    if (!String(blob.type || '').startsWith('image/')) {
+      throw new Error('not-image');
+    }
+    if (window.SpnAndroid?.downloadBlobBase64) {
+      try {
+        const b64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = String(reader.result || '');
+            resolve(dataUrl.split(',')[1] || '');
+          };
+          reader.onerror = () => reject(reader.error || new Error('read'));
+          reader.readAsDataURL(blob);
+        });
+        const result = window.SpnAndroid.downloadBlobBase64(b64, name, blob.type || '');
+        if (String(result || '').startsWith('OK')) return true;
+      } catch (_) { /* fall through */ }
+    }
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = name;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => {
+      try { URL.revokeObjectURL(blobUrl); } catch (_) {}
+    }, 4000);
+    return true;
+  } catch (_) {
+    const a = document.createElement('a');
+    a.href = absUrl.includes('?') ? `${absUrl}&download=1` : `${absUrl}?download=1`;
+    a.download = name;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    return false;
+  }
+}
+
 function renderAiImageResult(container, data) {
   if (!container) return;
   const msgs = getMessages();
@@ -120,12 +189,19 @@ function renderAiImageResult(container, data) {
     return;
   }
   const caption = data.caption || '';
+  const fileName = aiImageFileName(url);
   container.innerHTML = `
     <div class="ai-image-result">
-      <img src="${escapeHtml(url)}" alt="${escapeHtml(caption || msgs.modeImageLabel || 'image')}" loading="lazy">
+      <img src="${escapeHtml(url)}" alt="${escapeHtml(caption || msgs.modeImageLabel || 'image')}" decoding="async" loading="eager">
       ${caption ? `<p class="ai-image-caption">${escapeHtml(caption)}</p>` : ''}
-      <a class="ai-image-download" href="${escapeHtml(url)}" download>${escapeHtml(msgs.downloadImage || 'Скачать')}</a>
+      <button type="button" class="ai-image-download" data-ai-image-url="${escapeHtml(url)}" data-ai-image-name="${escapeHtml(fileName)}">${escapeHtml(msgs.downloadImage || 'Скачать')}</button>
     </div>`;
+  const btn = container.querySelector('[data-ai-image-url]');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      downloadAiImage(btn.getAttribute('data-ai-image-url'), btn.getAttribute('data-ai-image-name'));
+    });
+  }
 }
 
 async function runAiImage(prompt) {

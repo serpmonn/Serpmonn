@@ -233,14 +233,18 @@
     const raw = String(global.SpnAndroid.registerPushToken() || '').trim();
     if (!raw || raw.startsWith('ERR:')) {
       console.warn('[push-native] SpnAndroid token', raw);
-      return { ok: false, reason: 'error' };
+      return { ok: false, reason: 'error', detail: raw || 'ERR:empty' };
     }
     setStoredToken(raw);
     try {
       await postToken(raw);
     } catch (err) {
       console.warn('[push-native] server register failed', err?.message || err);
-      return { ok: false, reason: 'error' };
+      return {
+        ok: false,
+        reason: 'error',
+        detail: String(err?.message || 'fcm_register_failed'),
+      };
     }
     return { ok: true };
   }
