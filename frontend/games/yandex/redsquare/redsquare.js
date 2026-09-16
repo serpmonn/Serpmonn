@@ -804,6 +804,25 @@
         if (gameStarted && !isPaused) togglePause(true);
       },
       reset: resetRun,
+      /** Marketing capture: jump to denser level without idle grind. */
+      pressure(targetLevel = 3) {
+        const idx = Math.max(1, Math.min(levels.length, Number(targetLevel) || 3));
+        if (!gameStarted) beginPlay();
+        level = idx;
+        score = Math.max(score, (levels[idx - 2] && levels[idx - 2].points) || 40);
+        speed = levels[idx - 1].speed;
+        enemies.forEach((enemy) => enemy.remove());
+        enemies = [];
+        createEnemies(levels[idx - 1].enemies, { speed, gameArea, enemies });
+        // Faster CSS paths so Shorts read as motion, not a still board.
+        document.querySelectorAll('.enemy-fast, .enemy-slow').forEach((enemy) => {
+          const cur = parseFloat(enemy.style.animationDuration) || speed;
+          enemy.style.animationDuration = `${Math.max(0.55, cur * 0.55)}s`;
+        });
+        grantInvincible(INVINCIBLE_LEVEL_MS);
+        updateHud();
+        setEnemyAnimState('running');
+      },
     };
   }
 

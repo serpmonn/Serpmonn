@@ -12,12 +12,12 @@
   canvas.height = H * SCALE;
   ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
 
-  const gap = 60;
+  let gap = 60;
   const pipeWidth = 26;
   const floorY = H - 20;
   const gravity = 0.35;
   const flapVel = -5.2;
-  const pipeSpeed = 1.8;
+  let pipeSpeed = 1.8;
 
   const btnStart = document.getElementById('btnStart');
   const btnReset = document.getElementById('btnReset');
@@ -282,18 +282,25 @@
   };
 
   if (/[?&]rec=1(?:&|$)/.test(location.search)) {
+    gap = 100;
+    pipeSpeed = 1.35;
     window.__rec = {
       getState() {
         return {
           bird: bird ? { x: bird.x, y: bird.y, vy: bird.vy, r: bird.r } : null,
-          pipes: (pipes || []).map((p) => ({ x: p.x, top: p.top, passed: p.passed })),
+          pipes: (pipes || []).map((p) => ({
+            x: p.x,
+            top: p.top,
+            gapY: p.top + gap / 2,
+            passed: p.passed,
+          })),
           alive,
           started,
           gameActive,
           score,
           gap,
           pipeWidth,
-          floorY: floorY,
+          floorY,
           H,
           W,
         };

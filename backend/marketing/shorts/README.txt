@@ -7,6 +7,9 @@
 Название: EN | RU (две аудитории сразу).
 
 Выложено:
+- minesweeper-preview-en-serpmonn.mp4
+  Almost clear… | Почти очистил… #shorts
+  https://youtube.com/shorts/HikhSJfTtqw
 - g2048-preview-en-serpmonn.mp4
   Almost 2048… | Почти 2048… #shorts
   https://youtube.com/shorts/Jhh5IUx2eRg

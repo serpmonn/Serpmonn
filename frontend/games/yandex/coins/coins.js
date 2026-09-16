@@ -275,11 +275,30 @@
           started,
           alive,
           cells,
+          tickMs,
         };
       },
       setDir,
       start,
       reset,
+      /** Marketing Shorts: denser board + faster ticks. */
+      pressure({ badCount = 8, tick = 140, time = 45 } = {}) {
+        if (!alive) reset();
+        while (bads.length < badCount) bads.push(randEmptyCell());
+        while (coins.length < 6) coins.push(randEmptyCell());
+        timeLeft = Math.min(timeLeft || time, time);
+        $('time').textContent = String(timeLeft);
+        tickMs = tick;
+        if (started && tickTimer) {
+          clearInterval(tickTimer);
+          tickTimer = setInterval(() => {
+            tickCount++;
+            step();
+            draw();
+          }, tickMs);
+        }
+        draw();
+      },
     };
   }
 
