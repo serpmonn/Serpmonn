@@ -1370,6 +1370,12 @@ const INBOX_APP_CSS = `
     white-space: pre-wrap !important;
     word-break: break-word !important;
   }
+  .finding-dm-bubble__link {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
+    word-break: break-all !important;
+    pointer-events: auto !important;
+  }
   .finding-dm-dialog-item__preview {
     color: #374151 !important;
   }
@@ -1646,7 +1652,7 @@ const INBOX_APP_CSS = `
   }
 `;
 
-const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=59';
+const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=61';
 
 let findingsUiReady = null;
 function ensureFindingsUiInApp() {
@@ -4038,7 +4044,7 @@ function ensureInboxShellStyles() {
       }
       style.textContent = INBOX_APP_CSS;
       await Promise.all([
-        loadStylesheet('/frontend/styles/styles.css?v=dm-media2', 'spn-site-css-for-inbox'),
+        loadStylesheet('/frontend/styles/styles.css?v=dm-links1', 'spn-site-css-for-inbox'),
         loadStylesheet('/frontend/profile/profile_styles.css?v=avatar-crop', 'spn-profile-css-for-inbox'),
         loadStylesheet('/frontend/find/find-view.css?v=app-inbox', 'spn-findview-css-for-inbox'),
       ]);
@@ -4775,7 +4781,15 @@ if (spnPushEnableBtn) {
       } else {
         setPushPref(false);
         if (result?.reason === 'denied') toast(t('pushDenied'));
-        else toast(t('pushFailed'), 'error');
+        else {
+          const detail = String(result?.detail || '').trim();
+          toast(
+            detail
+              ? `${t('pushFailed')}: ${detail.slice(0, 120)}`
+              : t('pushFailed'),
+            'error',
+          );
+        }
       }
     } catch (_) {
       setPushPref(false);
