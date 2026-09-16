@@ -300,6 +300,153 @@
     true
   );
 
+  if (/[?&]rec=1(?:&|$)/.test(location.search)) {
+    function buildBoard(mines) {
+      reset();
+      for (const [x, y] of mines) mineMap[x][y] = true;
+      for (let x = 0; x < SIZE; x++) {
+        for (let y = 0; y < SIZE; y++) {
+          if (mineMap[x][y]) {
+            grid[x][y] = -1;
+            continue;
+          }
+          grid[x][y] = getNeighbors(x, y).reduce((acc, [nx, ny]) => acc + (mineMap[nx][ny] ? 1 : 0), 0);
+        }
+      }
+      minesPlaced = true;
+      startTimer();
+    }
+
+    function flagMines(list) {
+      for (const [x, y] of list) flagged[x][y] = true;
+      $('minesLeft').textContent = String(Math.max(MINES - flagged.flat().filter(Boolean).length, 0));
+    }
+
+    function revealSafeExcept(keepClosed) {
+      const keep = new Set((keepClosed || []).map(([x, y]) => x + ',' + y));
+      for (let x = 0; x < SIZE; x++) {
+        for (let y = 0; y < SIZE; y++) {
+          if (mineMap[x][y]) continue;
+          if (keep.has(x + ',' + y)) continue;
+          revealed[x][y] = true;
+        }
+      }
+    }
+
+    /** Pick safe cells still closed, in a readable human order (row by row). */
+    function closedSafeCells() {
+      const out = [];
+      for (let y = 0; y < SIZE; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          if (!mineMap[x][y] && !revealed[x][y] && !flagged[x][y]) out.push([x, y]);
+        }
+      }
+      return out;
+    }
+
+    window.__rec = {
+      getState() {
+        return {
+          alive,
+          minesPlaced,
+          leftSafe: closedSafeCells().length,
+          mines: MINES,
+          size: SIZE,
+        };
+      },
+      reset,
+      reveal,
+      hideEnd,
+      closedSafeCells,
+      /**
+       * Endgame loss: most board open, ~10 safes + 1 mine left.
+       * Human clicks safes, LAST click is the mine (must be last —
+       * clearing all safes first would auto-win before the boom).
+       */
+      setupEndgameLoss() {
+        const mines = [
+          [0, 2],
+          [0, 8],
+          [1, 5],
+          [2, 1],
+          [2, 9],
+          [3, 4],
+          [4, 0],
+          [4, 7],
+          [5, 3],
+          [6, 6],
+          [7, 1],
+          [7, 8],
+          [8, 4],
+          [9, 2],
+          [9, 9],
+        ];
+        buildBoard(mines);
+        $('time').textContent = '38';
+        const boom = [5, 3];
+        flagMines(mines.filter(([x, y]) => !(x === boom[0] && y === boom[1])));
+        const safes = [
+          [3, 2],
+          [3, 3],
+          [4, 2],
+          [4, 3],
+          [4, 4],
+          [5, 2],
+          [5, 4],
+          [6, 2],
+          [6, 3],
+          [6, 4],
+          [6, 5],
+        ];
+        revealSafeExcept(safes);
+        render();
+        // Important: do NOT open all safes before the mine — that auto-wins.
+        // Click all but one safe, then the mine (one safe stays closed).
+        return { clicks: [...safes.slice(0, -1), boom], boomClick: boom };
+      },
+      /**
+       * Endgame win: similar board, mines flagged, ~9 safes left → last click wins.
+       */
+      setupEndgameWin() {
+        const mines = [
+          [0, 1],
+          [0, 7],
+          [1, 4],
+          [2, 2],
+          [2, 8],
+          [3, 5],
+          [4, 1],
+          [4, 9],
+          [5, 6],
+          [6, 3],
+          [7, 0],
+          [7, 7],
+          [8, 5],
+          [9, 3],
+          [9, 8],
+        ];
+        buildBoard(mines);
+        $('time').textContent = '29';
+        flagMines(mines);
+        const keep = [
+          [5, 4],
+          [5, 5],
+          [6, 4],
+          [6, 5],
+          [7, 3],
+          [7, 4],
+          [7, 5],
+          [8, 3],
+          [8, 4],
+        ];
+        revealSafeExcept(keep);
+        render();
+        const clicks = closedSafeCells();
+        return { clicks, winClick: clicks[clicks.length - 1] };
+      },
+    };
+  }
+
   window.__ygOnReady = function () {
     reset();
   };
