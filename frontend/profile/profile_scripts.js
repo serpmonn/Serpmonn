@@ -18,6 +18,7 @@ import {
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
 import { csrfHeaders } from '../scripts/csrf.js';
+import { invalidateAuthSession } from '../scripts/auth-session.js';
 
 function escapeHtmlAttr(str) {
   return String(str || '')
@@ -1004,6 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
+      invalidateAuthSession();
     }
     if (stayInApp) {
       try {

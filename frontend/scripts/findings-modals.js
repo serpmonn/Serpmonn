@@ -26,6 +26,7 @@ import {
 } from './dm-chat.js?v=47';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
+import { checkLoggedIn } from './auth-session.js';
 
 let initialized = false;
 const ACTIVITY_INTRO_KEY = 'spn_activity_intro_seen';
@@ -420,6 +421,14 @@ function localizeActivityTabs(modal) {
 }
 
 async function updateActivityTabBadges(modal) {
+  const loggedIn = await checkLoggedIn();
+  if (!loggedIn) {
+    activityState.unreadDm = 0;
+    activityState.unreadNotifications = 0;
+    if (modal) localizeActivityTabs(modal);
+    notifyAppUnread();
+    return;
+  }
   const [dmResp, notifResp] = await Promise.all([
     apiGet('/api/dm/unread-count'),
     apiGet('/api/findings/notifications/unread-count'),
@@ -775,8 +784,8 @@ function ensureFeedModal() {
     tab.addEventListener('click', async () => {
       const mode = tab.dataset.feedMode;
       if (mode === 'following') {
-        const auth = await apiGet('/auth/protected');
-        if (!auth.ok) {
+        const ok = await checkLoggedIn();
+        if (!ok) {
           authRedirect();
           return;
         }
@@ -802,8 +811,7 @@ async function syncFeedGuestTabs(modal) {
   if (!followingTab) return;
   let loggedIn = false;
   try {
-    const auth = await apiGet('/auth/protected');
-    loggedIn = Boolean(auth?.ok);
+    loggedIn = await checkLoggedIn();
   } catch (_) {
     loggedIn = false;
   }
@@ -1921,6 +1929,7 @@ async function pollThreadMessages(modal, peer) {
     stopThreadPoll();
     return;
   }
+  if (!(await checkLoggedIn())) return;
   const { ok, data } = await apiGet(
     `/api/dm/conversations/${encodeURIComponent(key)}/messages`
   );
@@ -1987,6 +1996,7 @@ function bindDialogList(modal, conversations) {
 
 async function pollDialogList(modal) {
   if (inboxState.view !== 'dialogs' || activityState.tab !== 'inbox') return;
+  if (!(await checkLoggedIn())) return;
   const { ok, data } = await apiGet('/api/dm/conversations');
   if (!ok || inboxState.view !== 'dialogs') return;
   const conversations = data.conversations || [];
@@ -2005,6 +2015,16 @@ async function loadInboxInto(modal) {
   if (!listEl) return;
 
   setActivityPanels(modal);
+
+  if (!(await checkLoggedIn())) {
+    stopThreadPoll();
+    setInboxComposeVisible(modal, false);
+    listEl.classList.remove('findings-inbox-list--loading');
+    listEl.setAttribute('aria-busy', 'false');
+    listEl.innerHTML = `<p class="finding-empty finding-inbox-empty">${escapeHtml(t('loginRequired'))}</p>`;
+    notifyAppInboxState();
+    return;
+  }
 
   if (inboxState.view === 'thread' && dmPeerKey()) {
     setInboxComposeVisible(modal, true);

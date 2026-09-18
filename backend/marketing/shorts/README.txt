@@ -6,24 +6,29 @@
 Формат: геймплей + звук, без CTA.
 Название: EN | RU (две аудитории сразу).
 
-Выложено:
-- minesweeper-preview-en-serpmonn.mp4
-  Almost clear… | Почти очистил… #shorts
-  https://youtube.com/shorts/HikhSJfTtqw
-- g2048-preview-en-serpmonn.mp4
-  Almost 2048… | Почти 2048… #shorts
-  https://youtube.com/shorts/Jhh5IUx2eRg
-- breakout-preview-en-serpmonn.mp4
-  One more brick… | Ещё один кирпич… #shorts
-  https://youtube.com/shorts/y1ew8rKD0MI
+Выложено (YouTube / Serpmonn Ads):
+- Neon — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
+- Snake — One more turn… — https://youtube.com/shorts/ajp_FD8ihZc
+- Flappy — So close… — https://youtube.com/shorts/aErIqeZ95nw
+- Breakout — One more brick… — https://youtube.com/shorts/y1ew8rKD0MI
+- 2048 — Almost 2048… — https://youtube.com/shorts/Jhh5IUx2eRg
+- Neli — Almost out… — https://youtube.com/shorts/dZI6JZdV7VA
+- Fat Rat — One more bite… — https://youtube.com/shorts/wM6dgM0l0fE
+- Square Escape — Too close… — https://youtube.com/shorts/zyz8MrvR45Y
+- Coins — One more coin… — https://youtube.com/shorts/CP8Mn226CLk
+- Minesweeper — Almost clear… — https://youtube.com/shorts/HikhSJfTtqw
+- Fifteen — One more slide… — https://youtube.com/shorts/y8a_pPuBjD0
+- Typing — Faster… — https://youtube.com/shorts/dayj59TE1fk
+- Falling Shapes (redsquare2) — One more catch… — https://youtube.com/shorts/6XD_04MiQLE
 
-Готово к просмотру (ещё не выложено):
-- neli-preview-en-serpmonn.mp4
-  Almost out… | Почти наружу… #shorts
-  В кадре: погоня Neli, заново, почти у двери, Almost… / serpmonn. Без CTA.
-- snake-preview-en-serpmonn.mp4
-  One more turn… | Ещё один поворот… #shorts
-  В кадре: Serpmonn Snake + «Almost… / serpmonn» на поражении. Без CTA.
+Ещё без Shorts на канале: —
+
+Готово к проверке:
+- —
+Публичные превью: https://serpmonn.ru/shorts-preview/
+
+Готово локально, но уже выложено (не предлагать снова):
+- neli / rat / snake / coins / redsquare / redsquare2 / minesweeper / breakout / 2048 / flappy / fifteen / typing
 
 EN-файлы (*-preview-en.mp4) — основной набор для выкладки:
 1) snake-preview-en.mp4
