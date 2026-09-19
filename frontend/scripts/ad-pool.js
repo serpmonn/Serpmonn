@@ -179,6 +179,7 @@ function hidePromoAdContainer(el) {
   if (!el) {
     return;
   }
+  el.__adCancelled = true;
   el.classList.add('is-collapsed');
   el.remove();
 }
@@ -308,15 +309,34 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
   }
 
   const resolvedRoot = fillRoot || container;
+  if (resolvedRoot.__adCancelled || !resolvedRoot.isConnected) {
+    return false;
+  }
+
+  // Create the mount node only when Ya is ready — catalog may remove slots meanwhile.
   const pageNumber = ++yandexBannerSeq;
   const renderToId = `yandex_rtb_${cfg.blockId.replace(/-/g, '_')}_${pageNumber}`;
-  const target = document.createElement('div');
-  target.id = renderToId;
-  target.className = 'yandex-rtb-slot';
-  container.appendChild(target);
+  const mount = container.classList?.contains('promo-ad-inline__slot')
+    ? container
+    : (container.querySelector?.('.promo-ad-inline__slot') || container);
 
   ensureYandexAdsScript();
   onYandexReady(() => {
+    if (resolvedRoot.__adCancelled || !resolvedRoot.isConnected || !mount?.isConnected) {
+      return;
+    }
+
+    mount.querySelectorAll?.('.yandex-rtb-slot').forEach((el) => el.remove());
+
+    const target = document.createElement('div');
+    target.id = renderToId;
+    target.className = 'yandex-rtb-slot';
+    mount.appendChild(target);
+
+    if (!document.getElementById(renderToId)) {
+      return;
+    }
+
     try {
       // Official RSЯ API:
       // - onRender → ad was drawn — KEEP (do not second-guess via DOM heuristics)
@@ -327,6 +347,9 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
           renderTo: renderToId,
           pageNumber,
           onRender: () => {
+            if (resolvedRoot.__adCancelled || !resolvedRoot.isConnected) {
+              return;
+            }
             resolvedRoot.__yandexRendered = true;
             resolveAdContainer(resolvedRoot, true);
           }
@@ -334,7 +357,12 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
         () => {
           // no-fill can race ahead of onRender — wait briefly so a real render wins
           setTimeout(() => {
-            if (resolvedRoot.__yandexRendered || resolvedRoot.__adFillResolved) {
+            if (
+              resolvedRoot.__adCancelled ||
+              resolvedRoot.__yandexRendered ||
+              resolvedRoot.__adFillResolved ||
+              !resolvedRoot.isConnected
+            ) {
               return;
             }
             resolveAdContainer(resolvedRoot, false);
@@ -342,7 +370,11 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
         }
       );
     } catch (_) {
-      if (!resolvedRoot.__yandexRendered) {
+      if (
+        !resolvedRoot.__yandexRendered &&
+        resolvedRoot.isConnected &&
+        !resolvedRoot.__adCancelled
+      ) {
         resolveAdContainer(resolvedRoot, false);
       }
     }

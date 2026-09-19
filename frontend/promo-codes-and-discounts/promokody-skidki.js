@@ -1,7 +1,7 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
 import { applyMailAdAttrs, pushMailAdTag } from '/frontend/scripts/mail-ads-config.js';
 import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
-import { hasAdFill, isYandexPrimary, runVkFallbackForIns } from '/frontend/scripts/ad-pool.js?v=53';
+import { hasAdFill, isYandexPrimary, runVkFallbackForIns } from '/frontend/scripts/ad-pool.js?v=56';
 
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
@@ -547,6 +547,7 @@ function renderPromocodes() {
     const catalog = elements.catalog;
     if (!catalog) return;
 
+    removePromoAds(catalog);
     catalog.innerHTML = '';
 
     currentPage = 1;
@@ -622,7 +623,7 @@ function reorderSSRCatalogToMatchFilter() {
         cardsById.set(card.dataset.promoId, card);
     });
 
-    catalog.querySelectorAll('.promo-ad-inline').forEach((ad) => ad.remove());
+    removePromoAds(catalog);
 
     filteredPromocodes.forEach((promo) => {
         const card = cardsById.get(String(promo.id));
@@ -631,7 +632,10 @@ function reorderSSRCatalogToMatchFilter() {
         }
     });
 
-    insertInfeedAdsIntoCatalog(catalog, window.innerWidth < 768 ? 10 : 5);
+    // Ads only after boot allows them (see mountPromoAdsAfterBoot)
+    if (promoAdsAllowed) {
+        insertInfeedAdsIntoCatalog(catalog, window.innerWidth < 768 ? 10 : 5);
+    }
 }
 
 function initSSRCatalogState() {
@@ -658,8 +662,7 @@ function initSSRCatalogState() {
         observer.observe(lastCard);
     }
     lazyLoadImages();
-    insertInfeedAdsIntoCatalog(elements.catalog, window.innerWidth < 768 ? 10 : 5);
-    lazyLoadAds();
+    // Do not insert ads here — filterPromos() rebuilds the catalog right after boot.
     return true;
 }
 
@@ -1299,6 +1302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   filterPromos();
+  mountPromoAdsAfterBoot();
 
   const bindClick = (el, handler) => {
     if (el) el.addEventListener('click', handler);
@@ -1388,6 +1392,24 @@ window.addEventListener('beforeunload', () => {
 });
 
 let promoAdObserver = null;
+/** false until first filterPromos() finishes on boot — avoids insert→rebuild→delete race */
+let promoAdsAllowed = false;
+
+function removePromoAds(catalog) {
+    const root = catalog || elements.catalog;
+    if (!root) return;
+    root.querySelectorAll('.promo-ad-inline').forEach((ad) => {
+        ad.__adCancelled = true;
+        ad.__adFillResolved = true;
+        ad.remove();
+    });
+}
+
+function mountPromoAdsAfterBoot() {
+    promoAdsAllowed = true;
+    if (!elements.catalog) return;
+    insertInfeedAdsIntoCatalog(elements.catalog, window.innerWidth < 768 ? 10 : 5);
+}
 
 function createInlineAd() {
     const wrap = document.createElement('div');
@@ -1405,7 +1427,10 @@ function createInlineAd() {
 }
 
 function initPromoAdContainer(container) {
-    if (!container || container.dataset.adInit === '1') {
+    if (!container || container.__adCancelled || !container.isConnected) {
+        return;
+    }
+    if (container.dataset.adInit === '1') {
         return;
     }
     container.dataset.adInit = '1';
@@ -1444,7 +1469,7 @@ function lazyLoadAds() {
     }
 
     document.querySelectorAll('.promo-ad-inline').forEach(ad => {
-        if (ad.dataset.adObserved === '1') {
+        if (ad.dataset.adObserved === '1' || ad.__adCancelled) {
             return;
         }
         ad.dataset.adObserved = '1';
@@ -1453,7 +1478,7 @@ function lazyLoadAds() {
 }
 
 function insertInfeedAdsIntoCatalog(catalog, interval) {
-    if (!catalog) return;
+    if (!promoAdsAllowed || !catalog) return;
     const cards = Array.from(catalog.querySelectorAll('.promo-card'));
     if (!cards.length) return;
     const step = interval || 5;

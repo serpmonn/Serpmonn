@@ -1,5 +1,5 @@
 /**
- * Reverse image search: TinEye (SearXNG / official API) → Yandex CBIR → SauceNAO.
+ * Reverse image search: TinEye → SauceNAO (upload) → Yandex via SauceNAO URL → Yandex via serpmonn URL.
  * Фото временно кладётся в публичный каталог для движков, которым нужен URL.
  */
 
@@ -425,7 +425,8 @@ export async function reverseImageViaSauceNao(buffer, mime) {
       'User-Agent':
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     },
-    signal: AbortSignal.timeout(60000),
+    // Короткий timeout: 60с упиралось в nginx proxy_read_timeout и давало 504 пользователю
+    signal: AbortSignal.timeout(20000),
     redirect: 'follow'
   });
 
@@ -490,7 +491,9 @@ function parseSauceNaoHtml(html) {
 }
 
 /**
- * Orchestrates engines. Prefers TinEye, then SauceNAO (+ Yandex via hosted URL).
+ * Orchestrates engines.
+ * Порядок: TinEye API → TinEye/SearX → SauceNAO (байты) → Yandex через URL SauceNAO
+ * → прямой Yandex по serpmonn.ru (часто download_failed без IPv6 у краулера).
  * @param {{ buffer: Buffer, mime: string, publicUrl: string }} input
  */
 export async function reverseImageSearch(input) {
@@ -523,7 +526,50 @@ export async function reverseImageSearch(input) {
     attempts.push({ engine: 'tineye', error: err.message });
   }
 
-  // Прямой Yandex по URL serpmonn.ru (нужен рабочий IPv6/доступ с их краулера)
+  // Сначала SauceNAO по байтам — не зависит от доступа краулера к serpmonn.ru
+  let sauce = null;
+  try {
+    sauce = await reverseImageViaSauceNao(buffer, mime);
+    attempts.push({
+      engine: 'saucenao',
+      count: sauce.results.length,
+      hostedUrl: Boolean(sauce.hostedUrl)
+    });
+  } catch (err) {
+    attempts.push({ engine: 'saucenao', error: err.message });
+  }
+
+  // Яндекс через временный URL SauceNAO (их краулер обычно достучится до saucenao.com)
+  if (sauce?.hostedUrl) {
+    try {
+      const yandexViaHost = await reverseImageViaYandex(sauce.hostedUrl);
+      attempts.push({
+        engine: 'yandex-via-host',
+        count: yandexViaHost.results.length,
+        reason: yandexViaHost.reason
+      });
+      if (yandexViaHost.results.length) {
+        const merged = dedupeResults([
+          ...yandexViaHost.results,
+          ...(sauce.results || [])
+        ]);
+        return {
+          results: merged,
+          engine: 'yandex',
+          attempts,
+          imageUrl: publicUrl
+        };
+      }
+    } catch (err) {
+      attempts.push({ engine: 'yandex-via-host', error: err.message });
+    }
+  }
+
+  if (sauce?.results?.length) {
+    return { results: sauce.results, engine: 'saucenao', attempts, imageUrl: publicUrl };
+  }
+
+  // Последний шанс: прямой Yandex по URL serpmonn.ru
   try {
     const yandex = await reverseImageViaYandex(publicUrl);
     attempts.push({
@@ -536,40 +582,6 @@ export async function reverseImageSearch(input) {
     }
   } catch (err) {
     attempts.push({ engine: 'yandex', error: err.message });
-  }
-
-  try {
-    const sauce = await reverseImageViaSauceNao(buffer, mime);
-    attempts.push({ engine: 'saucenao', count: sauce.results.length });
-
-    // Запасной путь: Яндекс через временный URL SauceNAO
-    if (sauce.hostedUrl) {
-      try {
-        const yandexViaHost = await reverseImageViaYandex(sauce.hostedUrl);
-        attempts.push({
-          engine: 'yandex-via-host',
-          count: yandexViaHost.results.length,
-          reason: yandexViaHost.reason
-        });
-        if (yandexViaHost.results.length) {
-          const merged = dedupeResults([...yandexViaHost.results, ...sauce.results]);
-          return {
-            results: merged,
-            engine: 'yandex',
-            attempts,
-            imageUrl: publicUrl
-          };
-        }
-      } catch (err) {
-        attempts.push({ engine: 'yandex-via-host', error: err.message });
-      }
-    }
-
-    if (sauce.results.length) {
-      return { results: sauce.results, engine: 'saucenao', attempts, imageUrl: publicUrl };
-    }
-  } catch (err) {
-    attempts.push({ engine: 'saucenao', error: err.message });
   }
 
   return { results: [], engine: null, attempts, imageUrl: publicUrl };
