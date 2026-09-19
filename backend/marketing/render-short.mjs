@@ -181,15 +181,15 @@ async function resolveBrandLogo(brand) {
   const candidates = [
     brand?.logoFile,
     ...(Array.isArray(brand?.logoFallbacks) ? brand.logoFallbacks : []),
-    'serpmonn-3d-logo-realistic.png',
-    'serpmonn-3d-logo-realistic-gloss.png',
-    'logo.png'
+    'logos/serpmonn-3d-logo-realistic.png',
+    'logos/serpmonn-3d-logo-realistic-gloss.png',
+    'logos/logo.png'
   ].filter(Boolean);
   for (const name of candidates) {
     const abs = join(BRAND_DIR, String(name));
     if (await exists(abs)) return abs;
   }
-  return join(BRAND_DIR, 'logo.png');
+  return join(BRAND_DIR, 'logos/logo.png');
 }
 
 /**
@@ -359,8 +359,9 @@ export async function renderShort({
   const dual = uniqueStills.length >= 2;
 
   const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const rel = `out/${product}-${stamp}.mp4`;
+  const rel = `out/renders/${product}-${stamp}.mp4`;
   const abs = join(MARKETING_ROOT, rel);
+  await mkdir(join(MARKETING_ROOT, 'out/renders'), { recursive: true });
 
   const caption = await buildCaptionOverlay({
     title,

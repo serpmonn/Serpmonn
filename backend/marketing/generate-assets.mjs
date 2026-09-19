@@ -12,17 +12,17 @@ import {
 } from './gigachat-guard.mjs';
 import { MARKETING_ROOT, resolveMarketingMedia } from './render-short.mjs';
 
-const FALLBACK_IMAGE = 'brand/logo.png';
+const FALLBACK_IMAGE = 'brand/logos/logo.png';
 
 /** Статичные brand-кадры (последний рубеж). */
 const STILL_POOL = [
-  'brand/serpmonn-ads-banner-v2.png',
-  'brand/serpmonn-ads-3d-mockup.png',
-  'brand/serpmonn-ads-3d-logo.png',
-  'brand/serpmonn-3d-logo-realistic.png',
-  'brand/serpmonn-3d-logo-standing.png',
-  'brand/serpmonn-ads-avatar-800.png',
-  'brand/serpmonn-banner.png',
+  'brand/ads/serpmonn-ads-banner-v2.png',
+  'brand/ads/serpmonn-ads-3d-mockup.png',
+  'brand/ads/serpmonn-ads-3d-logo.png',
+  'brand/logos/serpmonn-3d-logo-realistic.png',
+  'brand/logos/serpmonn-3d-logo-standing.png',
+  'brand/ads/serpmonn-ads-avatar-800.png',
+  'brand/banners/serpmonn-banner.png',
   'assets/clips/neli-promo.png',
   FALLBACK_IMAGE
 ];
@@ -56,10 +56,10 @@ export function pickAlternateStill(exclude = [], product = '') {
     ...STILL_POOL
   ];
   if (p === 'neon_runner' || p === 'serphold' || p === 'games') {
-    pool.push('brand/serpmonn-ads-3d-mockup.png', 'brand/serpmonn-ads-banner-v2.png');
+    pool.push('brand/ads/serpmonn-ads-3d-mockup.png', 'brand/ads/serpmonn-ads-banner-v2.png');
   }
   if (p === 'partners') {
-    pool.push('brand/serpmonn-ads-banner-compose.png');
+    pool.push('brand/ads/serpmonn-ads-banner-compose.png');
   }
   for (const rel of pool) {
     if (skip.has(rel)) continue;

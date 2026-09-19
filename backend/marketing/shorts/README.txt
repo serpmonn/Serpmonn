@@ -1,13 +1,15 @@
 Превью Shorts (локально, не с сайта).
 Файлы: /var/www/serpmonn.ru/backend/marketing/out/shorts-preview/
-Готовые к YouTube: /var/www/serpmonn.ru/backend/marketing/out/*-short-serpmonn.mp4
+Готовые к YouTube: /var/www/serpmonn.ru/backend/marketing/out/shorts/
 Заметки: /var/www/serpmonn.ru/backend/marketing/shorts/
 
 Формат: геймплей + звук, без CTA.
 Название: EN | RU (две аудитории сразу).
 
 Выложено (YouTube / Serpmonn Ads):
-- Neon — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
+- Serphold — Hold the wall… / Удержи стену… — https://youtube.com/shorts/c9ocpDE2yLQ
+- Neon EN — Almost made it… / Почти успел… — https://youtube.com/shorts/u4bWu-za_Ko
+- Neon (ранее) — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
 - Snake — One more turn… — https://youtube.com/shorts/ajp_FD8ihZc
 - Flappy — So close… — https://youtube.com/shorts/aErIqeZ95nw
 - Breakout — One more brick… — https://youtube.com/shorts/y1ew8rKD0MI
@@ -24,11 +26,13 @@
 Ещё без Shorts на канале: —
 
 Готово к проверке:
-- —
-Публичные превью: https://serpmonn.ru/shorts-preview/
+—
+Публичные превью:
+- https://serpmonn.ru/shorts-preview/neon-preview-en-serpmonn.mp4
+- https://serpmonn.ru/shorts-preview/serphold-preview-en-serpmonn.mp4
 
 Готово локально, но уже выложено (не предлагать снова):
-- neli / rat / snake / coins / redsquare / redsquare2 / minesweeper / breakout / 2048 / flappy / fifteen / typing
+- neli / rat / snake / coins / redsquare / redsquare2 / minesweeper / breakout / 2048 / flappy / fifteen / typing / neon EN / serphold
 
 EN-файлы (*-preview-en.mp4) — основной набор для выкладки:
 1) snake-preview-en.mp4
