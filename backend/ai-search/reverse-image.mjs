@@ -8,6 +8,7 @@ import { mkdir, writeFile, unlink, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
+import { SEARCH_LOG_TTL_DAYS } from './search-log-ttl.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '../..');
@@ -19,8 +20,10 @@ const PUBLIC_BASE = String(
 
 const MAX_BYTES = Number(process.env.REVERSE_IMAGE_MAX_BYTES) || 2 * 1024 * 1024;
 const TTL_MS = Number(process.env.REVERSE_IMAGE_TTL_MS) || 15 * 60 * 1000;
+/** Архив фото для админки — тот же срок, что и search_query_log (5 лет по умолчанию). */
 const LOG_IMAGE_TTL_MS =
-  Number(process.env.SEARCH_LOG_IMAGE_TTL_MS) || 30 * 24 * 60 * 60 * 1000;
+  Number(process.env.SEARCH_LOG_IMAGE_TTL_MS) ||
+  SEARCH_LOG_TTL_DAYS * 24 * 60 * 60 * 1000;
 const TINEYE_API_KEY = String(process.env.TINEYE_API_KEY || '').trim();
 const TINEYE_API_USER = String(process.env.TINEYE_API_USER || '').trim();
 

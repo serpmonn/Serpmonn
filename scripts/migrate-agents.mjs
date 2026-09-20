@@ -5,7 +5,7 @@
 import dotenv from 'dotenv';
 import { resolve } from 'path';
 
-dotenv.config({ path: resolve(process.cwd(), 'backend/.env') });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 import { createAgentsTable } from '../backend/agents/agents.model.mjs';
 import { createSubscriptionsTable } from '../backend/agents/subscriptions.model.mjs';

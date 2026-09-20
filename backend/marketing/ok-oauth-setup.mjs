@@ -18,7 +18,7 @@
 import dotenv from 'dotenv';
 import { createInterface } from 'readline';
 
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 const appId = String(process.env.MARKETING_OK_APPLICATION_ID || '').trim();
 const redirectUri =

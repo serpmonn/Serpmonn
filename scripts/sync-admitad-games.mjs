@@ -11,8 +11,8 @@ import dotenv from 'dotenv';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 
-dotenv.config({ path: path.join(ROOT, 'backend/.env') });
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 const GAMES_FILE = path.join(ROOT, 'assembly/site/_data/localesGames.json');
 const ADMITAD_LEGAL_FILE = path.join(ROOT, 'assembly/site/_data/admitadLegal.json');

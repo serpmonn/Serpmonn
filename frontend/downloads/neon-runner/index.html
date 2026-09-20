@@ -62,7 +62,7 @@
       inset: 0 -8% auto;
       height: 70%;
       background:
-        url("/frontend/downloads/neon-runner/poster-ru.jpg") center/cover no-repeat;
+        url("/frontend/downloads/neon-runner/poster-ru.jpg?v=7") center/cover no-repeat;
       opacity: 0.28;
       filter: saturate(1.2) contrast(1.05);
       mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
@@ -147,7 +147,7 @@
     }
     .shots {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.85rem;
     }
     .shots figure {
@@ -156,8 +156,10 @@
     .shots img {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
+      height: auto;
+      aspect-ratio: 20 / 9;
+      object-fit: contain;
+      object-position: center;
       border-radius: 14px;
       border: 1px solid var(--line);
       background: #0c1220;
@@ -212,52 +214,72 @@
     <section class="hero" aria-labelledby="neon-title">
       <img class="hero-icon" src="/frontend/downloads/neon-runner/icon-176.png" width="88" height="88" alt="Neon Runner" decoding="async">
       <h1 id="neon-title" class="brand">Neon Runner</h1>
-      <p class="lead">Бесконечный неоновый раннер для Android. Уворачивайся от препятствий, держи темп, ставь рекорды.</p>
+      <p class="lead">Бесконечный неоновый раннер для Android. Классика и Шторм, скины, ежедневный вызов — держи темп и ставь рекорды.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.0.1.apk" download="Neon-Runner-1.0.1.apk">Скачать APK</a>
+        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.1.2.apk" download="Neon-Runner-1.1.2.apk">Скачать APK</a>
         <a class="btn btn-ghost" href="https://www.rustore.ru/catalog/app/com.mobilearcade.neon_runner" target="_blank" rel="noopener">Открыть в RuStore</a>
         <a class="btn btn-ghost" href="#gameplay">Смотреть геймплей</a>
       </div>
-      <p class="meta">Android · бесплатно · Serpmonn · версия 1.0.1</p>
+      <p class="meta">Android · бесплатно · Serpmonn · версия 1.1.2</p>
     </section>
 
     <section aria-labelledby="shots-title">
       <h2 id="shots-title" class="section-title">Скриншоты</h2>
-      <p class="section-note">Кадры из меню и забега — как выглядит игра на устройстве.</p>
+      <p class="section-note">Меню, скины, классика (RU/EN), Шторм и экран конца.</p>
       <div class="shots">
         <figure>
-          <img src="/frontend/downloads/neon-runner/rustore-phone/01-menu.jpg" alt="Главное меню Neon Runner" width="960" height="540" loading="eager">
+          <img src="/frontend/downloads/neon-runner/rustore-phone/01-menu.jpg?v=5" alt="Главное меню Neon Runner" width="960" height="540" loading="eager">
           <figcaption>Меню</figcaption>
         </figure>
         <figure>
-          <img src="/frontend/downloads/neon-runner/rustore-phone/02-gameplay.jpg" alt="Геймплей Neon Runner" width="960" height="540" loading="lazy">
-          <figcaption>Забег</figcaption>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/02-skins.jpg?v=5" alt="Скины Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Скины</figcaption>
         </figure>
         <figure>
-          <img src="/frontend/downloads/neon-runner/rustore-phone/03-obstacles.jpg" alt="Препятствия в Neon Runner" width="960" height="540" loading="lazy">
-          <figcaption>Препятствия</figcaption>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/03-gameplay-classic.jpg?v=7" alt="Геймплей классика Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Классика</figcaption>
         </figure>
         <figure>
-          <img src="/frontend/downloads/neon-runner/rustore-phone/04-game-over.jpg" alt="Экран окончания игры Neon Runner" width="960" height="540" loading="lazy">
-          <figcaption>Финиш раунда</figcaption>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/04-gameplay-classic-en.jpg?v=7" alt="Classic gameplay Neon Runner EN" width="960" height="540" loading="lazy">
+          <figcaption>Classic · EN</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/05-gameplay-storm.jpg?v=7" alt="Геймплей Шторм" width="960" height="540" loading="lazy">
+          <figcaption>Шторм</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/06-game-over.jpg?v=5" alt="Конец игры Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Конец раунда</figcaption>
         </figure>
       </div>
     </section>
 
     <section id="gameplay" aria-labelledby="videos-title">
       <h2 id="videos-title" class="section-title">Геймплей</h2>
-      <p class="section-note">Видео геймплея на русском и английском.</p>
+      <p class="section-note">Классика и Шторм — на русском и английском.</p>
       <div class="videos">
         <div class="video-card">
-          <h3>Русский</h3>
-          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-ru.jpg">
-            <source src="/frontend/downloads/neon-runner/gameplay-ru.mp4" type="video/mp4">
+          <h3>Классика · RU</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-ru.jpg?v=7">
+            <source src="/frontend/downloads/neon-runner/gameplay-ru.mp4?v=7" type="video/mp4">
           </video>
         </div>
         <div class="video-card">
-          <h3>English</h3>
-          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-en.jpg">
-            <source src="/frontend/downloads/neon-runner/gameplay-en.mp4" type="video/mp4">
+          <h3>Классика · EN</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-en.jpg?v=7">
+            <source src="/frontend/downloads/neon-runner/gameplay-en.mp4?v=7" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-card">
+          <h3>Шторм · RU</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-storm-ru.jpg?v=7">
+            <source src="/frontend/downloads/neon-runner/gameplay-storm-ru.mp4?v=7" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-card">
+          <h3>Шторм · EN</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-storm-en.jpg?v=7">
+            <source src="/frontend/downloads/neon-runner/gameplay-storm-en.mp4?v=7" type="video/mp4">
           </video>
         </div>
       </div>
@@ -266,7 +288,7 @@
     <div class="footer-cta">
       <p class="lead" style="max-width:28rem">Готов играть — скачай APK или установи из RuStore.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.0.1.apk" download="Neon-Runner-1.0.1.apk">Скачать Neon Runner</a>
+        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.1.2.apk" download="Neon-Runner-1.1.2.apk">Скачать Neon Runner</a>
         <a class="btn btn-ghost" href="https://www.rustore.ru/catalog/app/com.mobilearcade.neon_runner" target="_blank" rel="noopener">Открыть в RuStore</a>
       </div>
     </div>

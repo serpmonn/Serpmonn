@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 
-dotenv.config({ path: path.join(ROOT, 'backend/.env') });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 const FRONTEND_PATH = path.join(ROOT, 'frontend');
 const DIST_PATH = path.join(ROOT, 'assembly/dist/frontend');

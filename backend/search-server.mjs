@@ -19,7 +19,7 @@ import voiceRoutes from './voice/voiceRoutes.mjs';
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envPath =
   nodeEnv === 'production'
-    ? '/var/www/serpmonn.ru/backend/.env'
+    ? '/etc/serpmonn/backend.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath });
