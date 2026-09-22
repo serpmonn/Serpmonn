@@ -1,17 +1,24 @@
-import express from 'express';                                                                                                  // Импортируем Express для создания маршрутов
-import rateLimit from 'express-rate-limit';                                                                                     // Импортируем express-rate-limit для ограничения запросов
-import verifyToken from '../verifyToken.mjs';                                                                                   // Импортируем middleware для проверки токена
-import { createMailbox } from './onnmailController.mjs';                                                          // Импортируем функции контроллеров
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import verifyToken from '../verifyToken.mjs';
+import { createMailbox, changeMailboxPassword, linkMailbox } from './onnmailController.mjs';
 
-const router = express.Router();                                                                                                // Создаем экземпляр маршрутизатора Express
+const router = express.Router();
 
-// Rate Limiting
-const apiLimiter = rateLimit({                                                                                                  // Настраиваем ограничение скорости запросов
-    windowMs: 15 * 60 * 1000,                                                                                                   // Устанавливаем окно в 15 минут
-    max: 100,                                                                                                                   // Устанавливаем максимум 100 запросов
-    message: 'Слишком много запросов, попробуйте позже'                                                                         // Указываем сообщение при превышении лимита
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Слишком много запросов, попробуйте позже'
 });
 
-router.post('/create-mailbox', apiLimiter, verifyToken, createMailbox);                                                         // Определяем POST маршрут для регистрации почтового ящика
+const passwordLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: 'Слишком много запросов, попробуйте позже'
+});
 
-export default router;                                                                                                          // Экспортируем маршрутизатор для использования в приложении
+router.post('/create-mailbox', apiLimiter, verifyToken, createMailbox);
+router.post('/change-password', passwordLimiter, verifyToken, changeMailboxPassword);
+router.post('/link-mailbox', passwordLimiter, verifyToken, linkMailbox);
+
+export default router;

@@ -1392,8 +1392,20 @@ const INBOX_APP_CSS = `
     overflow: hidden;
     background: #f3f4f6;
   }
+  .finding-dm-photo__open {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: zoom-in;
+    line-height: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
   .finding-dm-photo img,
-  .finding-dm-photo__frame > img {
+  .finding-dm-photo__frame > img,
+  .finding-dm-photo__open img {
     display: block;
     width: 100%;
     max-width: 240px;
@@ -1433,12 +1445,77 @@ const INBOX_APP_CSS = `
     overflow: hidden;
     background: #f3f4f6;
   }
+  .finding-dm-compose__pending-frame .finding-dm-photo__open {
+    width: 100%;
+    height: 100%;
+  }
   .finding-dm-compose__pending-frame .finding-dm-media__download {
     right: 3px;
     bottom: 3px;
     width: 22px;
     height: 22px;
     border-radius: 6px;
+  }
+  .dm-photo-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483640;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  }
+  .dm-photo-lightbox[hidden] {
+    display: none !important;
+  }
+  .dm-photo-lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+  }
+  .dm-photo-lightbox__stage {
+    position: relative;
+    z-index: 1;
+    max-width: min(96vw, 1200px);
+    max-height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dm-photo-lightbox__img {
+    display: block;
+    max-width: min(96vw, 1200px);
+    max-height: 92vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .dm-photo-lightbox__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.72);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  body.dm-photo-lightbox-open {
+    overflow: hidden;
   }
   .finding-dm-audio {
     display: flex;
@@ -1652,7 +1729,7 @@ const INBOX_APP_CSS = `
   }
 `;
 
-const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=61';
+const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=62';
 
 let findingsUiReady = null;
 function ensureFindingsUiInApp() {
@@ -2983,6 +3060,16 @@ document.addEventListener('click', (e) => {
 
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
+  if (ev.data.type === 'spn-app-open-mail') {
+    const mailUrl = ev.data.url || catalog?.links?.mail || '/mail/';
+    const mailTitle = ev.data.title || 'Почта';
+    try {
+      openViewer(mailUrl, mailTitle);
+    } catch (err) {
+      console.warn('spn-app-open-mail', err);
+    }
+    return;
+  }
   if (ev.data.type === 'spn-app-close-viewer') {
     try { closeViewer(); } catch (_) {}
     return;
@@ -4044,7 +4131,7 @@ function ensureInboxShellStyles() {
       }
       style.textContent = INBOX_APP_CSS;
       await Promise.all([
-        loadStylesheet('/frontend/styles/styles.css?v=dm-links1', 'spn-site-css-for-inbox'),
+        loadStylesheet('/frontend/styles/styles.css?v=dm-lightbox1', 'spn-site-css-for-inbox'),
         loadStylesheet('/frontend/profile/profile_styles.css?v=avatar-crop', 'spn-profile-css-for-inbox'),
         loadStylesheet('/frontend/find/find-view.css?v=app-inbox', 'spn-findview-css-for-inbox'),
       ]);

@@ -334,7 +334,9 @@ export function renderChatMessage(msg, t) {
   const photoHtml = hasPhoto
     ? `<figure class="finding-dm-photo">
         <div class="finding-dm-photo__frame">
-          <img src="${escapeHtml(msg.imageUrl)}" alt="${escapeHtml(t('dmPhotoAttachment'))}" loading="lazy" decoding="async">
+          <button type="button" class="finding-dm-photo__open" data-action="open-dm-photo" data-media-url="${escapeHtml(msg.imageUrl)}" aria-label="${escapeHtml(t('dmPhotoOpen'))}">
+            <img src="${escapeHtml(msg.imageUrl)}" alt="${escapeHtml(t('dmPhotoAttachment'))}" loading="lazy" decoding="async">
+          </button>
           ${renderMediaDownload(msg.imageUrl, t)}
         </div>
       </figure>`
@@ -396,7 +398,9 @@ export function renderChatComposeBar(t, pendingFinding = null, pendingPhoto = nu
   const pendingPhotoHtml = pendingPhoto?.previewUrl
     ? `<div class="finding-dm-compose__pending finding-dm-compose__pending--photo">
         <div class="finding-dm-photo__frame finding-dm-compose__pending-frame">
-          <img class="finding-dm-compose__pending-thumb" src="${escapeHtml(pendingPhoto.previewUrl)}" alt="" draggable="false">
+          <button type="button" class="finding-dm-photo__open" data-action="open-dm-photo" data-media-url="${escapeHtml(pendingPhoto.previewUrl)}" aria-label="${escapeHtml(t('dmPhotoOpen'))}">
+            <img class="finding-dm-compose__pending-thumb" src="${escapeHtml(pendingPhoto.previewUrl)}" alt="" draggable="false">
+          </button>
           ${renderMediaDownload(pendingPhoto.previewUrl, t, pendingPhoto.name || 'photo.jpg')}
         </div>
         <span class="finding-dm-compose__pending-label">${escapeHtml(t('dmPhotoAttachment'))}</span>

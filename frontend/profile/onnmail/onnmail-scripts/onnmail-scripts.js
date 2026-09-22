@@ -1,10 +1,14 @@
-import { getFrontendPath, redirectToAuth } from '../../../scripts/locale-paths.js';
+import { getFrontendPath, redirectToAuth, safeAssignLocation } from '../../../scripts/locale-paths.js';
 import { getPageT } from '../../../scripts/i18n-loader.js';
 
 const registerForm = document.getElementById('registerForm');
 const statusMessage = document.getElementById('statusMessage');
 let csrfToken = '';
 let t = (key) => key;
+
+function goProfile() {
+    safeAssignLocation(getFrontendPath('profile/profile.html'));
+}
 
 const checkUserStatus = async () => {
     try {
@@ -13,14 +17,15 @@ const checkUserStatus = async () => {
         });
 
         if (!response.ok) {
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
             if (response.status === 401) {
                 statusMessage.textContent = data.message || t('onnmail.loginRequired');
                 redirectToAuth({ tab: 'login' });
                 return false;
             }
             if (response.status === 403) {
-                statusMessage.textContent = data.message || t('onnmail.accessDenied');
+                // Ящик уже есть — не показываем «Готово», сразу в профиль
+                goProfile();
                 return false;
             }
             throw new Error('unauthorized');
@@ -31,10 +36,10 @@ const checkUserStatus = async () => {
             return false;
         }
         if (data.mailbox_created) {
-            statusMessage.textContent = t('onnmail.alreadyCreated');
+            goProfile();
             return false;
         }
-        registerForm.style.display = 'block';
+        registerForm.classList.remove('is-hidden');
         return true;
     } catch (error) {
         console.error('Onnmail status check error:', error);
@@ -52,6 +57,7 @@ const handleRegister = async (e) => {
     const messageEl = document.getElementById('registerMessage');
 
     messageEl.textContent = '';
+    messageEl.style.color = 'red';
 
     if (password !== passwordConfirm) {
         messageEl.textContent = t('onnmail.passwordMismatch');
@@ -85,17 +91,16 @@ const handleRegister = async (e) => {
 
         if (!response.ok) {
             messageEl.textContent = data.message || t('onnmail.registerError');
-            messageEl.style.color = 'red';
             return;
         }
 
-        window.location.href = 'https://serpmonn.ru/mail/';
+        // Адрес и смена пароля — в профиле; пароль пользователь только что задал сам
+        goProfile();
     } catch (error) {
         console.error('Onnmail registration error:', error);
         messageEl.textContent = error.message?.includes('already exists')
             ? t('onnmail.mailboxExists')
             : (error.message || t('onnmail.registerError'));
-        messageEl.style.color = 'red';
     }
 };
 
@@ -110,6 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Onnmail CSRF token error:', error);
     }
+
     const canRegister = await checkUserStatus();
     if (canRegister) {
         registerForm.addEventListener('submit', handleRegister);

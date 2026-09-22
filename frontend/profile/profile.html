@@ -282,16 +282,52 @@
 
     <!-- Профиль -->
     <section id="tab-profile" class="profile-panel profile-panel--active" role="tabpanel" data-profile-panel="profile" aria-labelledby="tab-btn-profile">
-      <div class="profile-panel-block">
-        <h2 class="profile-panel__heading">Бесплатная почта @onnmail</h2>
-        <p class="profile-panel__hint">Бесплатная почта на @onnmail.ru. Создайте ящик и пользуйтесь им свободно.</p>
+      <div class="profile-panel-block" id="onnmailBlock">
+        <h2 class="profile-panel__heading" id="onnmailHeading">Почта @onnmail</h2>
+        <p class="profile-panel__hint" id="onnmailHint">Бесплатная почта на @onnmail.ru. Создайте ящик и пользуйтесь им свободно.</p>
         <div class="profile-onnmail-actions">
-          <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
+          <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             Создать
           </button>
-          <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
-            Открыть
+          <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            Войти в почту
           </button>
+          <button id="linkOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            Привязать ящик
+          </button>
+          <button id="changeOnnmailPasswordButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            Сменить пароль
+          </button>
+        </div>
+      </div>
+
+      <div id="onnmailPasswordModal" class="messenger-modal profile-onnmail-modal" hidden>
+        <div class="messenger-modal__backdrop" data-onnmail-modal-close></div>
+        <div class="messenger-modal__card profile-onnmail-modal__card" role="dialog" aria-modal="true" aria-labelledby="onnmailPasswordTitle">
+          <h3 id="onnmailPasswordTitle">Смена пароля @onnmail</h3>
+          <p class="messenger-modal__hint" id="onnmailPasswordHint"></p>
+          <form id="onnmailPasswordForm" class="profile-onnmail-form">
+            <label class="profile-onnmail-form__label" for="onnmailAccountPassword">Пароль Serpmonn</label>
+            <input type="password" id="onnmailAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+            <div id="onnmailLinkFields" hidden>
+              <label class="profile-onnmail-form__label" for="onnmailLinkLocalPart">Логин ящика</label>
+              <div class="profile-onnmail-form__suffix">
+                <input type="text" id="onnmailLinkLocalPart" class="profile-onnmail-form__input" autocomplete="off" />
+                <span>@onnmail.ru</span>
+              </div>
+              <label class="profile-onnmail-form__label" for="onnmailCurrentMailPassword">Текущий пароль почты</label>
+              <input type="password" id="onnmailCurrentMailPassword" class="profile-onnmail-form__input" autocomplete="off" />
+            </div>
+            <div id="onnmailNewPasswordFields">
+              <label class="profile-onnmail-form__label" for="onnmailNewPassword">Новый пароль почты</label>
+              <input type="password" id="onnmailNewPassword" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+              <label class="profile-onnmail-form__label" for="onnmailNewPasswordConfirm">Повторите пароль</label>
+              <input type="password" id="onnmailNewPasswordConfirm" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+            </div>
+            <p id="onnmailPasswordMessage" class="messenger-modal__status profile-onnmail-form__status" role="status"></p>
+            <button type="submit" class="profile-btn profile-btn--primary profile-btn--block" id="onnmailPasswordSubmit">Сохранить</button>
+            <button type="button" class="profile-btn profile-btn--ghost profile-btn--block" data-onnmail-modal-close>Отмена</button>
+          </form>
         </div>
       </div>
 

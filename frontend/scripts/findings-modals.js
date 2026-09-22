@@ -23,7 +23,7 @@ import {
   renderNotificationItem,
   renderActivityEmpty,
   downloadDmMedia,
-} from './dm-chat.js?v=47';
+} from './dm-chat.js?v=48';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 import { checkLoggedIn } from './auth-session.js';
@@ -1435,10 +1435,81 @@ async function openDmFindingPicker(onSelect) {
   });
 }
 
+function isOpenableDmPhotoUrl(url) {
+  if (typeof url !== 'string' || !url) return false;
+  if (url.startsWith('blob:')) return true;
+  return /^\/uploads\/dm\/[A-Za-z0-9._-]+\.webp$/.test(url);
+}
+
+function ensureDmPhotoLightbox() {
+  let root = document.getElementById('dm-photo-lightbox');
+  if (root) return root;
+  root = document.createElement('div');
+  root.id = 'dm-photo-lightbox';
+  root.className = 'dm-photo-lightbox';
+  root.hidden = true;
+  root.setAttribute('role', 'dialog');
+  root.setAttribute('aria-modal', 'true');
+  root.setAttribute('aria-label', tk('dmPhotoAttachment'));
+  const closeLabel = tk('dmPhotoClose');
+  root.innerHTML = `
+    <button type="button" class="dm-photo-lightbox__backdrop" data-dm-lightbox-close aria-label="${escapeHtml(closeLabel)}"></button>
+    <div class="dm-photo-lightbox__stage">
+      <img class="dm-photo-lightbox__img" alt="">
+      <button type="button" class="dm-photo-lightbox__close" data-dm-lightbox-close aria-label="${escapeHtml(closeLabel)}">×</button>
+    </div>`;
+  document.body.appendChild(root);
+
+  const close = () => {
+    root.hidden = true;
+    const img = root.querySelector('.dm-photo-lightbox__img');
+    if (img) {
+      img.removeAttribute('src');
+      img.alt = '';
+    }
+    document.body.classList.remove('dm-photo-lightbox-open');
+  };
+
+  root.addEventListener('click', (event) => {
+    if (event.target.closest('[data-dm-lightbox-close]')) {
+      event.preventDefault();
+      close();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !root.hidden) close();
+  });
+
+  root._spnClose = close;
+  return root;
+}
+
+function openDmPhotoLightbox(url, alt = '') {
+  if (!isOpenableDmPhotoUrl(url)) return;
+  const root = ensureDmPhotoLightbox();
+  const img = root.querySelector('.dm-photo-lightbox__img');
+  if (img) {
+    img.src = url;
+    img.alt = alt || '';
+  }
+  root.hidden = false;
+  document.body.classList.add('dm-photo-lightbox-open');
+}
+
 function ensureMediaDownloadHandlers(modal) {
   if (!modal || modal.dataset.mediaDownloadBound) return;
   modal.dataset.mediaDownloadBound = '1';
   modal.addEventListener('click', async (event) => {
+    const openPhoto = event.target.closest?.('[data-action="open-dm-photo"]');
+    if (openPhoto) {
+      event.preventDefault();
+      event.stopPropagation();
+      const url = openPhoto.getAttribute('data-media-url') || '';
+      const img = openPhoto.querySelector('img');
+      openDmPhotoLightbox(url, img?.getAttribute('alt') || '');
+      return;
+    }
     const link = event.target.closest?.('a.finding-dm-bubble__link');
     if (link) {
       const href = String(link.getAttribute('href') || '').trim();

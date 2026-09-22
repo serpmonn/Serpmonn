@@ -165,10 +165,18 @@
       </tr></thead><tbody>${offers.map((o) => {
         const path = o.trackPath || o.trackUrl || '';
         const trackUrl = path.startsWith('http') ? path : `${location.origin}${path}`;
+        const cond = String(o.conditions || '').trim();
+        const condLong = cond.length > 120;
+        const condBlock = cond
+          ? `<div class="partners-offer-conditions${condLong ? '' : ' is-expanded'}">
+              <div class="partners-offer-conditions__text">${escapeHtml(cond)}</div>
+              ${condLong ? `<button type="button" class="partners-offer-conditions__more js-cond-more" aria-expanded="false">${t('catalog.more')}</button>` : ''}
+            </div>`
+          : '';
         return `<tr>
         <td><div class="partners-offer-title">${escapeHtml(o.title)}</div>
           ${o.promocode ? `<div class="partners-mono">код: ${escapeHtml(o.promocode)}</div>` : ''}
-          <div class="partners__lead" style="margin:4px 0 0">${escapeHtml(o.conditions || '')}</div>
+          ${condBlock}
         </td>
         <td>${o.type}</td>
         <td>${escapeHtml(o.commission_text || '—')}</td>
@@ -190,6 +198,15 @@
           } catch {
             btn.textContent = t('postback.copyFail');
           }
+        });
+      });
+      offersEl.querySelectorAll('.js-cond-more').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const wrap = btn.closest('.partners-offer-conditions');
+          if (!wrap) return;
+          const open = wrap.classList.toggle('is-expanded');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          btn.textContent = open ? t('catalog.less') : t('catalog.more');
         });
       });
     }

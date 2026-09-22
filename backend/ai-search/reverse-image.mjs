@@ -458,7 +458,7 @@ function parseSauceNaoHtml(html) {
     const sim = block.match(/resultsimilarityinfo">([\d.]+)%/);
     const score = sim ? Number(sim[1]) : null;
     // Skip weak matches
-    if (score != null && score < 50) continue;
+    if (score != null && score < 40) continue;
 
     const title = block.match(/resulttitle">([\s\S]*?)<\/div>/i);
     const cleanTitle = String(title?.[1] || '')
@@ -495,8 +495,7 @@ function parseSauceNaoHtml(html) {
 
 /**
  * Orchestrates engines.
- * Порядок: TinEye API → TinEye/SearX → SauceNAO (байты) → Yandex через URL SauceNAO
- * → прямой Yandex по serpmonn.ru (часто download_failed без IPv6 у краулера).
+ * Порядок: TinEye API → TinEye/SearX → SauceNAO+Yandex параллельно → Yandex via SauceNAO host.
  * @param {{ buffer: Buffer, mime: string, publicUrl: string }} input
  */
 export async function reverseImageSearch(input) {
@@ -508,7 +507,7 @@ export async function reverseImageSearch(input) {
       const api = await reverseImageViaTinEyeApi(buffer, mime);
       attempts.push({ engine: api.engine, count: api.results.length });
       if (api.results.length) {
-        return { results: api.results, engine: api.engine, attempts, imageUrl: publicUrl };
+        return { results: api.results, engine: api.engine, attempts, imageUrl: publicUrl, emptyReason: null };
       }
     } catch (err) {
       attempts.push({ engine: 'tineye-api', error: err.message });
@@ -523,26 +522,58 @@ export async function reverseImageSearch(input) {
       unresponsive: searx.unresponsive
     });
     if (searx.results.length) {
-      return { results: searx.results, engine: 'tineye', attempts, imageUrl: publicUrl };
+      return { results: searx.results, engine: 'tineye', attempts, imageUrl: publicUrl, emptyReason: null };
     }
   } catch (err) {
     attempts.push({ engine: 'tineye', error: err.message });
   }
 
-  // Сначала SauceNAO по байтам — не зависит от доступа краулера к serpmonn.ru
+  // SauceNAO по байтам + прямой Yandex по нашему URL — параллельно
+  const [sauceSettled, yandexDirectSettled] = await Promise.allSettled([
+    reverseImageViaSauceNao(buffer, mime),
+    reverseImageViaYandex(publicUrl)
+  ]);
+
   let sauce = null;
-  try {
-    sauce = await reverseImageViaSauceNao(buffer, mime);
+  if (sauceSettled.status === 'fulfilled') {
+    sauce = sauceSettled.value;
     attempts.push({
       engine: 'saucenao',
       count: sauce.results.length,
       hostedUrl: Boolean(sauce.hostedUrl)
     });
-  } catch (err) {
-    attempts.push({ engine: 'saucenao', error: err.message });
+  } else {
+    attempts.push({ engine: 'saucenao', error: sauceSettled.reason?.message || 'failed' });
   }
 
-  // Яндекс через временный URL SauceNAO (их краулер обычно достучится до saucenao.com)
+  if (yandexDirectSettled.status === 'fulfilled') {
+    const yandex = yandexDirectSettled.value;
+    attempts.push({
+      engine: 'yandex',
+      count: yandex.results.length,
+      reason: yandex.reason
+    });
+    if (yandex.results.length) {
+      const merged = dedupeResults([
+        ...yandex.results,
+        ...(sauce?.results || [])
+      ]);
+      return {
+        results: merged,
+        engine: 'yandex',
+        attempts,
+        imageUrl: publicUrl,
+        emptyReason: null
+      };
+    }
+  } else {
+    attempts.push({
+      engine: 'yandex',
+      error: yandexDirectSettled.reason?.message || 'failed'
+    });
+  }
+
+  // Яндекс через временный URL SauceNAO
   if (sauce?.hostedUrl) {
     try {
       const yandexViaHost = await reverseImageViaYandex(sauce.hostedUrl);
@@ -560,7 +591,8 @@ export async function reverseImageSearch(input) {
           results: merged,
           engine: 'yandex',
           attempts,
-          imageUrl: publicUrl
+          imageUrl: publicUrl,
+          emptyReason: null
         };
       }
     } catch (err) {
@@ -569,25 +601,26 @@ export async function reverseImageSearch(input) {
   }
 
   if (sauce?.results?.length) {
-    return { results: sauce.results, engine: 'saucenao', attempts, imageUrl: publicUrl };
+    return {
+      results: sauce.results,
+      engine: 'saucenao',
+      attempts,
+      imageUrl: publicUrl,
+      emptyReason: null
+    };
   }
 
-  // Последний шанс: прямой Yandex по URL serpmonn.ru
-  try {
-    const yandex = await reverseImageViaYandex(publicUrl);
-    attempts.push({
-      engine: 'yandex',
-      count: yandex.results.length,
-      reason: yandex.reason
-    });
-    if (yandex.results.length) {
-      return { results: yandex.results, engine: 'yandex', attempts, imageUrl: publicUrl };
-    }
-  } catch (err) {
-    attempts.push({ engine: 'yandex', error: err.message });
-  }
+  const engineErrors = attempts.filter((a) => a.error).length;
+  const emptyReason =
+    engineErrors >= Math.max(1, attempts.length - 1) ? 'engines_failed' : 'no_matches';
 
-  return { results: [], engine: null, attempts, imageUrl: publicUrl };
+  return {
+    results: [],
+    engine: null,
+    attempts,
+    imageUrl: publicUrl,
+    emptyReason
+  };
 }
 
 function dedupeResults(items) {

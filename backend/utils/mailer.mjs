@@ -128,6 +128,46 @@ export async function sendConfirmationEmail(to, confirmLink) {
   }
 }
 
+export async function sendMailboxPasswordChangedEmail(to, { mailboxEmail, ip, when } = {}) {
+  const safeMailbox = mailboxEmail || '@onnmail.ru';
+  const safeIp = ip || 'unknown';
+  const safeWhen = when || new Date().toISOString();
+
+  console.log(`🔐 Mailbox password changed notify for: ${to} (${safeMailbox})`);
+
+  const mailOptions = {
+    from: '"Serpmonn" <noreply@serpmonn.ru>',
+    to,
+    subject: 'Пароль почты @onnmail.ru изменён',
+    text: `Пароль почтового ящика ${safeMailbox} был изменён.\nВремя: ${safeWhen}\nIP: ${safeIp}\n\nЕсли это были не вы, срочно смените пароль аккаунта Serpmonn и обратитесь в поддержку.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #dc3545;">Пароль почты изменён</h2>
+        <p>Пароль ящика <strong>${safeMailbox}</strong> был изменён.</p>
+        <p style="color:#555;font-size:14px;line-height:1.5;">
+          Время: ${safeWhen}<br/>
+          IP: ${safeIp}
+        </p>
+        <p style="margin-top: 20px; color: #666; font-size: 12px;">
+          Если это были не вы, смените пароль аккаунта Serpmonn и напишите в поддержку.
+        </p>
+      </div>
+    `
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Mailbox password notify processed:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Mailbox password notify error:', error.message);
+    if (process.env.NODE_ENV === 'development') {
+      return { messageId: 'dev-error', response: 'Email failed but continuing in dev mode' };
+    }
+    throw error;
+  }
+}
+
 export async function sendPromoEmail(to, promoText, unsubscribeLink, promoHtmlBlock, options = {}) {
   console.log(`🎁 Promo email for: ${to}`);
 

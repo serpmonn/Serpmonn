@@ -73,9 +73,10 @@ app.get('/csrf-token', (req, res) => {
     return res.status(200).json({ csrfToken: generateCsrfToken(req, res) });
 });
 
-// CSRF на create-mailbox (cookie-сессия). Токен берём с того же хоста (/csrf-token).
+// CSRF на мутирующие mail-api маршруты (cookie-сессия). Токен: /csrf-token.
+const csrfProtectedPaths = new Set(['/create-mailbox', '/change-password', '/link-mailbox']);
 app.use('/mail-api', (req, res, next) => {
-    if (req.method === 'POST' && req.path === '/create-mailbox') {
+    if (req.method === 'POST' && csrfProtectedPaths.has(req.path)) {
         return doubleCsrfProtection(req, res, next);
     }
     return next();

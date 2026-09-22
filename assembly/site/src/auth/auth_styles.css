@@ -1,5 +1,30 @@
 @import url('../login/login_styles.css');
 
+/* Десктоп: styles.css тянет body на stretch → карточка прилипает влево.
+   На auth держим центрирование; в app-shell (мобильная оболочка) не трогаем. */
+html:not(.auth-app-shell) {
+  scrollbar-gutter: auto;
+}
+
+html:not(.auth-app-shell) body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html:not(.auth-app-shell) body .auth-container.container {
+  width: min(100%, 440px) !important;
+  max-width: 440px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  align-self: center !important;
+  flex-shrink: 0;
+  animation: none; /* без «выезда» — сразу по центру */
+}
+
 .auth-container {
   max-width: 440px;
 }
@@ -120,14 +145,43 @@
   background: #fff5f5;
 }
 
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.password-container input {
+  margin-bottom: 0;
+  padding-right: 44px;
+}
+
 .password-container .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
-  padding: 4px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.password-container .toggle-password:hover {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .messenger-login-btn {
@@ -221,4 +275,187 @@
 .messenger-modal__card .secondary-btn {
   margin-top: 0;
   width: 100%;
+}
+
+.messenger-open-app-btn {
+  width: 100%;
+  margin: 0 0 14px;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.messenger-open-app-btn[hidden],
+#messengerQrCanvas[hidden] {
+  display: none !important;
+}
+
+.auth-app-bar {
+  display: none;
+}
+
+/* —— RuStore / Android app shell —— */
+html.auth-app-shell,
+html.auth-app-shell body.auth-app-shell {
+  background: #f7f7f8 !important;
+  min-height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.auth-app-shell {
+  display: block !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #141414;
+}
+
+body.auth-app-shell #serpmonn-bg-canvas,
+body.auth-app-shell #menuCorner,
+body.auth-app-shell #menuContainer,
+body.auth-app-shell #menuButton,
+body.auth-app-shell .menu-corner,
+body.auth-app-shell .menu-container,
+body.auth-app-shell .menu-button,
+body.auth-app-shell #cookie-consent,
+body.auth-app-shell .cookie-consent,
+body.auth-app-shell #installAppButton {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.auth-app-shell .auth-app-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 48px;
+  padding: 6px 10px;
+  padding-top: calc(6px + env(safe-area-inset-top, 0px));
+  background: #fff;
+  border-bottom: 1px solid #e6e6e8;
+}
+
+body.auth-app-shell .auth-app-bar[hidden],
+body.auth-app-shell--embedded .auth-app-bar {
+  display: none !important;
+}
+
+.auth-app-back {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #141414;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.auth-app-back svg {
+  display: block;
+}
+
+body.auth-app-shell .auth-container.container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 16px 16px 28px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #f7f7f8 !important;
+  animation: none !important;
+  min-height: calc(100dvh - 52px - env(safe-area-inset-top, 0px));
+}
+
+body.auth-app-shell .auth-page-title {
+  display: none;
+}
+
+body.auth-app-shell .auth-tab {
+  border-radius: 12px;
+  border-color: #e6e6e8;
+  background: #fff;
+  font-weight: 600;
+}
+
+body.auth-app-shell .auth-tab.active {
+  background: #c62828;
+  border-color: #c62828;
+  color: #fff;
+}
+
+body.auth-app-shell input {
+  border-radius: 12px;
+  border-color: #e6e6e8;
+  background: #fff;
+  margin-bottom: 14px;
+}
+
+/* Отступ у контейнера, не у input — иначе глазик смещается вниз */
+body.auth-app-shell .password-container {
+  margin-bottom: 14px;
+}
+
+body.auth-app-shell .password-container input {
+  margin-bottom: 0;
+}
+
+body.auth-app-shell input:focus {
+  border-color: #c62828;
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+}
+
+body.auth-app-shell .submit-btn {
+  border-radius: 12px;
+  background: #c62828;
+  border: 0;
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+body.auth-app-shell .submit-btn:hover {
+  background: #b71c1c;
+  transform: none;
+}
+
+body.auth-app-shell .secondary-btn {
+  background: #f0f0f2;
+  color: #141414;
+  border: 0;
+}
+
+body.auth-app-shell .secondary-btn:hover {
+  background: #e6e6e8;
+}
+
+body.auth-app-shell .messenger-login-btn {
+  border-radius: 12px;
+  background: linear-gradient(90deg, #ff5252, #ff1717);
+  margin-top: 8px;
+}
+
+body.auth-app-shell .messenger-login-btn:hover {
+  background: linear-gradient(90deg, #e53935, #d32f2f);
+  transform: none;
+}
+
+body.auth-app-shell .auth-forgot a {
+  color: #c62828;
+}
+
+body.auth-app-shell .messenger-modal__card {
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18);
 }

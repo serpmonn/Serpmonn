@@ -94,8 +94,114 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const createOnnmailButton = document.getElementById('createOnnmailButton');
   const loginOnnmailButton = document.getElementById('loginOnnmailButton');
+  let onnmailModalMode = 'change'; // 'change' | 'link'
+  let currentMailboxEmail = null;
+
+  function ensureOnnmailDom() {
+    const actions = document.querySelector('.profile-onnmail-actions');
+    if (!actions) return;
+
+    const block = actions.closest('.profile-panel-block') || actions.parentElement;
+    if (block) {
+      if (!block.id) block.id = 'onnmailBlock';
+      const heading = block.querySelector('.profile-panel__heading');
+      if (heading && !heading.id) heading.id = 'onnmailHeading';
+      const hint = block.querySelector('.profile-panel__hint');
+      if (hint && !hint.id) hint.id = 'onnmailHint';
+    }
+
+    const ensureActionBtn = (id, beforeId = null) => {
+      if (document.getElementById(id)) return;
+      const btn = document.createElement('button');
+      btn.id = id;
+      btn.type = 'button';
+      btn.className = 'profile-btn profile-btn--ghost profile-btn--sm';
+      btn.hidden = true;
+      const beforeEl = beforeId ? document.getElementById(beforeId) : null;
+      if (beforeEl && beforeEl.parentElement === actions) {
+        actions.insertBefore(btn, beforeEl);
+      } else {
+        actions.appendChild(btn);
+      }
+    };
+
+    // Order: Create → Open → Link → Change password
+    ensureActionBtn('linkOnnmailButton', 'changeOnnmailPasswordButton');
+    ensureActionBtn('changeOnnmailPasswordButton');
+
+    // Убрать устаревшую кнопку «Копировать» (адрес копируется кликом по заголовку)
+    document.getElementById('copyOnnmailButton')?.remove();
+    document.getElementById('onnmailAddressRow')?.remove();
+
+    const existingModal = document.getElementById('onnmailPasswordModal');
+    if (existingModal) {
+      existingModal.classList.add('profile-onnmail-modal');
+      existingModal.querySelector('.messenger-modal__card')?.classList.add('profile-onnmail-modal__card');
+      existingModal.querySelector('#onnmailPasswordSubmit')?.classList.add('profile-btn--primary');
+      existingModal.querySelector('#onnmailPasswordMessage')?.classList.add('profile-onnmail-form__status');
+    }
+
+    if (!document.getElementById('onnmailPasswordModal')) {
+      const modal = document.createElement('div');
+      modal.id = 'onnmailPasswordModal';
+      modal.className = 'messenger-modal profile-onnmail-modal';
+      modal.hidden = true;
+      modal.innerHTML = `
+        <div class="messenger-modal__backdrop" data-onnmail-modal-close></div>
+        <div class="messenger-modal__card profile-onnmail-modal__card" role="dialog" aria-modal="true" aria-labelledby="onnmailPasswordTitle">
+          <h3 id="onnmailPasswordTitle"></h3>
+          <p class="messenger-modal__hint" id="onnmailPasswordHint"></p>
+          <form id="onnmailPasswordForm" class="profile-onnmail-form">
+            <label class="profile-onnmail-form__label" for="onnmailAccountPassword"></label>
+            <input type="password" id="onnmailAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+            <div id="onnmailLinkFields" hidden>
+              <label class="profile-onnmail-form__label" for="onnmailLinkLocalPart"></label>
+              <div class="profile-onnmail-form__suffix">
+                <input type="text" id="onnmailLinkLocalPart" class="profile-onnmail-form__input" autocomplete="off" />
+                <span>@onnmail.ru</span>
+              </div>
+              <label class="profile-onnmail-form__label" for="onnmailCurrentMailPassword"></label>
+              <input type="password" id="onnmailCurrentMailPassword" class="profile-onnmail-form__input" autocomplete="off" />
+            </div>
+            <div id="onnmailNewPasswordFields">
+              <label class="profile-onnmail-form__label" for="onnmailNewPassword"></label>
+              <input type="password" id="onnmailNewPassword" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+              <label class="profile-onnmail-form__label" for="onnmailNewPasswordConfirm"></label>
+              <input type="password" id="onnmailNewPasswordConfirm" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+            </div>
+            <p id="onnmailPasswordMessage" class="messenger-modal__status profile-onnmail-form__status" role="status"></p>
+            <button type="submit" class="profile-btn profile-btn--primary profile-btn--block" id="onnmailPasswordSubmit"></button>
+            <button type="button" class="profile-btn profile-btn--ghost profile-btn--block" data-onnmail-modal-close></button>
+          </form>
+        </div>`;
+      document.body.appendChild(modal);
+    }
+  }
+
+  ensureOnnmailDom();
+
+  const changeOnnmailPasswordButton = document.getElementById('changeOnnmailPasswordButton');
+  const linkOnnmailButton = document.getElementById('linkOnnmailButton');
+  const onnmailHeadingEl = document.getElementById('onnmailHeading');
+  const onnmailPasswordModal = document.getElementById('onnmailPasswordModal');
+  const onnmailPasswordForm = document.getElementById('onnmailPasswordForm');
+  const onnmailPasswordTitle = document.getElementById('onnmailPasswordTitle');
+  const onnmailPasswordHint = document.getElementById('onnmailPasswordHint');
+  const onnmailLinkFields = document.getElementById('onnmailLinkFields');
+  const onnmailNewPasswordFields = document.getElementById('onnmailNewPasswordFields');
+  const onnmailPasswordMessage = document.getElementById('onnmailPasswordMessage');
   const logoutButton = document.getElementById('logoutButton');
   const managePlanButton = document.getElementById('managePlanButton');
+
+  // Не мигать «Создать/Открыть» до ответа /profile/info (в т.ч. на локалях без hidden в HTML)
+  [
+    createOnnmailButton,
+    loginOnnmailButton,
+    linkOnnmailButton,
+    changeOnnmailPasswordButton
+  ].forEach((btn) => {
+    if (btn) btn.hidden = true;
+  });
 
   const favoriteContainer = document.getElementById('favoriteTools');
   const noFavoritesMessage = document.getElementById('noFavoritesMessage');
@@ -466,7 +572,36 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       return;
     }
+    // Сохраняем текущий URL (в т.ч. ?onnmail=password) как return после логина
     redirectToAuth({ tab: 'login' });
+  }
+
+  function consumeOnnmailPasswordDeepLink() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('onnmail') !== 'password') return;
+
+      params.delete('onnmail');
+      const qs = params.toString();
+      const clean =
+        window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash;
+      window.history.replaceState({}, '', clean);
+
+      const block = document.getElementById('onnmailBlock');
+      if (block) block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      if (currentMailboxEmail) {
+        setOnnmailModalOpen(true, 'change');
+      } else if (linkOnnmailButton && !linkOnnmailButton.hidden) {
+        setOnnmailModalOpen(true, 'link');
+      } else if (createOnnmailButton && !createOnnmailButton.hidden) {
+        setGlobalMessage(t('profile.onnmailNeedCreateFirst'), 'error');
+      } else {
+        setGlobalMessage(t('profile.onnmailNeedMailbox'), 'error');
+      }
+    } catch (err) {
+      console.error('onnmail deep link error:', err);
+    }
   }
 
   function cancelProfileEdit() {
@@ -799,9 +934,180 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
+      updateOnnmailUi(data);
+      consumeOnnmailPasswordDeepLink();
+
     } catch (error) {
       console.error('Ошибка получения профиля:', error);
       setGlobalMessage(t('profile.loadErrorRetry'), 'error');
+    }
+  }
+
+  function updateOnnmailUi(data) {
+    const created = Boolean(data?.mailbox_created);
+    const mailboxEmail = data?.mailbox_email || null;
+    const needsLink = created && !mailboxEmail;
+    currentMailboxEmail = mailboxEmail;
+
+    const onnmailHeading = document.getElementById('onnmailHeading');
+    const onnmailHint = document.getElementById('onnmailHint');
+    if (onnmailHeading) {
+      onnmailHeading.hidden = false;
+      if (mailboxEmail) {
+        onnmailHeading.textContent = mailboxEmail;
+        onnmailHeading.classList.add('profile-onnmail-heading--copy');
+        onnmailHeading.setAttribute('role', 'button');
+        onnmailHeading.tabIndex = 0;
+        onnmailHeading.title = t('profile.onnmailClickToCopy');
+        onnmailHeading.setAttribute('aria-label', t('profile.onnmailClickToCopy'));
+      } else {
+        onnmailHeading.textContent = t('profile.onnmailTitle');
+        onnmailHeading.classList.remove('profile-onnmail-heading--copy');
+        onnmailHeading.removeAttribute('role');
+        onnmailHeading.removeAttribute('tabindex');
+        onnmailHeading.removeAttribute('title');
+        onnmailHeading.removeAttribute('aria-label');
+      }
+    }
+    if (onnmailHint) {
+      onnmailHint.hidden = false;
+      if (!created) {
+        onnmailHint.textContent = t('profile.onnmailHintCreate');
+      } else if (needsLink) {
+        onnmailHint.textContent = t('profile.onnmailHintLink');
+      } else {
+        onnmailHint.textContent = t('profile.onnmailHintLinked');
+      }
+    }
+
+    if (createOnnmailButton) {
+      createOnnmailButton.hidden = created;
+      createOnnmailButton.textContent = t('profile.onnmailCreate');
+    }
+    if (loginOnnmailButton) {
+      loginOnnmailButton.hidden = !created;
+      loginOnnmailButton.textContent = t('profile.onnmailOpen');
+    }
+    if (changeOnnmailPasswordButton) {
+      changeOnnmailPasswordButton.hidden = !(created && mailboxEmail);
+      changeOnnmailPasswordButton.textContent = t('profile.onnmailChangePassword');
+    }
+    if (linkOnnmailButton) {
+      linkOnnmailButton.hidden = !needsLink;
+      linkOnnmailButton.textContent = t('profile.onnmailLinkMailbox');
+    }
+  }
+
+  async function copyMailboxEmail() {
+    if (!currentMailboxEmail) return;
+    try {
+      await navigator.clipboard.writeText(currentMailboxEmail);
+      setGlobalMessage(t('profile.onnmailCopied'), 'success');
+    } catch {
+      setGlobalMessage(t('profile.onnmailCopyFailed'), 'error');
+    }
+  }
+
+  function setOnnmailModalOpen(open, mode = 'change') {
+    if (!onnmailPasswordModal) return;
+    onnmailModalMode = mode;
+    onnmailPasswordModal.hidden = !open;
+    if (!open) {
+      if (onnmailPasswordForm) onnmailPasswordForm.reset();
+      if (onnmailPasswordMessage) onnmailPasswordMessage.textContent = '';
+      return;
+    }
+
+    if (onnmailPasswordTitle) {
+      onnmailPasswordTitle.textContent =
+        mode === 'link' ? t('profile.onnmailLinkTitle') : t('profile.onnmailChangeTitle');
+    }
+    if (onnmailPasswordHint) {
+      onnmailPasswordHint.textContent =
+        mode === 'link' ? t('profile.onnmailLinkHint') : t('profile.onnmailChangeHint');
+    }
+    if (onnmailLinkFields) onnmailLinkFields.hidden = mode !== 'link';
+    if (onnmailNewPasswordFields) onnmailNewPasswordFields.hidden = mode === 'link';
+    if (onnmailPasswordMessage) onnmailPasswordMessage.textContent = '';
+
+    const setLabel = (id, key) => {
+      const label = document.querySelector(`label[for="${id}"]`);
+      if (label) label.textContent = t(key);
+    };
+    setLabel('onnmailAccountPassword', 'profile.onnmailAccountPassword');
+    setLabel('onnmailLinkLocalPart', 'profile.onnmailMailboxLogin');
+    setLabel('onnmailCurrentMailPassword', 'profile.onnmailCurrentMailPassword');
+    setLabel('onnmailNewPassword', 'profile.onnmailNewPassword');
+    setLabel('onnmailNewPasswordConfirm', 'profile.onnmailConfirmPassword');
+
+    const submitBtn = document.getElementById('onnmailPasswordSubmit');
+    if (submitBtn) submitBtn.textContent = t('profile.onnmailSave');
+    const cancelBtn = onnmailPasswordModal?.querySelector('[data-onnmail-modal-close].profile-btn');
+    if (cancelBtn) cancelBtn.textContent = t('profile.cancel');
+  }
+
+  async function submitOnnmailPasswordForm(event) {
+    event.preventDefault();
+    if (!onnmailPasswordMessage) return;
+
+    const accountPassword = document.getElementById('onnmailAccountPassword')?.value || '';
+    onnmailPasswordMessage.textContent = '';
+
+    try {
+      if (onnmailModalMode === 'link') {
+        const emailLocalPart = (document.getElementById('onnmailLinkLocalPart')?.value || '')
+          .trim()
+          .toLowerCase();
+        const mailboxPassword = document.getElementById('onnmailCurrentMailPassword')?.value || '';
+        if (!emailLocalPart || !mailboxPassword) {
+          onnmailPasswordMessage.textContent = t('onnmail.fillAllFields');
+          return;
+        }
+        const response = await fetch('/mail-api/link-mailbox', {
+          method: 'POST',
+          headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
+          credentials: 'include',
+          body: JSON.stringify({ emailLocalPart, mailboxPassword, accountPassword })
+        });
+        const data = await safeJson(response);
+        if (!response.ok) {
+          onnmailPasswordMessage.textContent = data?.message || t('profile.onnmailLinkFailed');
+          return;
+        }
+        const linkedEmail = data?.email || `${emailLocalPart}@onnmail.ru`;
+        setGlobalMessage(t('profile.onnmailLinkSuccess', { email: linkedEmail }), 'success');
+        setOnnmailModalOpen(false);
+        getProfile();
+        return;
+      }
+
+      const newPassword = document.getElementById('onnmailNewPassword')?.value || '';
+      const newPasswordConfirm = document.getElementById('onnmailNewPasswordConfirm')?.value || '';
+      if (newPassword.length < 8) {
+        onnmailPasswordMessage.textContent = t('onnmail.passwordMin8');
+        return;
+      }
+      if (newPassword !== newPasswordConfirm) {
+        onnmailPasswordMessage.textContent = t('onnmail.passwordMismatch');
+        return;
+      }
+
+      const response = await fetch('/mail-api/change-password', {
+        method: 'POST',
+        headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
+        credentials: 'include',
+        body: JSON.stringify({ accountPassword, newPassword, newPasswordConfirm })
+      });
+      const data = await safeJson(response);
+      if (!response.ok) {
+        onnmailPasswordMessage.textContent = data?.message || t('profile.onnmailChangeFailed');
+        return;
+      }
+      setGlobalMessage(data?.message || t('profile.onnmailChangeSuccess'), 'success');
+      setOnnmailModalOpen(false);
+    } catch (error) {
+      console.error('Onnmail password form error:', error);
+      onnmailPasswordMessage.textContent = t('profile.onnmailChangeFailed');
     }
   }
 
@@ -1167,12 +1473,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  createOnnmailButton.addEventListener('click', () => {
+  createOnnmailButton?.addEventListener('click', () => {
     checkCreateMailboxStatus();
   });
 
-  loginOnnmailButton.addEventListener('click', () => {
-    window.location.href = 'https://serpmonn.ru/mail/';
+  loginOnnmailButton?.addEventListener('click', () => {
+    const mailUrl = 'https://serpmonn.ru/mail/';
+    const inAppShell =
+      Boolean(window.__SPN_ANDROID_APP__) ||
+      document.documentElement.classList.contains('android-app') ||
+      new URLSearchParams(window.location.search).get('app') === '1';
+    if (inAppShell && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage(
+          {
+            type: 'spn-app-open-mail',
+            url: '/mail/',
+            title: t('profile.onnmailOpen') || 'Почта'
+          },
+          '*'
+        );
+        return;
+      } catch (_) {
+        /* fall through */
+      }
+    }
+    window.location.href = mailUrl;
+  });
+
+  changeOnnmailPasswordButton?.addEventListener('click', () => {
+    setOnnmailModalOpen(true, 'change');
+  });
+
+  linkOnnmailButton?.addEventListener('click', () => {
+    setOnnmailModalOpen(true, 'link');
+  });
+
+  onnmailHeadingEl?.addEventListener('click', () => {
+    if (currentMailboxEmail) copyMailboxEmail();
+  });
+  onnmailHeadingEl?.addEventListener('keydown', (e) => {
+    if (!currentMailboxEmail) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      copyMailboxEmail();
+    }
+  });
+
+  onnmailPasswordForm?.addEventListener('submit', submitOnnmailPasswordForm);
+  document.querySelectorAll('[data-onnmail-modal-close]').forEach((el) => {
+    el.addEventListener('click', () => setOnnmailModalOpen(false));
   });
 
   if (avatarButton) {

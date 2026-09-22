@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Serpmonn Snake</title>
+  <meta name="description" content="Classic snake from Serpmonn: eat apples, grow longer, and beat your high score.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="snake.css">
+  <style>
+    .ad-top-banner, #menuContainer, .mobile-anchor-ad { display: none !important; }
+    .page { max-width: 960px; padding: 12px; box-sizing: border-box; }
+    @media (max-width: 900px), (orientation: portrait) {
+      html, body {
+        height: 100%;
+        height: 100svh;
+        overflow: hidden;
+        background: #0f0f10;
+      }
+      .page {
+        max-width: 100%;
+        width: 100%;
+        height: 100%;
+        height: 100svh;
+        margin: 0;
+        padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      header {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0;
+      }
+      header h1 { font-size: 1.15rem; }
+      .hint { display: none !important; }
+      .wrap {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        grid-template-columns: none;
+      }
+      .wrap > .panel:first-child {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+      }
+      canvas#game {
+        width: min(100%, calc(100svh - 300px)) !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 auto;
+        border-radius: 10px;
+        box-shadow: none;
+      }
+      .wrap > .panel:last-child {
+        flex: 0 0 auto;
+        margin-top: auto;
+        padding: 10px 12px;
+      }
+      .wrap > .panel:last-child > h2 { display: none; }
+      .stats { gap: 6px; margin-bottom: 6px; }
+      .stat { padding: 6px 8px; }
+      .stat b { font-size: 1rem; }
+      .controls {
+        display: grid !important;
+        grid-template-columns: repeat(3, 64px);
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .btn { min-height: 42px; }
+    }
+  </style>
+  <script src="locales.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" style="border-radius:6px;">
+      <h1 data-i18n="heading">Serpmonn Snake</h1>
+    </header>
+
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="480" aria-label="Game field"></canvas>
+        <div class="hint" data-i18n="hint">Arrows / WASD · Space or Esc — pause · R — restart · Mobile — swipes</div>
+      </div>
+
+      <div class="panel">
+        <h2 data-i18n="stats">Stats</h2>
+        <div class="stats">
+          <div class="stat" data-i18n-score>Score<br><b id="score">0</b></div>
+          <div class="stat" data-i18n-best>Best<br><b id="best">0</b></div>
+        </div>
+        <div class="stats">
+          <div class="stat" data-i18n-speed>Speed<br><b id="speed">1x</b></div>
+          <div class="stat" data-i18n-field>Field<br><b>24×24</b></div>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px; flex-wrap:wrap;">
+          <button class="btn primary" id="btnStart" data-i18n="start">Start</button>
+          <button class="btn" id="btnPause" data-i18n="pause">Pause</button>
+          <button class="btn" id="btnReset" data-i18n="reset">Restart</button>
+        </div>
+        <div class="controls" aria-label="Mobile controls">
+          <div></div>
+          <button class="btn" data-dir="up">▲</button>
+          <div></div>
+          <button class="btn" data-dir="left">◀</button>
+          <button class="btn" data-dir="down">▼</button>
+          <button class="btn" data-dir="right">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.i18n = {
+      gameOver: 'Game over',
+      pressRToRestart: 'Press R — restart'
+    };
+    window.showFullScreenAd = function () {};
+  </script>
+  <script src="snake.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      function go() {
+        if (!window.SERPMONN_LOCALES || !window.applySerpmonnLocale) return false;
+        window.applySerpmonnLocale(window.SERPMONN_LOCALES.en);
+        return true;
+      }
+      if (!go()) setTimeout(go, 100);
+      setTimeout(go, 400);
+    });
+  </script>
+</body>
+</html>

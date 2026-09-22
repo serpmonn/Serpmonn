@@ -1,5 +1,30 @@
 @import url('../login/login_styles.css');
 
+/* Десктоп: styles.css тянет body на stretch → карточка прилипает влево.
+   На auth держим центрирование; в app-shell (мобильная оболочка) не трогаем. */
+html:not(.auth-app-shell) {
+  scrollbar-gutter: auto;
+}
+
+html:not(.auth-app-shell) body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html:not(.auth-app-shell) body .auth-container.container {
+  width: min(100%, 440px) !important;
+  max-width: 440px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  align-self: center !important;
+  flex-shrink: 0;
+  animation: none; /* без «выезда» — сразу по центру */
+}
+
 .auth-container {
   max-width: 440px;
 }

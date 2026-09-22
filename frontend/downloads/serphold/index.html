@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Serphold — башенная защита для Android | Serpmonn</title>
-  <meta name="description" content="Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачай APK на Serpmonn.">
+  <meta name="description" content="Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачайте APK на Serpmonn.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://serpmonn.ru/serphold">
   <link rel="alternate" hreflang="ru" href="https://serpmonn.ru/serphold">
   <link rel="alternate" hreflang="en" href="https://serpmonn.ru/serphold?lang=en">
   <meta property="og:title" content="Serphold — Android">
-  <meta property="og:description" content="Защити крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.">
+  <meta property="og:description" content="Защитите крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/downloads/serphold/icon-1024.png">
   <meta property="og:url" content="https://serpmonn.ru/serphold">
   <meta property="og:type" content="website">
@@ -134,6 +134,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 0.4rem;
       padding: 0.95rem 1.4rem;
       border-radius: 10px;
       font-weight: 700;
@@ -144,6 +145,8 @@
       background: linear-gradient(120deg, var(--gold), #e0c35a 45%, var(--wood));
       color: #1a1208;
       box-shadow: 0 10px 28px rgba(201, 162, 39, 0.22);
+      min-width: min(100%, 16rem);
+      font-size: 1.05rem;
     }
     .btn-primary:hover { transform: translateY(-2px); }
     .btn-ghost {
@@ -152,10 +155,61 @@
       background: rgba(255,255,255,0.03);
     }
     .btn-ghost:hover { border-color: rgba(201,162,39,0.55); }
+    .btn-size {
+      font-weight: 600;
+      opacity: 0.75;
+      font-size: 0.88em;
+    }
     .meta {
       margin: 0;
       color: var(--muted);
       font-size: 0.88rem;
+    }
+    .install-tip {
+      margin: 0;
+      max-width: 36rem;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(201, 162, 39, 0.08);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .install-tip strong { color: var(--text); font-weight: 700; }
+    .alt-links {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .alt-links a {
+      color: var(--gold);
+      text-underline-offset: 0.15em;
+    }
+    .sticky-dl {
+      display: none;
+    }
+    @media (max-width: 720px) {
+      body { padding-bottom: 4.75rem; }
+      .sticky-dl {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        gap: 0.65rem;
+        align-items: center;
+        padding: 0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
+        background: rgba(16, 12, 8, 0.94);
+        border-top: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .sticky-dl .btn-primary {
+        flex: 1;
+        min-width: 0;
+        padding: 0.85rem 1rem;
+      }
     }
     section { margin-top: 3.2rem; }
     .section-title {
@@ -267,22 +321,23 @@
     <section class="hero" aria-labelledby="serphold-title">
       <img class="hero-icon" src="/frontend/downloads/serphold/icon-176.png" width="88" height="88" alt="Serphold" decoding="async">
       <h1 id="serphold-title" class="brand" data-i18n="brand">Serphold</h1>
-      <p class="lead" data-i18n="lead">Защити крепость от орды. Ставь лучников, пушки и магов на траву, выбирай дорогу и держи стены до последней волны.</p>
+      <p class="lead" data-i18n="lead">Защитите крепость от орды. Ставьте лучников, пушки и магов на траву, выбирайте дорогу и держите стены до последней волны.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.0.0.apk" download="Serphold-1.0.0.apk" data-i18n="downloadApk">Скачать APK</a>
-        <a class="btn btn-ghost" href="https://www.rustore.ru/catalog/app/com.serpmonn.serphold" target="_blank" rel="noopener" data-i18n="openRustore">Открыть в RuStore</a>
+        <a class="btn btn-primary" id="dl-apk" href="/frontend/downloads/serphold/Serphold-1.1.0.apk" download="Serphold-1.1.0.apk"><span data-i18n="downloadApk">Скачать APK</span> <span class="btn-size">· 50 МБ</span></a>
         <a class="btn btn-ghost" href="#gameplay" data-i18n="watchGameplay">Смотреть геймплей</a>
       </div>
-      <p class="meta" data-i18n="meta">Android · бесплатно · Serpmonn · версия 1.0.0 · 3 карты × 20 волн</p>
+      <p class="meta" data-i18n="meta">Версия 1.1.0 · Android · бесплатно · Serpmonn · 3 карты × 20 волн</p>
+      <p class="install-tip"><strong data-i18n="installLabel">Как установить:</strong> <span data-i18n="installBody">скачайте APK → откройте файл → разрешите установку из этого источника (один раз) → «Установить». Предупреждение системы — нормально: файл не из Google Play, а напрямую с сайта разработчика.</span></p>
+      <p class="alt-links"><span data-i18n="altRustoreBefore">Также в</span> <a href="https://www.rustore.ru/catalog/app/com.serpmonn.serphold" target="_blank" rel="noopener">RuStore</a></p>
     </section>
 
     <section aria-labelledby="roads-title">
       <h2 id="roads-title" class="section-title" data-i18n="roadsTitle">Три дороги</h2>
-      <p class="section-note" data-i18n="roadsNote">Каждая карта — свой путь к крепости. Пройди все три для полной кампании.</p>
+      <p class="section-note" data-i18n="roadsNote">Каждая карта — свой путь к крепости. Пройдите все три для полной кампании.</p>
       <div class="roads">
         <article class="road">
           <h3 data-i18n="road1Title">Извилистая</h3>
-          <p data-i18n="road1Body">Классические изгибы — учись строить оборону.</p>
+          <p data-i18n="road1Body">Классические изгибы — учитесь строить оборону.</p>
         </article>
         <article class="road">
           <h3 data-i18n="road2Title">Северная тропа</h3>
@@ -338,31 +393,35 @@
     </section>
 
     <div class="footer-cta">
-      <p class="lead" style="max-width:30rem" data-i18n="footerLead">Готов держать стены — скачай APK или установи из RuStore.</p>
+      <p class="lead" style="max-width:30rem" data-i18n="footerLead">Готовы держать стены — скачайте APK с сайта.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.0.0.apk" download="Serphold-1.0.0.apk" data-i18n="downloadName">Скачать Serphold</a>
-        <a class="btn btn-ghost" href="https://www.rustore.ru/catalog/app/com.serpmonn.serphold" target="_blank" rel="noopener" data-i18n="openRustore">Открыть в RuStore</a>
+        <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.1.0.apk" download="Serphold-1.1.0.apk"><span data-i18n="downloadName">Скачать Serphold</span> <span class="btn-size">· 50 МБ</span></a>
       </div>
     </div>
   </main>
+  <div class="sticky-dl" role="region" aria-label="Скачать Serphold">
+    <a class="btn btn-primary" href="/frontend/downloads/serphold/Serphold-1.1.0.apk" download="Serphold-1.1.0.apk"><span data-i18n="downloadApk">Скачать APK</span></a>
+  </div>
   <script src="/frontend/scripts/menu.js" defer></script>
   <script>
     (function () {
       var I18N = {
         ru: {
           docTitle: "Serphold — башенная защита для Android | Serpmonn",
-          docDesc: "Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачай APK на Serpmonn.",
-          ogDesc: "Защити крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.",
+          docDesc: "Serphold (Серпхолд) — мобильная tower defense для Android: 3 дороги, 20 волн, лучники, пушки и маги. Скачайте APK на Serpmonn.",
+          ogDesc: "Защитите крепость. Три дороги, двадцать волн. APK для Android на Serpmonn.",
           brand: "Serphold",
-          lead: "Защити крепость от орды. Ставь лучников, пушки и магов на траву, выбирай дорогу и держи стены до последней волны.",
+          lead: "Защитите крепость от орды. Ставьте лучников, пушки и магов на траву, выбирайте дорогу и держите стены до последней волны.",
           downloadApk: "Скачать APK",
-          openRustore: "Открыть в RuStore",
           watchGameplay: "Смотреть геймплей",
-          meta: "Android · бесплатно · Serpmonn · версия 1.0.0 · 3 карты × 20 волн",
+          meta: "Версия 1.1.0 · Android · бесплатно · Serpmonn · 3 карты × 20 волн",
+          installLabel: "Как установить:",
+          installBody: "скачайте APK → откройте файл → разрешите установку из этого источника (один раз) → «Установить». Предупреждение системы — нормально: файл не из Google Play, а напрямую с сайта разработчика.",
+          altRustoreBefore: "Также в",
           roadsTitle: "Три дороги",
-          roadsNote: "Каждая карта — свой путь к крепости. Пройди все три для полной кампании.",
+          roadsNote: "Каждая карта — свой путь к крепости. Пройдите все три для полной кампании.",
           road1Title: "Извилистая",
-          road1Body: "Классические изгибы — учись строить оборону.",
+          road1Body: "Классические изгибы — учитесь строить оборону.",
           road2Title: "Северная тропа",
           road2Body: "Длиннее путь — больше времени стрелять.",
           road3Title: "Штурм ворот",
@@ -381,7 +440,7 @@
           videosNote: "Видео с телефона — русский и английский интерфейс.",
           videoRu: "Русский",
           videoEn: "English",
-          footerLead: "Готов держать стены — скачай APK или установи из RuStore.",
+          footerLead: "Готовы держать стены — скачайте APK с сайта.",
           downloadName: "Скачать Serphold"
         },
         en: {
@@ -391,9 +450,11 @@
           brand: "Serphold",
           lead: "Hold the fortress against the horde. Place archers, cannons and mages on the grass, pick a road, and keep the walls up through the last wave.",
           downloadApk: "Download APK",
-          openRustore: "Open in RuStore",
           watchGameplay: "Watch gameplay",
-          meta: "Android · free · Serpmonn · version 1.0.0 · 3 maps × 20 waves",
+          meta: "Version 1.1.0 · Android · free · Serpmonn · 3 maps × 20 waves",
+          installLabel: "How to install:",
+          installBody: "download the APK → open the file → allow installs from this source (once) → Install. The system warning is normal: the file is not from Google Play, it comes directly from the developer's site.",
+          altRustoreBefore: "Also on",
           roadsTitle: "Three roads",
           roadsNote: "Each map is a different path to the keep. Clear all three for the full campaign.",
           road1Title: "Serpentine",
@@ -416,7 +477,7 @@
           videosNote: "Phone recordings — Russian and English UI.",
           videoRu: "Russian",
           videoEn: "English",
-          footerLead: "Ready to hold the walls — download the APK or install from RuStore.",
+          footerLead: "Ready to hold the walls — download the APK from the site.",
           downloadName: "Download Serphold"
         }
       };
