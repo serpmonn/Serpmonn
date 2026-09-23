@@ -12,6 +12,7 @@
 - Neon EN — Almost made it… / Почти успел… — https://youtube.com/shorts/u4bWu-za_Ko
 - Neon (ранее) — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
 - Snake — One more turn… — https://youtube.com/shorts/ajp_FD8ihZc
+- Snake update — Three modes. Almost… / Три режима. Почти… — https://youtube.com/shorts/f8g55FfGwnQ
 - Flappy — So close… — https://youtube.com/shorts/aErIqeZ95nw
 - Breakout — One more brick… — https://youtube.com/shorts/y1ew8rKD0MI
 - 2048 — Almost 2048… — https://youtube.com/shorts/Jhh5IUx2eRg
