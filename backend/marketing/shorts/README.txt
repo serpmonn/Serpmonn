@@ -26,6 +26,9 @@
 - Falling Shapes (redsquare2) — One more catch… — https://youtube.com/shorts/6XD_04MiQLE
 - Obрыв — Don't fall… / Не сорвись… — https://youtube.com/shorts/flxmZ-dIVXI
 
+- App preview EN — Search. Play. Discover… | Поиск. Игры. Лента… — https://youtube.com/shorts/yYRjNG8ogNM
+- App preview RU — Поиск. Игры. Лента… | Search. Play. Discover… — https://youtube.com/shorts/JPzw0B0TITk
+
 RU готово к проверке (не выкладывать без ok):
 - Snake update — One more turn… / Ещё один поворот… — out/shorts/snake-update-en-serpmonn.mp4 + snake-update-ru-serpmonn.mp4
   Запись: SNAKE_LANG=en|ru node tools/record-snake-update-ru-short.cjs
@@ -38,6 +41,7 @@ RU готово к проверке (не выкладывать без ok):
 
 Готово к проверке:
 —
+
 Публичные превью:
 - https://serpmonn.ru/shorts-preview/neon-preview-en-serpmonn.mp4
 - https://serpmonn.ru/shorts-preview/serphold-preview-en-serpmonn.mp4
