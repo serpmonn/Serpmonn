@@ -7,7 +7,7 @@ import {
   getCacheUpdatedAt,
 } from './news-generator.mjs';
 
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 const { V2 } = paseto;
 const secretKey = process.env.SECRET_KEY;
 

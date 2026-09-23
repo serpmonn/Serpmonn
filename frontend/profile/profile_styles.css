@@ -1832,8 +1832,15 @@ html.android-app .profile-tabs__btn {
 
 .profile-onnmail-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 8px;
+  overflow-x: auto;
+}
+
+.profile-onnmail-actions .profile-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .card:hover {
@@ -1963,4 +1970,433 @@ html.android-app .profile-tabs__btn {
 .messenger-modal__status {
   margin-bottom: 16px;
   min-height: 1.2em;
+}
+
+.profile-onnmail-address {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-color, #333);
+}
+
+.profile-onnmail-address__value {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+#onnmailHeading.profile-onnmail-heading--copy {
+  cursor: pointer;
+  color: inherit;
+  word-break: break-all;
+  text-decoration: none;
+  user-select: none;
+}
+
+#onnmailHeading.profile-onnmail-heading--copy:hover {
+  color: #c62828;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+#onnmailHeading.profile-onnmail-heading--copy:focus-visible {
+  outline: 2px solid #c62828;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.profile-onnmail-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.profile-onnmail-actions .profile-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.profile-onnmail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  text-align: left;
+}
+
+.profile-onnmail-form__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #444;
+  margin-top: 0.35rem;
+}
+
+.profile-onnmail-form__label:first-child {
+  margin-top: 0;
+}
+
+.profile-onnmail-form__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background: #fdfdfd;
+  color: #222;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-onnmail-form__input:focus {
+  border-color: #ff4d4d;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.15);
+  background: #fff;
+}
+
+.profile-onnmail-form__suffix {
+  display: flex;
+  align-items: stretch;
+}
+
+.profile-onnmail-form__suffix input {
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
+.profile-onnmail-form__suffix span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.85rem;
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 0 8px 8px 0;
+  color: #555;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.profile-onnmail-form__status {
+  margin: 0.35rem 0 0.15rem !important;
+  min-height: 1.25em;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c62828;
+  text-align: center;
+}
+
+/* Модалка смены/привязки @onnmail — в стиле форм Serpmonn */
+.profile-onnmail-modal .messenger-modal__backdrop {
+  background:
+    linear-gradient(135deg, rgba(224, 247, 250, 0.55), rgba(225, 190, 231, 0.5)),
+    rgba(20, 20, 30, 0.35);
+  backdrop-filter: blur(2px);
+}
+
+.profile-onnmail-modal__card {
+  width: min(100%, 400px) !important;
+  padding: 28px 24px 22px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  text-align: left !important;
+}
+
+.profile-onnmail-modal__card h3 {
+  margin: 0 0 6px !important;
+  font-size: 1.35rem !important;
+  font-weight: 650;
+  color: #333 !important;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-onnmail-modal__card .messenger-modal__hint {
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #666;
+}
+
+.profile-onnmail-modal__card .profile-btn--primary {
+  margin-top: 0.65rem;
+  background: linear-gradient(90deg, #ff5252, #ff1717);
+  box-shadow: 0 4px 14px rgba(255, 23, 23, 0.28);
+  border: none;
+}
+
+.profile-onnmail-modal__card .profile-btn--primary:hover {
+  background: linear-gradient(90deg, #e53935, #d32f2f);
+  transform: translateY(-1px);
+}
+
+.profile-onnmail-modal__card .profile-btn--ghost {
+  margin-top: 0.35rem;
+}
+
+/* OnnMail identity + manage menu */
+.profile-onnmail-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin: 0 0 0.35rem;
+}
+
+.profile-onnmail-identity .profile-panel__heading {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+}
+
+.profile-onnmail-manage {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin: -4px -6px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.profile-onnmail-manage:hover,
+.profile-onnmail-manage:focus-visible {
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
+  outline: none;
+}
+
+.profile-onnmail-manage:focus-visible {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.35);
+}
+
+body.profile-onnmail-sheet-open {
+  overflow: hidden;
+}
+
+.profile-onnmail-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 100050;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.profile-onnmail-sheet[hidden] {
+  display: none !important;
+}
+
+.profile-onnmail-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(15, 23, 42, 0.45);
+  cursor: pointer;
+  animation: profile-onnmail-fade-in 0.2s ease;
+}
+
+.profile-onnmail-sheet__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  max-height: min(88vh, 640px);
+  overflow: auto;
+  margin: 0;
+  padding: 0.55rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  border-radius: 18px 18px 0 0;
+  background: #fff;
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+  animation: profile-onnmail-sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 720px) {
+  .profile-onnmail-sheet {
+    align-items: center;
+  }
+
+  .profile-onnmail-sheet__panel {
+    border-radius: 18px;
+    margin: 1rem;
+    padding-bottom: 1.1rem;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
+    animation-name: profile-onnmail-fade-in;
+  }
+
+  .profile-onnmail-sheet__handle {
+    display: none;
+  }
+}
+
+.profile-onnmail-sheet__handle {
+  width: 36px;
+  height: 4px;
+  margin: 0.15rem auto 0.75rem;
+  border-radius: 999px;
+  background: #d1d5db;
+}
+
+.profile-onnmail-sheet__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.profile-onnmail-sheet__email {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  word-break: break-all;
+}
+
+.profile-onnmail-sheet__warn {
+  margin: 0 0 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #7f1d1d;
+}
+
+.profile-onnmail-sheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.profile-onnmail-sheet__action {
+  width: 100%;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-onnmail-sheet__action:hover,
+.profile-onnmail-sheet__action:focus-visible {
+  background: #f3f4f6;
+  outline: none;
+}
+
+.profile-onnmail-sheet__action--danger {
+  margin-top: 0.35rem;
+  border-color: transparent;
+  background: transparent;
+  color: #b91c1c;
+  font-weight: 600;
+  text-align: center;
+}
+
+.profile-onnmail-sheet__action--danger:hover,
+.profile-onnmail-sheet__action--danger:focus-visible {
+  background: rgba(185, 28, 28, 0.06);
+}
+
+.profile-onnmail-sheet__cancel {
+  display: block;
+  width: 100%;
+  margin: 0.85rem 0 0;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.profile-onnmail-sheet--delete .profile-onnmail-form__label {
+  margin-top: 0.55rem;
+}
+
+.profile-onnmail-hold {
+  --hold-progress: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  margin: 0.85rem 0 0.35rem;
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 14px;
+  background: #450a0a;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.profile-onnmail-hold__fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform: scaleX(var(--hold-progress));
+  transform-origin: left center;
+  background: #dc2626;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.profile-onnmail-hold__ring {
+  display: none;
+}
+
+.profile-onnmail-hold__label {
+  position: relative;
+  z-index: 1;
+}
+
+.profile-onnmail-hold.is-holding {
+  transform: scale(0.99);
+}
+
+.profile-onnmail-hold.is-busy,
+.profile-onnmail-hold:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.profile-onnmail-hold__hint {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+@keyframes profile-onnmail-sheet-up {
+  from {
+    transform: translateY(18px);
+    opacity: 0.85;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes profile-onnmail-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

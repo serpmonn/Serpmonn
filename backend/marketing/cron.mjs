@@ -38,7 +38,7 @@ import { refreshReachMetrics, ensureReachColumns } from './reach.mjs';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({
   path: process.env.NODE_ENV === 'production'
-    ? '/var/www/serpmonn.ru/backend/.env'
+    ? '/etc/serpmonn/backend.env'
     : resolve(__dirname, '../.env')
 });
 

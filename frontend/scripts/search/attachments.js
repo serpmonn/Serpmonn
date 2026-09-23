@@ -342,13 +342,18 @@ async function runReverseImageSearch() {
   }
 
   const results = Array.isArray(data?.results) ? data.results : [];
+  const emptyHint =
+    results.length === 0
+      ? data?.emptyReason === 'engines_failed'
+        ? messages.reverseImageError
+        : messages.reverseImageEmptyHint
+          ? `${data?.error || messages.reverseImageEmpty || messages.resultsEmpty} ${messages.reverseImageEmptyHint}`
+          : data?.error || messages.reverseImageEmpty || messages.resultsEmpty
+      : undefined;
   renderResultsMode({
     category,
     results,
-    emptyText:
-      results.length === 0
-        ? data?.error || messages.reverseImageEmpty || messages.resultsEmpty
-        : undefined
+    emptyText: emptyHint
   });
   return data;
 }

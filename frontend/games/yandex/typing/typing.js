@@ -391,6 +391,16 @@
         initTest(newText !== false);
         focusInput();
       },
+      /** Jump clock to last N seconds (real timer still runs to 0). */
+      setTimeLeft(sec) {
+        if (mode === 'words') return;
+        const total = parseInt(mode, 10);
+        const left = Math.max(0, Math.min(total, Math.floor(Number(sec) || 0)));
+        timeLeft = left;
+        totalTime = total - left;
+        if (started) startTs = performance.now() - totalTime * 1000;
+        updateLiveStats();
+      },
       finish: finishTest,
     };
   }

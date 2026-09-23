@@ -15,15 +15,45 @@ const CHATTY_RE =
 const PERSONAL_RE =
   /\b(?:я|мне|меня|мой|моя|моё|мое|мы|ты|вы|муж|жена|друг|подруга|пожалуйста)\b/i;
 
+/** Ожидание «осведомителя / досье по всем сайтам» — обычная Выдача так не умеет. */
+const DOSSIER_RE =
+  /(?:на\s+всех\s+сайтах|со\s+всех\s+\S+|всех\s+источник[а-яёa-z]*|всю\s+информаци[а-яёa-z]*|полн[а-яёa-z]*\s+досье|досье\s+на|осведом|включая\s+фото.{0,60}со\s+всех|find\s+everything(?:\s+about)?|across\s+all\s+(?:the\s+)?(?:sites|sources)|all\s+(?:the\s+)?(?:sites|sources)\s+(?:about|for))/i;
+
 function looksLikeConversation(text) {
   const t = String(text || '').trim();
-  if (!t || WEB_SEARCH_RE.test(t) || IMAGE_RE.test(text)) return false;
+  if (!t || WEB_SEARCH_RE.test(t) || IMAGE_RE.test(t) || DOSSIER_RE.test(t)) return false;
   if (PERSONAL_RE.test(t)) return true;
   const cyr = (t.match(/[а-яё]/gi) || []).length;
   const lat = (t.match(/[a-z]/gi) || []).length;
   if (t.length <= 12 && !/\d{2,}/.test(t)) return true;
   if (cyr > lat && cyr >= 10 && /\s/.test(t)) return true;
   return false;
+}
+
+function isDossierQuery(query) {
+  return DOSSIER_RE.test(String(query || '').trim());
+}
+
+/** Убрать «со всех сайтов» и оставить имя/суть для обычного поиска. */
+function simplifyDossierQuery(query) {
+  let t = String(query || '');
+  t = t
+    .replace(/найд[иь]\s+информаци[а-яёa-z]*/gi, ' ')
+    .replace(/всю\s+информаци[а-яёa-z]*/gi, ' ')
+    .replace(/включая\s+фото(?:\s+и\s+видео)?/gi, ' ')
+    .replace(/на\s+всех\s+сайтах/gi, ' ')
+    .replace(/со\s+всех\s+\S+/gi, ' ')
+    .replace(/всех\s+источник[а-яёa-z]*/gi, ' ')
+    .replace(/полн[а-яёa-z]*\s+досье\s*(?:на)?/gi, ' ')
+    .replace(/досье\s+на/gi, ' ')
+    .replace(/find\s+everything(?:\s+about)?/gi, ' ')
+    .replace(/across\s+all\s+(?:the\s+)?(?:sites|sources)/gi, ' ')
+    .replace(/all\s+(?:the\s+)?(?:sites|sources)\s+(?:about|for)/gi, ' ')
+    .replace(/^\s*на\s+/i, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (/^(?:информаци[а-яёa-z]*|поиск|найд[иь]|find|search)$/i.test(t)) return '';
+  return t;
 }
 
 function detectAiIntent(query, opts = {}) {
@@ -45,4 +75,11 @@ function detectAiIntent(query, opts = {}) {
   return 'search';
 }
 
-export { detectAiIntent, IMAGE_RE };
+export {
+  detectAiIntent,
+  IMAGE_RE,
+  WEB_SEARCH_RE,
+  DOSSIER_RE,
+  isDossierQuery,
+  simplifyDossierQuery
+};

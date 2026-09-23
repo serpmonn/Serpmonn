@@ -57,7 +57,10 @@ import {
   runAiImage,
   renderAiImageResult
 } from './ai-assist.js';
-import { detectAiIntent } from './ai-intent.js';
+import {
+  detectAiIntent,
+  isDossierQuery
+} from './ai-intent.js';
 
 function initAdObserver() {
   initAdSlotObserver();
@@ -243,9 +246,23 @@ async function initPage() {
       setSubmitLoading(true);
       prefetchPromoIntent(query);
 
+      const intentEarly = detectAiIntent(query, {
+        hasChatHistory: getChatHistory().length > 0
+      });
+
+      // «Нарисуй…» из Выдачи — в ИИ/картинку, не в web
+      if (intentEarly === 'image') {
+        setSearchMode('ai');
+      }
+
+      // «Досье / на всех сайтах» — всегда обычная Выдача (с именем — упрощение на бэке)
+      if (isDossierQuery(query)) {
+        setSearchMode('results');
+      }
+
       const activeMode = getSearchMode(searchForm);
 
-      if (activeMode === 'results') {
+      if (activeMode === 'results' && intentEarly !== 'image') {
         try {
           await runResultsSearch(query, searchState.currentResultsCategory || 'general');
         } catch (error) {
@@ -269,9 +286,7 @@ async function initPage() {
       }
 
       // Режим ИИ: картинка / чат / поиск — по intent
-      const intent = detectAiIntent(query, {
-        hasChatHistory: getChatHistory().length > 0
-      });
+      const intent = intentEarly;
       const contentDiv = document.getElementById('ai-result-content');
       const container = document.getElementById('ai-result-container');
       if (container) {

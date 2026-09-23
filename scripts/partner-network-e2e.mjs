@@ -4,7 +4,7 @@
  * Creates disposable adv/pub accounts, cleans them up at the end.
  */
 import dotenv from 'dotenv';
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 import { query } from '../backend/database/config.mjs';
 

@@ -2,6 +2,7 @@ import { getPageT } from './i18n-loader.js';
 import { flyFindingToMenu } from './finding-fly-animation.js';
 import { csrfHeaders } from './csrf.js?v=3';
 import { apiUrl } from './app-api.js?v=3';
+import { checkLoggedIn } from './auth-session.js';
 
 let t = (key, vars = {}) => key;
 
@@ -314,8 +315,8 @@ export async function initFindingsSave(getContext) {
       return;
     }
 
-    const authCheck = await apiGet('/auth/protected');
-    if (!authCheck.ok) {
+    const authOk = await checkLoggedIn();
+    if (!authOk) {
       window.location.href = buildAuthUrl(window.location.pathname + window.location.search);
       return;
     }

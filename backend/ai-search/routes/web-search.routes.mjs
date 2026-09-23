@@ -11,6 +11,7 @@ import {
   localeToSearxLanguage,
   normalizeWebSearchExtras,
 } from '../web-search-normalize.mjs';
+import { isDossierQuery, simplifyDossierQuery } from '../ai-intent.mjs';
 
 function registerWebSearchRoutes(router) {
   router.post(
@@ -27,6 +28,18 @@ function registerWebSearchRoutes(router) {
 
         if (!q) {
           return res.status(400).json({ error: t.queryEmpty });
+        }
+
+        // «Досье со всех сайтов»: есть имя — ищем по нему + пометка;
+        // нет имени — всё равно обычный поиск по исходному тексту (без экрана отказа).
+        let dossierMeta = null;
+        let searchQ = q;
+        if (isDossierQuery(q)) {
+          const suggestQuery = simplifyDossierQuery(q);
+          if (suggestQuery) {
+            dossierMeta = { originalQ: q, suggestQuery };
+            searchQ = suggestQuery;
+          }
         }
 
         const identity = getUserIdentity(req);
@@ -50,12 +63,12 @@ function registerWebSearchRoutes(router) {
         const safesearchRaw = Number(req.body?.safesearch);
         const safesearch = WEB_SAFESEARCH.has(safesearchRaw) ? safesearchRaw : 2;
 
-        const data = await fetchSearxViaCurl(q, category, {
+        const data = await fetchSearxViaCurl(searchQ, category, {
           ...(language ? { language } : {}),
           ...(timeRange ? { timeRange } : {}),
           safesearch,
         });
-        const results = normalizeWebSearchResults(category, q, data, t);
+        const results = normalizeWebSearchResults(category, searchQ, data, t);
         const extras = normalizeWebSearchExtras(data);
         const totalMs = Number(process.hrtime.bigint() - reqStart) / 1e6;
 
@@ -63,7 +76,7 @@ function registerWebSearchRoutes(router) {
         if (isSearxHardFailure(data) && results.length === 0) {
           trackSearchQuery(req, identity, {
             mode: 'web',
-            queryText: q,
+            queryText: searchQ,
             category,
             locale,
             status: 'error',
@@ -80,6 +93,7 @@ function registerWebSearchRoutes(router) {
           `/web-search | category=${category} | lang=${language || 'auto'}` +
             ` | time=${timeRange || 'any'} | safe=${safesearch}` +
             ` | results=${results.length}` +
+            (dossierMeta ? ` | dossier→${JSON.stringify(searchQ)}` : '') +
             ` | answers=${extras.answers.length} | infoboxes=${extras.infoboxes.length}` +
             ` | suggestions=${extras.suggestions.length} | corrections=${extras.corrections.length}` +
             ` | total=${totalMs.toFixed(0)}ms`
@@ -87,7 +101,7 @@ function registerWebSearchRoutes(router) {
 
         trackSearchQuery(req, identity, {
           mode: 'web',
-          queryText: q,
+          queryText: searchQ,
           category,
           locale,
           status: results.length === 0 ? 'empty' : 'ok',
@@ -96,13 +110,20 @@ function registerWebSearchRoutes(router) {
         });
 
         return res.json({
-          q,
+          q: searchQ,
           category,
           timeRange: timeRange || null,
           safesearch,
           results,
           ...extras,
           timings: { total_ms: totalMs },
+          ...(dossierMeta
+            ? {
+                dossierRewritten: true,
+                originalQ: dossierMeta.originalQ,
+                suggestQuery: dossierMeta.suggestQuery,
+              }
+            : {}),
         });
       } catch (error) {
         console.error('💥 Ошибка в /web-search:', error.message);

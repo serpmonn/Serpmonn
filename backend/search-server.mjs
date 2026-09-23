@@ -16,12 +16,13 @@ import helmet from 'helmet';
 import aiSearchRouter from './ai-search/ai-search.mjs';
 import voiceRoutes from './voice/voiceRoutes.mjs';
 
-// database/config.mjs тянет prod .env с override:true — возвращаем env этого дерева
+// database/config.mjs тянет prod .env с override:true — для serpmonn-dev берём backend-dev.env
 const isDevTree = process.cwd().includes('serpmonn-dev');
+const nodeEnv = process.env.NODE_ENV || 'development';
 const envPath = isDevTree
-  ? resolve(process.cwd(), 'backend/.env')
-  : process.env.NODE_ENV === 'production'
-    ? '/var/www/serpmonn.ru/backend/.env'
+  ? '/etc/serpmonn/backend-dev.env'
+  : nodeEnv === 'production'
+    ? '/etc/serpmonn/backend.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath, override: true });

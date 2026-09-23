@@ -251,6 +251,110 @@
   });
   window.addEventListener('keydown', handleKeyDown, true);
 
+  if (/[?&]rec=1(?:&|$)/.test(location.search)) {
+    window.__rec = {
+      getState() {
+        return {
+          tiles: tiles.slice(),
+          emptyIndex,
+          moves,
+          time,
+          solved: gameSolved,
+          started: gameStarted,
+        };
+      },
+      reset() {
+        initGame();
+      },
+      /** One move from solved: empty left of 15. */
+      setupNearSolved() {
+        tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15];
+        emptyIndex = 14;
+        moves = 24;
+        time = 18;
+        gameStarted = true;
+        gameSolved = false;
+        adShownThisRound = true;
+        $('moves').textContent = String(moves);
+        $('time').textContent = String(time);
+        hideEnd();
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+        ygStart();
+        timer = setInterval(() => {
+          time++;
+          $('time').textContent = String(time);
+        }, 1000);
+        renderBoard();
+        return { emptyIndex, moves, nextIndex: 15 };
+      },
+      /** Two moves from solved. */
+      setupTwoAway() {
+        tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0, 14, 15];
+        emptyIndex = 13;
+        moves = 23;
+        time = 17;
+        gameStarted = true;
+        gameSolved = false;
+        adShownThisRound = true;
+        $('moves').textContent = String(moves);
+        $('time').textContent = String(time);
+        hideEnd();
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+        ygStart();
+        timer = setInterval(() => {
+          time++;
+          $('time').textContent = String(time);
+        }, 1000);
+        renderBoard();
+        return { emptyIndex, moves, nextIndex: 14 };
+      },
+      /** Scramble last row after being close — visual "fail". */
+      failNearEnd() {
+        tiles = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 14, 13, 0];
+        emptyIndex = 15;
+        moves += 1;
+        gameSolved = false;
+        $('moves').textContent = String(moves);
+        hideEnd();
+        renderBoard();
+        // fake near-miss banner via end overlay
+        endMessage.textContent = 'Almost…';
+        endOverlay.classList.remove('hidden');
+        return { emptyIndex, moves };
+      },
+      hideEnd() {
+        hideEnd();
+      },
+      showBanner(text) {
+        endMessage.textContent = String(text || 'Almost…');
+        endOverlay.classList.remove('hidden');
+      },
+      moveIndex(index) {
+        moveTile(index);
+        return { solved: gameSolved, emptyIndex, moves };
+      },
+      /** Move tile into empty by sliding empty toward dir: up/down/left/right (empty moves). */
+      slide(dir) {
+        let target = -1;
+        if (dir === 'up') target = emptyIndex + BOARD_SIZE;
+        else if (dir === 'down') target = emptyIndex - BOARD_SIZE;
+        else if (dir === 'left') target = emptyIndex + 1;
+        else if (dir === 'right') target = emptyIndex - 1;
+        if (target >= 0 && target < tiles.length && canMove(target)) {
+          moveTile(target);
+          return true;
+        }
+        return false;
+      },
+    };
+  }
+
   window.__ygOnReady = function () {
     initGame();
   };

@@ -9,7 +9,7 @@ import { registerFeedbackRoutes } from './routes/feedback.routes.mjs';
 import { registerAiImageRoutes } from './routes/ai-image.routes.mjs';
 import { registerAiChatRoutes } from './routes/ai-chat.routes.mjs';
 
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+dotenv.config({ path: '/etc/serpmonn/backend.env' });
 
 const router = express.Router();
 

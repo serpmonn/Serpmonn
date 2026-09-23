@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style type="text/css">
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+body {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-circle {
+  width: min(28vw, 28vh);
+  height: min(28vw, 28vh);
+  border-radius: 50%;
+  background: #fff center / contain no-repeat url(images/serpmonn-logo-hires.png);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+  opacity: 0.25;
+  overflow: hidden;
+}
+html.dark-mode > body {
+  background: #21292c;
+}
+html.dark-mode .logo-circle {
+  background-color: #fff;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  opacity: 0.2;
+}
+</style>
+<script>
+  try {
+    if (document.cookie.indexOf('colorMode=dark') > -1
+      || (document.cookie.indexOf('colorMode=light') === -1 && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      document.documentElement.className += ' dark-mode';
+    }
+  } catch (e) { }
+</script>
+</head>
+<body>
+  <div class="logo-circle" aria-hidden="true"></div>
+</body>
+</html>

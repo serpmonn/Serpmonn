@@ -18,11 +18,11 @@ let buildPromise = null;
 function loadEnv() {
   try {
     require(path.join(ROOT, 'node_modules/dotenv')).config({
-      path: path.join(ROOT, 'backend/.env')
+      path: '/etc/serpmonn/backend.env'
     });
   } catch (_) {
     try {
-      require('dotenv').config({ path: path.join(ROOT, 'backend/.env') });
+      require('dotenv').config({ path: '/etc/serpmonn/backend.env' });
     } catch (__) {}
   }
 }

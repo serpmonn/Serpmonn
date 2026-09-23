@@ -1,5 +1,5 @@
 /**
- * Reverse image search: TinEye (SearXNG / official API) → Yandex CBIR → SauceNAO.
+ * Reverse image search: TinEye → SauceNAO (upload) → Yandex via SauceNAO URL → Yandex via serpmonn URL.
  * Фото временно кладётся в публичный каталог для движков, которым нужен URL.
  */
 
@@ -8,6 +8,7 @@ import { mkdir, writeFile, unlink, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
+import { SEARCH_LOG_TTL_DAYS } from './search-log-ttl.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '../..');
@@ -19,8 +20,10 @@ const PUBLIC_BASE = String(
 
 const MAX_BYTES = Number(process.env.REVERSE_IMAGE_MAX_BYTES) || 2 * 1024 * 1024;
 const TTL_MS = Number(process.env.REVERSE_IMAGE_TTL_MS) || 15 * 60 * 1000;
+/** Архив фото для админки — тот же срок, что и search_query_log (5 лет по умолчанию). */
 const LOG_IMAGE_TTL_MS =
-  Number(process.env.SEARCH_LOG_IMAGE_TTL_MS) || 30 * 24 * 60 * 60 * 1000;
+  Number(process.env.SEARCH_LOG_IMAGE_TTL_MS) ||
+  SEARCH_LOG_TTL_DAYS * 24 * 60 * 60 * 1000;
 const TINEYE_API_KEY = String(process.env.TINEYE_API_KEY || '').trim();
 const TINEYE_API_USER = String(process.env.TINEYE_API_USER || '').trim();
 
@@ -425,7 +428,8 @@ export async function reverseImageViaSauceNao(buffer, mime) {
       'User-Agent':
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     },
-    signal: AbortSignal.timeout(60000),
+    // Короткий timeout: 60с упиралось в nginx proxy_read_timeout и давало 504 пользователю
+    signal: AbortSignal.timeout(20000),
     redirect: 'follow'
   });
 
@@ -454,7 +458,7 @@ function parseSauceNaoHtml(html) {
     const sim = block.match(/resultsimilarityinfo">([\d.]+)%/);
     const score = sim ? Number(sim[1]) : null;
     // Skip weak matches
-    if (score != null && score < 50) continue;
+    if (score != null && score < 40) continue;
 
     const title = block.match(/resulttitle">([\s\S]*?)<\/div>/i);
     const cleanTitle = String(title?.[1] || '')
@@ -490,7 +494,8 @@ function parseSauceNaoHtml(html) {
 }
 
 /**
- * Orchestrates engines. Prefers TinEye, then SauceNAO (+ Yandex via hosted URL).
+ * Orchestrates engines.
+ * Порядок: TinEye API → TinEye/SearX → SauceNAO+Yandex параллельно → Yandex via SauceNAO host.
  * @param {{ buffer: Buffer, mime: string, publicUrl: string }} input
  */
 export async function reverseImageSearch(input) {
@@ -502,7 +507,7 @@ export async function reverseImageSearch(input) {
       const api = await reverseImageViaTinEyeApi(buffer, mime);
       attempts.push({ engine: api.engine, count: api.results.length });
       if (api.results.length) {
-        return { results: api.results, engine: api.engine, attempts, imageUrl: publicUrl };
+        return { results: api.results, engine: api.engine, attempts, imageUrl: publicUrl, emptyReason: null };
       }
     } catch (err) {
       attempts.push({ engine: 'tineye-api', error: err.message });
@@ -517,62 +522,105 @@ export async function reverseImageSearch(input) {
       unresponsive: searx.unresponsive
     });
     if (searx.results.length) {
-      return { results: searx.results, engine: 'tineye', attempts, imageUrl: publicUrl };
+      return { results: searx.results, engine: 'tineye', attempts, imageUrl: publicUrl, emptyReason: null };
     }
   } catch (err) {
     attempts.push({ engine: 'tineye', error: err.message });
   }
 
-  // Прямой Yandex по URL serpmonn.ru (нужен рабочий IPv6/доступ с их краулера)
-  try {
-    const yandex = await reverseImageViaYandex(publicUrl);
+  // SauceNAO по байтам + прямой Yandex по нашему URL — параллельно
+  const [sauceSettled, yandexDirectSettled] = await Promise.allSettled([
+    reverseImageViaSauceNao(buffer, mime),
+    reverseImageViaYandex(publicUrl)
+  ]);
+
+  let sauce = null;
+  if (sauceSettled.status === 'fulfilled') {
+    sauce = sauceSettled.value;
+    attempts.push({
+      engine: 'saucenao',
+      count: sauce.results.length,
+      hostedUrl: Boolean(sauce.hostedUrl)
+    });
+  } else {
+    attempts.push({ engine: 'saucenao', error: sauceSettled.reason?.message || 'failed' });
+  }
+
+  if (yandexDirectSettled.status === 'fulfilled') {
+    const yandex = yandexDirectSettled.value;
     attempts.push({
       engine: 'yandex',
       count: yandex.results.length,
       reason: yandex.reason
     });
     if (yandex.results.length) {
-      return { results: yandex.results, engine: 'yandex', attempts, imageUrl: publicUrl };
+      const merged = dedupeResults([
+        ...yandex.results,
+        ...(sauce?.results || [])
+      ]);
+      return {
+        results: merged,
+        engine: 'yandex',
+        attempts,
+        imageUrl: publicUrl,
+        emptyReason: null
+      };
     }
-  } catch (err) {
-    attempts.push({ engine: 'yandex', error: err.message });
+  } else {
+    attempts.push({
+      engine: 'yandex',
+      error: yandexDirectSettled.reason?.message || 'failed'
+    });
   }
 
-  try {
-    const sauce = await reverseImageViaSauceNao(buffer, mime);
-    attempts.push({ engine: 'saucenao', count: sauce.results.length });
-
-    // Запасной путь: Яндекс через временный URL SauceNAO
-    if (sauce.hostedUrl) {
-      try {
-        const yandexViaHost = await reverseImageViaYandex(sauce.hostedUrl);
-        attempts.push({
-          engine: 'yandex-via-host',
-          count: yandexViaHost.results.length,
-          reason: yandexViaHost.reason
-        });
-        if (yandexViaHost.results.length) {
-          const merged = dedupeResults([...yandexViaHost.results, ...sauce.results]);
-          return {
-            results: merged,
-            engine: 'yandex',
-            attempts,
-            imageUrl: publicUrl
-          };
-        }
-      } catch (err) {
-        attempts.push({ engine: 'yandex-via-host', error: err.message });
+  // Яндекс через временный URL SauceNAO
+  if (sauce?.hostedUrl) {
+    try {
+      const yandexViaHost = await reverseImageViaYandex(sauce.hostedUrl);
+      attempts.push({
+        engine: 'yandex-via-host',
+        count: yandexViaHost.results.length,
+        reason: yandexViaHost.reason
+      });
+      if (yandexViaHost.results.length) {
+        const merged = dedupeResults([
+          ...yandexViaHost.results,
+          ...(sauce.results || [])
+        ]);
+        return {
+          results: merged,
+          engine: 'yandex',
+          attempts,
+          imageUrl: publicUrl,
+          emptyReason: null
+        };
       }
+    } catch (err) {
+      attempts.push({ engine: 'yandex-via-host', error: err.message });
     }
-
-    if (sauce.results.length) {
-      return { results: sauce.results, engine: 'saucenao', attempts, imageUrl: publicUrl };
-    }
-  } catch (err) {
-    attempts.push({ engine: 'saucenao', error: err.message });
   }
 
-  return { results: [], engine: null, attempts, imageUrl: publicUrl };
+  if (sauce?.results?.length) {
+    return {
+      results: sauce.results,
+      engine: 'saucenao',
+      attempts,
+      imageUrl: publicUrl,
+      emptyReason: null
+    };
+  }
+
+  const engineErrors = attempts.filter((a) => a.error).length;
+  const emptyReason =
+    engineErrors >= Math.max(1, attempts.length - 1) ? 'engines_failed' : 'no_matches';
+
+  return {
+    results: [],
+    engine: null,
+    attempts,
+    imageUrl: publicUrl,
+    emptyReason
+  };
 }
 
 function dedupeResults(items) {

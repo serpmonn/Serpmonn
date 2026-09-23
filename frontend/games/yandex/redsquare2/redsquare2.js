@@ -553,6 +553,9 @@
           level,
           running: Boolean(gameStarted && !isPaused),
           started: gameStarted,
+          playerX: player.x,
+          canvasW: canvas.width,
+          objects: objects.map((o) => ({ x: o.x, y: o.y, size: o.size })),
         };
       },
       start() {
@@ -568,6 +571,81 @@
       reset() {
         dismissInstruction();
         restartGame();
+      },
+      setPlayerX(x) {
+        player.x = Math.max(0, Math.min(canvas.width - player.width, Number(x) || 0));
+        player.dx = 0;
+      },
+      nudge(dir) {
+        const step = player.speed * 3.2;
+        if (dir === 'left') player.dx = -step;
+        else if (dir === 'right') player.dx = step;
+      },
+      setMisses(n) {
+        missedObjects = Math.max(0, Math.min(MAX_MISSES, Number(n) || 0));
+        updateHud();
+      },
+      setScore(n) {
+        score = Math.max(0, Number(n) || 0);
+        level = Math.max(1, Math.floor(score / 8) + 1);
+        objectSpeed = currentObjectSpeed();
+        updateHud();
+      },
+      forceEnd() {
+        missedObjects = MAX_MISSES;
+        updateHud();
+        endGame();
+      },
+      clearObjects() {
+        objects.length = 0;
+      },
+      spawn(x, y, size) {
+        const s = size || 22 + Math.random() * 28;
+        const shapes = ['square', 'circle', 'triangle', 'star'];
+        objects.push({
+          x: x == null ? Math.random() * Math.max(1, canvas.width - s) : Number(x),
+          y: y == null ? -s : Number(y),
+          size: s,
+          shape: shapes[Math.floor(Math.random() * shapes.length)],
+          dx: (Math.random() - 0.5) * 1.6,
+        });
+      },
+      setPlayerSize(w, h) {
+        player.width = Math.max(30, Number(w) || 44);
+        player.height = Math.max(30, Number(h) || 44);
+        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      },
+      bumpSpeed(mult) {
+        objectSpeed = Math.min(MAX_OBJECT_SPEED, currentObjectSpeed() * (Number(mult) || 1.6));
+      },
+      missNow() {
+        // drop every object to floor → instant misses toward game over
+        for (const o of objects) o.y = canvas.height + 10;
+      },
+      styleFailModal() {
+        const style = document.createElement('style');
+        style.id = 'rec-fail-style';
+        style.textContent = `
+          .rs2-modal { background: rgba(80,0,0,.72) !important; }
+          .rs2-modal-content {
+            border: 3px solid #ff4444 !important;
+            transform: scale(1.25);
+            padding: 28px 32px !important;
+          }
+          .rs2-modal-content h2 {
+            font-size: 2.6rem !important;
+            color: #ff5555 !important;
+            letter-spacing: .04em;
+          }
+          .rs2-modal-content p { font-size: 1.35rem !important; }
+          #missesValue { color: #ff5555 !important; font-size: 1.5rem !important; font-weight: 800 !important; }
+        `;
+        document.head.appendChild(style);
+      },
+      pressure() {
+        level = Math.max(level, 4);
+        objectSpeed = currentObjectSpeed();
+        restartSpawnTimer();
       },
     };
   }

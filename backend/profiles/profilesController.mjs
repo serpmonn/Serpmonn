@@ -3,7 +3,7 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
+    ? '/etc/serpmonn/backend.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
@@ -34,13 +34,13 @@ const getUserProfile = async (req, res) => {                                    
         let result = [];
         if (userId) {
             result = await query(
-                'SELECT username, email, confirmed, mailbox_created FROM users WHERE id = ? LIMIT 1',
+                'SELECT username, email, confirmed, mailbox_created, mailbox_email FROM users WHERE id = ? LIMIT 1',
                 [userId]
             );
         }
         if ((!result || result.length === 0) && email) {
             result = await query(
-                'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ? LIMIT 1',
+                'SELECT username, email, confirmed, mailbox_created, mailbox_email FROM users WHERE email = ? LIMIT 1',
                 [email]
             );
         }
@@ -75,7 +75,7 @@ const getUserInfo = async (req, res) => {                                       
         console.log('Email пользователя из токена (getUserInfo):', email, 'id:', userId);
 
         const selectCols = `
-        SELECT id, username, email, confirmed, mailbox_created, avatar_updated_at, plan, pro_until, created_at
+        SELECT id, username, email, confirmed, mailbox_created, mailbox_email, avatar_updated_at, plan, pro_until, created_at
         FROM users
         `;
         let result = [];
@@ -163,6 +163,7 @@ const getUserInfo = async (req, res) => {                                       
         email: user.email,
         confirmed: user.confirmed,
         mailbox_created: user.mailbox_created,
+        mailbox_email: user.mailbox_email || null,
         avatar_url: buildAvatarUrl(user.id, user.avatar_updated_at),
         created_at: user.created_at,
         plan: user.plan,

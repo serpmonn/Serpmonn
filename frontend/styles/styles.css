@@ -5608,8 +5608,26 @@ a:visited {
   background: #f3f4f6;
 }
 
+.finding-dm-photo__open {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  line-height: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.finding-dm-photo__open:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
 .finding-dm-photo img,
-.finding-dm-photo__frame > img {
+.finding-dm-photo__frame > img,
+.finding-dm-photo__open img {
   display: block;
   width: 100%;
   max-width: 240px;
@@ -5618,6 +5636,79 @@ a:visited {
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.dm-photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+.dm-photo-lightbox[hidden] {
+  display: none !important;
+}
+
+.dm-photo-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+
+.dm-photo-lightbox__stage {
+  position: relative;
+  z-index: 1;
+  max-width: min(96vw, 1200px);
+  max-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dm-photo-lightbox__img {
+  display: block;
+  max-width: min(96vw, 1200px);
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.dm-photo-lightbox__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.72);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dm-photo-lightbox__close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+body.dm-photo-lightbox-open {
+  overflow: hidden;
 }
 
 .finding-dm-media__download {
@@ -5665,6 +5756,11 @@ a:visited {
   width: 56px;
   height: 56px;
   flex-shrink: 0;
+}
+
+.finding-dm-compose__pending-frame .finding-dm-photo__open {
+  width: 100%;
+  height: 100%;
 }
 
 .finding-dm-compose__pending-frame .finding-dm-compose__pending-thumb {

@@ -3,6 +3,7 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t, loadMessages } from './i18n-loader.js';
+import { checkLoggedIn } from './auth-session.js';
 
 /** Lazy findings-modals — keep ~84KB off the critical path */
 let findingsModalsPromise = null;
@@ -582,43 +583,46 @@ fetch(primaryMenuPath)
     // Apply GEO filtering after menu init
     try { applyGeoFilter(); } catch {}
 
+    function applyAuthMenuUi(isLoggedIn) {
+      const authBlock = document.getElementById('auth-block');
+      const profileBlock = document.getElementById('profile-block');
+      const activityBell = document.getElementById('activityBellBtn');
+
+      if (authBlock) {
+        authBlock.hidden = isLoggedIn;
+        authBlock.style.display = isLoggedIn ? 'none' : '';
+      }
+      if (profileBlock) {
+        profileBlock.hidden = !isLoggedIn;
+        profileBlock.style.display = isLoggedIn ? '' : 'none';
+      }
+      if (activityBell) {
+        activityBell.hidden = !isLoggedIn;
+        activityBell.style.display = isLoggedIn ? '' : 'none';
+      }
+      if (!isLoggedIn) {
+        updateActivityBellBadge(0);
+      }
+    }
+
     async function updateAuthMenuState() {
       const authBlock = document.getElementById('auth-block');
       const profileBlock = document.getElementById('profile-block');
       const activityBell = document.getElementById('activityBellBtn');
       if (!authBlock && !profileBlock && !activityBell) return;
 
-      try {
-        const resp = await fetch('/auth/protected', { credentials: 'include' });
-        const isLoggedIn = resp.ok;
+      // Гостевой UI сразу — без ожидания /auth/protected
+      applyAuthMenuUi(false);
 
-        if (authBlock) {
-          authBlock.hidden = isLoggedIn;
-          authBlock.style.display = isLoggedIn ? 'none' : '';
-        }
-        if (profileBlock) {
-          profileBlock.hidden = !isLoggedIn;
-          profileBlock.style.display = isLoggedIn ? '' : 'none';
-        }
-        if (activityBell) {
-          activityBell.hidden = !isLoggedIn;
-          activityBell.style.display = isLoggedIn ? '' : 'none';
-        }
+      try {
+        const isLoggedIn = await checkLoggedIn();
+        applyAuthMenuUi(isLoggedIn);
         if (isLoggedIn) {
           refreshUnreadUi();
-        } else {
-          updateActivityBellBadge(0);
         }
       } catch (e) {
         console.warn('auth menu state check failed', e);
-        if (profileBlock) {
-          profileBlock.hidden = true;
-          profileBlock.style.display = 'none';
-        }
-        if (activityBell) {
-          activityBell.hidden = true;
-          activityBell.style.display = 'none';
-        }
+        applyAuthMenuUi(false);
       }
 
       hideCurrentPageMenuLinks();
@@ -682,8 +686,8 @@ fetch(primaryMenuPath)
         const { closeMenu } = await import('./menu.js');
         closeMenu();
         try {
-          const resp = await fetch('/auth/protected', { credentials: 'include' });
-          if (!resp.ok) return;
+          const ok = await checkLoggedIn();
+          if (!ok) return;
           const { openActivityModal } = await loadFindingsModals();
           await openActivityModal('inbox');
         } catch {
@@ -694,6 +698,16 @@ fetch(primaryMenuPath)
 
     updateAuthMenuState();
     initActivityBell();
+
+    window.addEventListener('spn-auth-changed', (event) => {
+      const ok = event?.detail?.ok;
+      if (ok === true) {
+        applyAuthMenuUi(true);
+        refreshUnreadUi();
+      } else if (ok === false || ok === null) {
+        applyAuthMenuUi(false);
+      }
+    });
 
     whenIdle(async () => {
       try {

@@ -3,7 +3,7 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
+    ? '/etc/serpmonn/backend.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
@@ -73,9 +73,10 @@ app.get('/csrf-token', (req, res) => {
     return res.status(200).json({ csrfToken: generateCsrfToken(req, res) });
 });
 
-// CSRF на create-mailbox (cookie-сессия). Токен берём с того же хоста (/csrf-token).
+// CSRF на мутирующие mail-api маршруты (cookie-сессия). Токен: /csrf-token.
+const csrfProtectedPaths = new Set(['/create-mailbox', '/change-password', '/link-mailbox']);
 app.use('/mail-api', (req, res, next) => {
-    if (req.method === 'POST' && req.path === '/create-mailbox') {
+    if (req.method === 'POST' && csrfProtectedPaths.has(req.path)) {
         return doubleCsrfProtection(req, res, next);
     }
     return next();

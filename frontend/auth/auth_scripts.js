@@ -2,6 +2,7 @@ import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerato
 import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, safeReplaceLocation, getCurrentLocale } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 import { appFetch } from '../scripts/app-api.js?v=2';
+import { setAuthSession } from '../scripts/auth-session.js';
 
 const t = await getPageT('auth');
 
@@ -137,6 +138,7 @@ function safeNavigate(url) {
 
 /** Сразу уводим с формы после успеха — без паузы, из‑за которой мелькает логин. */
 function finishAuthSuccess() {
+  setAuthSession(true);
   if (isAndroidAppShell()) {
     hideAuthAppUi();
     safeNavigate(authRedirectTarget());
@@ -157,6 +159,7 @@ async function redirectIfAlreadyAuthedInApp() {
       cache: 'no-store',
     });
     if (!res.ok) return false;
+    setAuthSession(true);
     hideAuthAppUi();
     if (embedded) {
       // Не auth-ok: иначе Back на старый auth в history снова орёт «Вы вошли» и кидает на профиль

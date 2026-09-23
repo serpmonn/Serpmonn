@@ -128,9 +128,15 @@ function registerReverseImageRoutes(router) {
           corrections: [],
           infoboxes: [],
           attempts: found.attempts || [],
+          emptyReason: results.length === 0 ? found.emptyReason || 'no_matches' : null,
           timings: { total_ms: totalMs },
           ...(results.length === 0
-            ? { error: t.reverseImageEmpty || t.resultsEmpty || 'Nothing found' }
+            ? {
+                error:
+                  found.emptyReason === 'engines_failed'
+                    ? t.reverseImageError || t.networkError
+                    : t.reverseImageEmpty || t.resultsEmpty || 'Nothing found'
+              }
             : {}),
         });
       } catch (error) {

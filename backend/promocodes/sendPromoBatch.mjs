@@ -6,7 +6,7 @@ import { filterPromocodes, loadPromocodesFromAPI } from '../promocodes/promocode
 
 dotenv.config({
   path: process.env.NODE_ENV === 'production'
-    ? '/var/www/serpmonn.ru/backend/.env'
+    ? '/etc/serpmonn/backend.env'
     : resolve(process.cwd(), 'backend/.env')
 });
 

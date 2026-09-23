@@ -127,6 +127,72 @@ function bindResultsModeActions(root) {
       document.getElementById('ai-search-form')?.requestSubmit();
     });
   });
+
+  root.querySelectorAll('[data-dossier-search]').forEach((btn) => {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      const q = String(btn.getAttribute('data-dossier-search') || '').trim();
+      const form = document.getElementById('ai-search-form');
+      const input = form?.querySelector('input[name="q"]');
+      if (!form || !input || !q) return;
+      input.value = q;
+      setSearchMode('results');
+      form.requestSubmit();
+    });
+  });
+}
+
+/** Пометка над выдачей: запрос был «досье», показали обычный поиск. */
+function buildDossierBannerHtml({ suggestQuery = '', messages = {} } = {}) {
+  const suggest = String(suggestQuery || '').trim();
+  if (!suggest) return '';
+  const shownAs = String(messages.dossierShownAs || 'Запрос упрощён до: {query}').replace(
+    '{query}',
+    suggest
+  );
+  return `
+    <aside class="results-dossier-banner" role="status">
+      <p class="results-dossier-shown">${escapeHtml(shownAs)}</p>
+    </aside>`;
+}
+
+/** Если из запроса нельзя вытащить имя — честный отказ с кнопками. */
+function renderDossierNotice({ suggestQuery = '' } = {}) {
+  const messages = getMessages();
+  const contentDiv = document.getElementById('ai-result-content');
+  const container = document.getElementById('ai-result-container');
+  const tabs = document.getElementById('results-tabs');
+
+  setSearchMode('results');
+  if (container) {
+    container.style.display = 'block';
+    container.classList.add('is-results-mode');
+  }
+  if (tabs) tabs.hidden = true;
+  setResultActionsVisible(false);
+
+  if (!contentDiv) return;
+
+  const title =
+    messages.dossierTitle ||
+    'Полный сбор со всех сайтов недоступен';
+  const body =
+    messages.dossierBodyNoSuggest ||
+    messages.dossierBody ||
+    'Такой запрос обычно значит «собрать всё обо всём». Полного досье здесь нет.';
+  const tryAiLabel =
+    messages.dossierAskAi || messages.resultsTryAi || messages.modeAiLabel || 'Ask AI';
+
+  contentDiv.innerHTML = `
+    <div class="results-empty results-dossier-notice" role="status">
+      <p class="results-dossier-title"><strong>${escapeHtml(title)}</strong></p>
+      <p class="results-dossier-body">${escapeHtml(body)}</p>
+      <div class="results-empty-actions">
+        <button type="button" class="results-try-ai-btn" data-results-try-ai>${escapeHtml(tryAiLabel)}</button>
+      </div>
+    </div>`;
+  bindResultsModeActions(contentDiv);
 }
 
 function getSourceFaviconForResults(hostname) {
@@ -584,7 +650,8 @@ function renderResultsMode({
   infoboxes,
   error,
   emptyText,
-  quota
+  quota,
+  dossierBannerHtml = ''
 }) {
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
@@ -665,8 +732,8 @@ function renderResultsMode({
         <button type="button" class="results-try-ai-btn" data-results-try-ai>${escapeHtml(tryAiLabel)}</button>
       </div>`;
     contentDiv.innerHTML = extrasHtml
-      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`
-      : `<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`;
+      ? `${dossierBannerHtml}${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`
+      : `${dossierBannerHtml}<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`;
     bindPromoIntentCardActions(contentDiv);
     bindResultsModeActions(contentDiv);
     return;
@@ -698,7 +765,7 @@ function renderResultsMode({
     messages
   });
 
-  contentDiv.innerHTML = `${topExtras}${mainHtml}${promoHtml}${bottomExtras}`;
+  contentDiv.innerHTML = `${dossierBannerHtml}${topExtras}${mainHtml}${promoHtml}${bottomExtras}`;
   bindPromoIntentCardActions(contentDiv);
   bindMediaNsfwReveal(contentDiv);
   bindResultsThumbFallbacks(contentDiv);
@@ -780,6 +847,22 @@ async function runResultsSearch(query, category = searchState.currentResultsCate
     return;
   }
 
+  if (data?.dossierRewritten && data.q) {
+    const input = form?.querySelector('input[name="q"]');
+    if (input && data.q !== input.value.trim()) {
+      input.value = data.q;
+      syncSearchQueryToUrl(data.q, 'results');
+    }
+    searchState.resultsQuery = data.q;
+  }
+
+  const dossierBannerHtml = data?.dossierRewritten
+    ? buildDossierBannerHtml({
+        suggestQuery: data.suggestQuery || data.q || '',
+        messages
+      })
+    : '';
+
   renderResultsMode({
     category: data?.category || category,
     results: Array.isArray(data?.results) ? data.results : [],
@@ -787,6 +870,7 @@ async function runResultsSearch(query, category = searchState.currentResultsCate
     suggestions: Array.isArray(data?.suggestions) ? data.suggestions : [],
     corrections: Array.isArray(data?.corrections) ? data.corrections : [],
     infoboxes: Array.isArray(data?.infoboxes) ? data.infoboxes : [],
+    dossierBannerHtml,
     emptyText:
       form?.dataset.emptyResults ||
       messages.resultsEmpty
@@ -815,6 +899,7 @@ export {
   initResultsFilters,
   initAutocomplete,
   renderResultsMode,
+  renderDossierNotice,
   bindResultsThumbFallbacks,
   runResultsSearch
 };

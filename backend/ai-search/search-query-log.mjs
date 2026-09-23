@@ -1,10 +1,11 @@
 import { query } from '../database/config.mjs';
 import crypto from 'crypto';
+import { SEARCH_LOG_TTL_DAYS } from './search-log-ttl.mjs';
 
 let tablesReady = false;
 
 const QUERY_MAX = 300;
-const RAW_TTL_DAYS = 30;
+const RAW_TTL_DAYS = SEARCH_LOG_TTL_DAYS;
 
 export async function ensureSearchQueryLogTable() {
   if (tablesReady) return;
@@ -173,7 +174,16 @@ export async function logSearchQuery(data) {
 function periodToHours(period) {
   if (period === '24h') return 24;
   if (period === '30d') return 24 * 30;
+  if (period === '90d') return 24 * 90;
+  if (period === '180d') return 24 * 180;
+  if (period === '365d') return 24 * 365;
   return 24 * 7;
+}
+
+function clampRecentLimit(raw) {
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return 200;
+  return Math.min(500, Math.max(50, Math.round(n)));
 }
 
 export async function getSearchInsights({
@@ -184,10 +194,12 @@ export async function getSearchInsights({
   identityType = null,
   client = null,
   device = null,
+  recentLimit = 200,
 } = {}) {
   await ensureSearchQueryLogTable();
 
   const hours = periodToHours(period);
+  const recentCap = clampRecentLimit(recentLimit);
   const where = ['created_at >= (NOW() - INTERVAL ? HOUR)'];
   const params = [hours];
 
@@ -277,7 +289,7 @@ export async function getSearchInsights({
        FROM search_query_log
        WHERE ${whereSql}
        ORDER BY created_at DESC
-       LIMIT 50`,
+       LIMIT ${recentCap}`,
       params
     ),
     query(
@@ -354,54 +366,59 @@ export async function getSearchInsights({
   }
   const usernameById = await resolveUsernames([...userIds]);
 
+  const top = (topRows || []).map((r) => ({
+    query: r.query_text,
+    norm: r.query_norm,
+    hits: Number(r.hits) || 0,
+    ai: Number(r.ai_hits) || 0,
+    web: Number(r.web_hits) || 0,
+    empty: Number(r.empty_hits) || 0,
+    limit: Number(r.limit_hits) || 0,
+    emptyPct: Number(r.hits)
+      ? Math.round((Number(r.empty_hits) / Number(r.hits)) * 1000) / 10
+      : 0,
+  }));
+  const failures = (failureRows || []).map((r) => ({
+    query: r.query_text,
+    norm: r.query_norm,
+    mode: r.mode,
+    status: r.status,
+    hits: Number(r.hits) || 0,
+  }));
+  const summary = {
+    total,
+    ai: Number(s.ai_count) || 0,
+    web: Number(s.web_count) || 0,
+    empty: emptyCount,
+    error: Number(s.error_count) || 0,
+    limit: Number(s.limit_count) || 0,
+    ok: Number(s.ok_count) || 0,
+    emptyPct: total ? Math.round((emptyCount / total) * 1000) / 10 : 0,
+    byIdentity: (identityRows || []).map((r) => ({
+      type: r.identity_type,
+      hits: Number(r.hits) || 0,
+    })),
+    byClient: (clientRows || []).map((r) => ({
+      client: r.client,
+      hits: Number(r.hits) || 0,
+    })),
+    byDevice: (deviceRows || []).map((r) => ({
+      device: r.device,
+      hits: Number(r.hits) || 0,
+    })),
+    webCategories: (categoryRows || []).map((r) => ({
+      category: r.category,
+      hits: Number(r.hits) || 0,
+    })),
+  };
+
   return {
     period,
     hours,
-    summary: {
-      total,
-      ai: Number(s.ai_count) || 0,
-      web: Number(s.web_count) || 0,
-      empty: emptyCount,
-      error: Number(s.error_count) || 0,
-      limit: Number(s.limit_count) || 0,
-      ok: Number(s.ok_count) || 0,
-      emptyPct: total ? Math.round((emptyCount / total) * 1000) / 10 : 0,
-      byIdentity: (identityRows || []).map((r) => ({
-        type: r.identity_type,
-        hits: Number(r.hits) || 0,
-      })),
-      byClient: (clientRows || []).map((r) => ({
-        client: r.client,
-        hits: Number(r.hits) || 0,
-      })),
-      byDevice: (deviceRows || []).map((r) => ({
-        device: r.device,
-        hits: Number(r.hits) || 0,
-      })),
-      webCategories: (categoryRows || []).map((r) => ({
-        category: r.category,
-        hits: Number(r.hits) || 0,
-      })),
-    },
-    top: (topRows || []).map((r) => ({
-      query: r.query_text,
-      norm: r.query_norm,
-      hits: Number(r.hits) || 0,
-      ai: Number(r.ai_hits) || 0,
-      web: Number(r.web_hits) || 0,
-      empty: Number(r.empty_hits) || 0,
-      limit: Number(r.limit_hits) || 0,
-      emptyPct: Number(r.hits)
-        ? Math.round((Number(r.empty_hits) / Number(r.hits)) * 1000) / 10
-        : 0,
-    })),
-    failures: (failureRows || []).map((r) => ({
-      query: r.query_text,
-      norm: r.query_norm,
-      mode: r.mode,
-      status: r.status,
-      hits: Number(r.hits) || 0,
-    })),
+    recentLimit: recentCap,
+    summary,
+    top,
+    failures,
     topUsers: (topUserRows || []).map((r) => ({
       userId: r.user_id,
       username: usernameById.get(String(r.user_id)) || null,
@@ -446,7 +463,7 @@ export async function getSearchInsights({
 async function resolveUsernames(ids) {
   const map = new Map();
   if (!ids.length) return map;
-  const unique = [...new Set(ids.map(String))].slice(0, 100);
+  const unique = [...new Set(ids.map(String))].slice(0, 300);
   const placeholders = unique.map(() => '?').join(',');
   try {
     const rows = await query(

@@ -119,16 +119,58 @@ eleventyComputed:
 
     <!-- Профиль -->
     <section id="tab-profile" class="profile-panel profile-panel--active" role="tabpanel" data-profile-panel="profile" aria-labelledby="tab-btn-profile">
-      <div class="profile-panel-block">
-        <h2 class="profile-panel__heading">{{ onnmailSectionTitle }}</h2>
-        <p class="profile-panel__hint">{{ profile[locale].profile.extraSection.onnmailDescription }}</p>
+      <div class="profile-panel-block" id="onnmailBlock">
+        <h2 class="profile-panel__heading" id="onnmailHeading">{{ onnmailSectionTitle }}</h2>
+        <p class="profile-panel__hint" id="onnmailHint">{{ profile[locale].profile.extraSection.onnmailDescription }}</p>
+        <p id="onnmailAddressRow" class="profile-onnmail-address" hidden>
+          <span id="onnmailAddressValue" class="profile-onnmail-address__value"></span>
+        </p>
         <div class="profile-onnmail-actions">
-          <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
+          <button id="copyOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            {{ profile[locale].profile.extraSection.copyOnnmail or 'Copy' }}
+          </button>
+          <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             {{ profile[locale].profile.extraSection.createOnnmail }}
           </button>
-          <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
+          <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             {{ profile[locale].profile.extraSection.loginOnnmail }}
           </button>
+          <button id="linkOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            {{ profile[locale].profile.extraSection.linkOnnmail or 'Link mailbox' }}
+          </button>
+          <button id="changeOnnmailPasswordButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            {{ profile[locale].profile.extraSection.changeOnnmailPassword or 'Change password' }}
+          </button>
+        </div>
+      </div>
+
+      <div id="onnmailPasswordModal" class="messenger-modal" hidden>
+        <div class="messenger-modal__backdrop" data-onnmail-modal-close></div>
+        <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="onnmailPasswordTitle">
+          <h3 id="onnmailPasswordTitle">{{ profile[locale].profile.extraSection.changeOnnmailTitle or 'Change @onnmail password' }}</h3>
+          <p class="messenger-modal__hint" id="onnmailPasswordHint"></p>
+          <form id="onnmailPasswordForm" class="profile-onnmail-form">
+            <label class="profile-onnmail-form__label" for="onnmailAccountPassword">{{ profile[locale].profile.extraSection.accountPasswordLabel or 'Serpmonn password' }}</label>
+            <input type="password" id="onnmailAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+            <div id="onnmailLinkFields" hidden>
+              <label class="profile-onnmail-form__label" for="onnmailLinkLocalPart">{{ profile[locale].profile.extraSection.mailboxLoginLabel or 'Mailbox login' }}</label>
+              <div class="profile-onnmail-form__suffix">
+                <input type="text" id="onnmailLinkLocalPart" class="profile-onnmail-form__input" autocomplete="off" />
+                <span>@onnmail.ru</span>
+              </div>
+              <label class="profile-onnmail-form__label" for="onnmailCurrentMailPassword">{{ profile[locale].profile.extraSection.currentMailPasswordLabel or 'Current mailbox password' }}</label>
+              <input type="password" id="onnmailCurrentMailPassword" class="profile-onnmail-form__input" autocomplete="off" />
+            </div>
+            <div id="onnmailNewPasswordFields">
+              <label class="profile-onnmail-form__label" for="onnmailNewPassword">{{ profile[locale].profile.extraSection.newMailPasswordLabel or 'New mailbox password' }}</label>
+              <input type="password" id="onnmailNewPassword" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+              <label class="profile-onnmail-form__label" for="onnmailNewPasswordConfirm">{{ profile[locale].profile.extraSection.confirmMailPasswordLabel or 'Confirm password' }}</label>
+              <input type="password" id="onnmailNewPasswordConfirm" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
+            </div>
+            <p id="onnmailPasswordMessage" class="messenger-modal__status" role="status"></p>
+            <button type="submit" class="profile-btn profile-btn--block" id="onnmailPasswordSubmit">{{ profile[locale].profile.extraSection.saveOnnmailPassword or 'Save' }}</button>
+            <button type="button" class="profile-btn profile-btn--ghost profile-btn--block" data-onnmail-modal-close>{{ profile[locale].profile.extraSection.cancelOnnmail or 'Cancel' }}</button>
+          </form>
         </div>
       </div>
 
