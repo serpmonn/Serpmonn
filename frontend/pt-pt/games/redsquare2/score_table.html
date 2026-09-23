@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="pt-pt" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="pt-pt">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classificação</title>
-  <meta name="description" content="Classificação partilhada: Falling Figures e Neli — demo. Compare os seus resultados com outros jogadores.">
+  <title>Ranking — Serpmonn</title>
+  <meta name="description" content="Ranking partilhado: Formas a cair e Neli. Compare os seus resultados com outros jogadores.">
   <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/games/redsquare2/score_table.html"/>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
   <link rel="stylesheet" href="/frontend/styles/styles.css">
@@ -14,42 +13,23 @@
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/leaderboards.css?v=3">
   <script>
-  window.lbI18n = {"loadFail":"Falha ao carregar a classificação","empty":"Ainda sem resultados"};
+  window.lbI18n = {"loadFail":"Falha ao carregar","empty":"No results yet"};
   </script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=4" defer></script>
-  <script>
-  (function () {
-    function loadMailAds() {
-      if (document.querySelector('script[src*="ads-async.js"]')) return;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://ad.mail.ru/static/ads-async.js';
-      document.head.appendChild(s);
-    }
-    function schedule() {
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(function () { setTimeout(loadMailAds, 2000); }, { timeout: 5000 });
-      } else {
-        setTimeout(loadMailAds, 2500);
-      }
-    }
-    if (document.readyState === 'complete') schedule();
-    else window.addEventListener('load', schedule);
-  })();
-</script>
+  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=5" defer></script>
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
-<body class="leaderboard-page">
+<body>
     <div class="ad-container leaderboard-top-ad">
         <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px"
              data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
     </div>
 
-    <h1 class="leaderboard-page-title">Classificação</h1>
+    <h1 class="leaderboard-page-title">Ranking</h1>
 
     <div class="leaderboard-grid">
         <section class="leaderboard-board" id="redsquare2-board">
-            <h2>Figuras a cair</h2>
+            <h2>Formas caindo</h2>
             <table>
                 <thead>
                     <tr>
@@ -63,16 +43,30 @@
         </section>
 
         <section class="leaderboard-board" id="neli-board">
-            <h2>Neli — demo</h2>
+            <h2>Neli</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Posição</th>
                         <th>Apelido</th>
-                        <th>Hora</th>
+                        <th>Tempo</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboardBodyNeli"></tbody>
+            </table>
+        </section>
+
+        <section class="leaderboard-board" id="snake-board">
+            <h2>Snake</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Apelido</th>
+                        <th>Pontos</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBodySnake"></tbody>
             </table>
         </section>
     </div>
@@ -81,7 +75,7 @@
         <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px"
              data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+<script src="/frontend/scripts/mobile-enhancements.js?v=promo35" defer></script>
 
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 

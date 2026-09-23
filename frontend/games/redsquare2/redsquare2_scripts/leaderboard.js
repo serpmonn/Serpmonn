@@ -13,6 +13,11 @@ const BOARDS = [
     bodyId: 'leaderboardBodyNeli',
     formatScore: formatPlayTime,
   },
+  {
+    gameId: 'snake',
+    bodyId: 'leaderboardBodySnake',
+    formatScore: (score) => String(score ?? ''),
+  },
 ];
 
 function formatPlayTime(seconds) {

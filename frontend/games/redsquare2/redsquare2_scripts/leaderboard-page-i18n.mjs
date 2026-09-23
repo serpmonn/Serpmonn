@@ -111,8 +111,8 @@ export const PAGE_H1 = {
 };
 
 export const META_DESCRIPTION = {
-  ru: 'Общая таблица лидеров: Падающие фигуры и Neli. Сравните свои результаты с другими игроками.',
-  en: 'Shared leaderboard for Falling figures and Neli. Compare your results with other players.',
+  ru: 'Общая таблица лидеров: Падающие фигуры, Нэли и Змейка. Сравните свои результаты с другими игроками.',
+  en: 'Shared leaderboard for Falling figures, Neli and Snake. Compare your results with other players.',
   de: 'Gemeinsame Bestenliste: Fallende Formen und Neli. Vergleiche deine Ergebnisse mit anderen Spielern.',
   fr: 'Classement commun : Formes tombantes et Neli. Comparez vos résultats avec les autres joueurs.',
   es: 'Clasificación compartida: Formas cayendo y Neli. Compara tus resultados con otros jugadores.',

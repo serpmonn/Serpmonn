@@ -1,125 +1,207 @@
-/* snake.css - Стили для игры "Змейка" */
+/* snake.css — Serpmonn Snake */
 
-/* CSS переменные для цветовой схемы игры */
-:root { 
-    --bg: #0f0f10;           /* Основной фон страницы */
-    --grid: #1b1b1d;         /* Фон игрового поля */
-    --snake: #2ecc71;        /* Цвет змейки */
-    --food: #e74c3c;         /* Цвет еды */
-    --text: #e6e6e6;         /* Цвет текста */
-    --accent: #dc3545;       /* Акцентный цвет */
+:root {
+  --bg: #0f0f10;
+  --grid: #1b1b1d;
+  --snake: #8b1e2d;
+  --snake-head: #dc3545;
+  --food: #2ecc71;
+  --text: #e6e6e6;
+  --accent: #dc3545;
+  --panel: #141416;
+  --panel-border: #242428;
 }
 
-/* Базовые стили для html и body */
-html, body { 
-    width: 100%;             /* Полная ширина */
-    height: 100%;            /* Полная высота */
-    overflow: hidden;        /* Скрываем прокрутку */
-    background: var(--bg);   /* Фон из CSS переменной */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--bg);
 }
 
-/* Стили основного body */
-body { 
-    margin: 0;               /* Убираем внешние отступы */
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* Системные шрифты */
-    color: var(--text);      /* Цвет текста из переменной */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Основной контейнер контента */
-.page { 
-    max-width: 1000px;       /* Максимальная ширина контента */
-    margin: 0 auto;          /* Центрирование по горизонтали */
-    padding: 16px;           /* Внутренние отступы */
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-/* Стили шапки страницы */
-header { 
-    display: flex;           /* Flexbox для выравнивания */
-    align-items: center;     /* Вертикальное выравнивание по центру */
-    gap: 12px;               /* Расстояние между элементами */
-    margin: 10px 0 16px;     /* Внешние отступы */
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 16px;
 }
 
-/* Заголовок в шапке */
-header h1 { 
-    font-size: 1.6rem;       /* Размер шрифта */
-    margin: 0;               /* Убираем отступы */
+header h1 {
+  font-size: 1.6rem;
+  margin: 0;
 }
 
-/* Основная сетка страницы */
-.wrap { 
-    display: grid;           /* CSS Grid для раскладки */
-    grid-template-columns: 1fr 320px; /* Две колонки: игровое поле и панель управления */
-    gap: 16px;               /* Расстояние между колонками */
-    align-items: start;      /* Выравнивание по верху */
+.brand-tag {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.7rem;
+  vertical-align: middle;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #fff;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  letter-spacing: 0.04em;
+  font-weight: 700;
 }
 
-/* Стили панелей (игровое поле и управление) */
-.panel { 
-    background: #141416;     /* Темный фон панели */
-    border: 1px solid #242428; /* Граница панели */
-    border-radius: 10px;     /* Скругленные углы */
-    padding: 12px 14px;      /* Внутренние отступы */
+.wrap {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  align-items: start;
 }
 
-/* Заголовок панели управления */
-.panel h2 { 
-    font-size: 1rem;         /* Размер шрифта */
-    margin: 0 0 10px;        /* Отступ снизу */
-    color: #ddd;             /* Цвет текста */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 12px 14px;
 }
 
-/* Сетка для блока статистики */
-.stats { 
-    display: grid;           /* CSS Grid */
-    grid-template-columns: repeat(2, 1fr); /* Две колонки одинаковой ширины */
-    gap: 10px;               /* Расстояние между элементами */
-    margin-bottom: 10px;     /* Отступ снизу */
+.playfield.is-shaking {
+  animation: snake-shake 0.28s ease-out;
 }
 
-/* Стили отдельного элемента статистики */
-.stat { 
-    background: #16181b;     /* Темный фон */
-    border: 1px solid #23262a; /* Граница */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px 10px;       /* Внутренние отступы */
-    text-align: center;      /* Выравнивание текста по центру */
+@keyframes snake-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(4px, -2px); }
+  60% { transform: translate(-3px, -1px); }
+  80% { transform: translate(2px, 1px); }
 }
 
-/* Жирный текст в статистике */
-.stat b { 
-    font-size: 1.1rem;       /* Увеличенный размер шрифта */
+.panel h2 {
+  font-size: 1rem;
+  margin: 0 0 10px;
+  color: #ddd;
 }
 
-/* Сетка для кнопок мобильного управления */
-.controls { 
-    display: grid;           /* CSS Grid */
-    grid-template-columns: repeat(3, 64px); /* Три колонки по 64px */
-    gap: 8px;                /* Расстояние между кнопками */
-    justify-content: center; /* Центрирование по горизонтали */
-    margin-top: 8px;         /* Отступ сверху */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.stat {
+  background: #16181b;
+  border: 1px solid #23262a;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.stat b {
+  font-size: 1.1rem;
+  color: var(--text);
+  display: inline-block;
+  margin-top: 2px;
+}
+
+#combo.combo-hot {
+  color: var(--accent);
+}
+
+.mode-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #aaa;
+  margin: 4px 0 6px;
+}
+
+.mode-select {
+  width: 100%;
+  margin-bottom: 12px;
+  background: #16181b;
+  border: 1px solid #23262a;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+}
+
+.nickname-panel {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(220, 53, 69, 0.65);
+  background: rgba(220, 53, 69, 0.12);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+}
+
+.nickname-panel[hidden] {
+  display: none !important;
+}
+
+.nickname-panel label {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.nickname-panel input {
+  background: #16181b;
+  border: 1px solid #23262a;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
 .btn,
 .btn:hover,
 .btn:focus,
 .btn:focus-visible,
 .btn:active {
-    background: #1a1c20;
-    border: 1px solid #2a2e33;
-    color: #eee;
-    border-radius: 8px;
-    padding: 8px;
-    cursor: pointer;
-    user-select: none;
-    text-align: center;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
+  background: #1a1c20;
+  border: 1px solid #2a2e33;
+  color: #eee;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .btn:active {
-    transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 .btn.primary,
@@ -131,38 +213,37 @@ header h1 {
 .primary:hover,
 .primary:focus,
 .primary:active {
-    background: linear-gradient(90deg, #dc3545, #c82333);
-    border: none;
-    color: #fff;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border: none;
+  color: #fff;
+  font-weight: 600;
 }
 
-/* Стили игрового холста */
-canvas { 
-    background: var(--grid); /* Фон из CSS переменной */
-    width: 100%;             /* Адаптивная ширина */
-    max-width: 640px;        /* Максимальная ширина */
-    height: auto;            /* Автоматическая высота */
-    border-radius: 10px;     /* Скругленные углы */
-    border: 1px solid #242428; /* Граница */
-    box-shadow: 0 8px 30px rgba(0,0,0,.25); /* Тень для глубины */
-    display: block;          /* Блочный элемент */
-    margin: 0 auto;          /* Центрирование */
+canvas {
+  background: var(--grid);
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid #242428;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  display: block;
+  margin: 0 auto;
 }
 
-/* Стили подсказки */
-.hint { 
-    color: #bbb;             /* Серый цвет текста */
-    font-size: .95rem;       /* Размер шрифта */
-    text-align: center;      /* Выравнивание по центру */
-    margin-top: 10px;        /* Отступ сверху */
+.hint {
+  color: #bbb;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.4;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 960px) { 
-    .wrap {
-        grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    }
-    .controls {
-        display: none;       /* Скрываем кнопки управления на мобильных */
-    }
+@media (max-width: 960px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+  .controls {
+    display: none;
+  }
 }

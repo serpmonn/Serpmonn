@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
@@ -7,18 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Змейка — Серпмонн</title>
-  <meta name="description" content="Классическая игра Змейка: собери как можно больше яблок, избегай столкновений.">
+  <meta name="description" content="Змейка Serpmonn: классика, стены и порталы. Комбо, звук и таблица лидеров.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/games/snake/snake.html">
   <meta property="og:title" content="Змейка — Серпмонн">
-  <meta property="og:description" content="Классическая игра Змейка: собери как можно больше яблок, избегай столкновений.">
+  <meta property="og:description" content="Змейка Serpmonn: классика, стены и порталы. Комбо, звук и таблица лидеров.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/games/snake/snake.html">
   <meta property="twitter:title" content="Змейка — Серпмонн">
-  <meta property="twitter:description" content="Классическая игра Змейка: собери как можно больше яблок, избегай столкновений.">
+  <meta property="twitter:description" content="Змейка Serpmonn: классика, стены и порталы. Комбо, звук и таблица лидеров.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/games/snake/snake.html">
@@ -28,7 +27,7 @@
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
-  <link rel="stylesheet" href="/frontend/games/snake/snake.css?v=2">
+  <link rel="stylesheet" href="/frontend/games/snake/snake.css?v=10">
 
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
   <script>
@@ -63,6 +62,7 @@
     function showInstructions(){
       try{
         if (localStorage.getItem('game_instructions_snake_shown') === '1') return;
+        try { if (new URLSearchParams(location.search).get('rec')) return; } catch(e) {}
 
         var ov = document.createElement('div');
         ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
@@ -104,13 +104,13 @@
     </div>
     <header>
       <img src="/frontend/images/snake.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
-      <h1>Змейка</h1>
+      <h1>Змейка <span class="brand-tag">Serpmonn</span></h1>
     </header>
 
     <div class="wrap">
-      <div class="panel">
+      <div class="panel playfield" id="shakeLayer">
         <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
-        <div class="hint">Управление: стрелки или WASD. Пауза — пробел, Esc или Enter. Перезапуск — R.</div>
+        <div class="hint">Управление: стрелки или WASD. Пауза — пробел. Перезапуск — R. Комбо растёт за яблоки подряд (сброс на паузе).</div>
       </div>
 
       <div class="panel">
@@ -123,13 +123,39 @@
 
         <div class="stats">
           <div class="stat">Скорость<br><b id="speed">1x</b></div>
-          <div class="stat">Размер поля<br><b>24×24</b></div>
+          <div class="stat">Комбо<br><b id="combo">—</b></div>
         </div>
 
-        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
+        <div class="stats">
+          <div class="stat">Ник<br><b id="nickValue">—</b></div>
+          <div class="stat">Поле<br><b>24×24</b></div>
+        </div>
+
+        <label class="mode-label" for="modeSelect">Режим</label>
+        <select id="modeSelect" class="mode-select" aria-label="Режим игры">
+          <option value="classic">Classic — сквозь края</option>
+          <option value="walls">Walls — стены</option>
+          <option value="portals">Portals — порталы</option>
+        </select>
+
+        <form id="nicknameForm" class="nickname-panel">
+          <label for="nickname">Ник для таблицы лидеров (необязательно)</label>
+          <input type="text" id="nickname" maxlength="24" placeholder="Ваш ник" autocomplete="nickname">
+          <div class="action-row">
+            <button type="submit" class="btn primary">Сохранить</button>
+            <button type="button" class="btn" id="btnSkipNick">Без ника</button>
+          </div>
+        </form>
+
+        <div class="action-row">
           <button class="btn primary" id="btnStart">Старт</button>
           <button class="btn" id="btnPause">Пауза</button>
           <button class="btn" id="btnReset">Заново</button>
+        </div>
+        <div class="action-row">
+          <button class="btn" id="btnChangeNick" type="button">Сменить ник</button>
+          <button class="btn" id="btnSound" type="button" aria-pressed="true">Звук: вкл</button>
+          <button class="btn" id="btnLeaderboard" type="button">Таблица лидеров</button>
         </div>
 
         <div class="controls" aria-label="Мобильное управление">
@@ -148,15 +174,21 @@
     window.i18n = {
       gameOver: "Игра окончена",
       pressRToRestart: "Нажмите R — заново",
-      instructionsDesktop: "• Стрелки или WASD — управление\n• Пробел / Esc / Enter — пауза\n• R — перезапуск",
-      instructionsMobile: "• Свайпы — управление\n• Старт/Пауза — кнопки"
+      finalScore: "Счёт",
+      soundOn: "Звук: вкл",
+      soundOff: "Звук: выкл",
+      bannedNicknameAlert: "Этот ник нельзя использовать",
+      changeNick: "Сменить ник",
+      setNick: "Указать ник",
+      scoreTableUrl: "/frontend/games/redsquare2/score_table.html",
+      instructionsDesktop: "• Стрелки или WASD — управление\n• Пробел / Esc / Enter — пауза (сбрасывает комбо)\n• R — перезапуск\n• Режимы: Classic / Walls / Portals\n• Яблоки подряд дают комбо ×2…×8",
+      instructionsMobile: "• Свайпы — управление\n• Старт/Пауза — кнопки\n• Режимы и комбо — в панели справа"
     };
   </script>
   <script type="module" src="/frontend/games/snake/snake-ads.js?v=1" defer></script>
-  <script src="/frontend/games/snake/snake.js?v=3" defer></script>
+  <script src="/frontend/games/snake/snake.js?v=11" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-  
-  
+
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -170,7 +202,6 @@
   import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
   initMobileAnchorAd();
 </script>
-
 
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 

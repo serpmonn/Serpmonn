@@ -26,6 +26,9 @@
 - Obрыв — Don't fall… / Не сорвись… — https://youtube.com/shorts/flxmZ-dIVXI
 
 RU готово к проверке (не выкладывать без ok):
+- Snake update — One more turn… / Ещё один поворот… — out/shorts/snake-update-en-serpmonn.mp4 + snake-update-ru-serpmonn.mp4
+  Запись: SNAKE_LANG=en|ru node tools/record-snake-update-ru-short.cjs
+
 - Typing RU — Быстрее… — out/shorts/typing-vk-ru.mp4
 - Falling Shapes RU — Ещё один улов… — out/shorts/redsquare2-vk-ru.mp4
   Запись: node tools/record-typing-ru-short.cjs | node tools/record-redsquare2-ru-short.cjs
