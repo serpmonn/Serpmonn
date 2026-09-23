@@ -84,67 +84,85 @@ function pickAudio() {
   return path.join(AUDIO_DIR, files[0] || 'games-9.mp3');
 }
 
+async function steerOnce(page) {
+  await page.evaluate(() => {
+    const st = window.__rec.getState();
+    if (!st) return false;
+    if (!st.alive) {
+      window.__rec.restart();
+      if (window.__rec.slow) window.__rec.slow(110);
+      return true;
+    }
+    if (!st.food || !st.snake.length) return false;
+    const head = st.snake[0];
+    const body = new Set(st.snake.slice(1).map((s) => `${s.x},${s.y}`));
+    const walls = st.mode === 'walls';
+    const wrapDelta = (from, to, size) => {
+      let d = to - from;
+      if (!walls) {
+        if (d > size / 2) d -= size;
+        if (d < -size / 2) d += size;
+      }
+      return d;
+    };
+    const dx = wrapDelta(head.x, st.food.x, st.grid);
+    const dy = wrapDelta(head.y, st.food.y, st.grid);
+    const opts = [];
+    if (dx !== 0) opts.push({ x: dx > 0 ? 1 : -1, y: 0, pri: Math.abs(dx) });
+    if (dy !== 0) opts.push({ x: 0, y: dy > 0 ? 1 : -1, pri: Math.abs(dy) });
+    opts.sort((a, b) => b.pri - a.pri);
+    opts.push({ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 });
+    for (const o of opts) {
+      if (o.x === -st.dir.x && o.y === -st.dir.y) continue;
+      let nx = head.x + o.x;
+      let ny = head.y + o.y;
+      if (walls) {
+        if (nx < 0 || ny < 0 || nx >= st.grid || ny >= st.grid) continue;
+      } else {
+        nx = (nx + st.grid) % st.grid;
+        ny = (ny + st.grid) % st.grid;
+      }
+      if (body.has(`${nx},${ny}`)) continue;
+      window.__rec.setDir(o.x, o.y);
+      return true;
+    }
+    return false;
+  });
+}
+
+async function playSegment(page, mode, ms) {
+  await page.evaluate((m) => {
+    window.__rec.setMode(m);
+    if (window.__rec.slow) window.__rec.slow(110);
+  }, mode);
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    await steerOnce(page);
+    await sleep(55);
+  }
+}
+
 async function playTowardFoodThenCrash(page) {
   await page.waitForFunction(() => window.__rec && window.__rec.getState, { timeout: 10000 });
-  await sleep(150);
-  // Чуть медленнее — длиннее читаемый геймплей в кадре
+  await sleep(120);
   await page.evaluate(() => {
     if (window.__rec.slow) window.__rec.slow(110);
   });
-  const playUntil = Date.now() + DURATION_MS - 3200;
-  while (Date.now() < playUntil) {
-    await page.evaluate(() => {
-      const st = window.__rec.getState();
-      if (!st) return false;
-      if (!st.alive) {
-        window.__rec.restart();
-        if (window.__rec.slow) window.__rec.slow(110);
-        return true;
-      }
-      if (!st.food || !st.snake.length) return false;
-      const head = st.snake[0];
-      const body = new Set(st.snake.slice(1).map((s) => `${s.x},${s.y}`));
-      const walls = st.mode === 'walls';
-      const wrapDelta = (from, to, size) => {
-        let d = to - from;
-        if (!walls) {
-          if (d > size / 2) d -= size;
-          if (d < -size / 2) d += size;
-        }
-        return d;
-      };
-      const dx = wrapDelta(head.x, st.food.x, st.grid);
-      const dy = wrapDelta(head.y, st.food.y, st.grid);
-      const opts = [];
-      if (dx !== 0) opts.push({ x: dx > 0 ? 1 : -1, y: 0, pri: Math.abs(dx) });
-      if (dy !== 0) opts.push({ x: 0, y: dy > 0 ? 1 : -1, pri: Math.abs(dy) });
-      opts.sort((a, b) => b.pri - a.pri);
-      opts.push({ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 });
-      for (const o of opts) {
-        if (o.x === -st.dir.x && o.y === -st.dir.y) continue;
-        let nx = head.x + o.x;
-        let ny = head.y + o.y;
-        if (walls) {
-          if (nx < 0 || ny < 0 || nx >= st.grid || ny >= st.grid) continue;
-        } else {
-          nx = (nx + st.grid) % st.grid;
-          ny = (ny + st.grid) % st.grid;
-        }
-        if (body.has(`${nx},${ny}`)) continue;
-        window.__rec.setDir(o.x, o.y);
-        return true;
-      }
-      return false;
-    });
-    await sleep(55);
-  }
+
+  // Classic → Walls → Portals в одном ролике, та же суммарная длительность
+  const budget = DURATION_MS - 3200;
+  const slice = Math.floor(budget / 3);
+  await playSegment(page, 'classic', slice);
+  await playSegment(page, 'walls', slice);
+  await playSegment(page, 'portals', budget - 2 * slice);
+
   await page.evaluate((go) => {
     window.i18n = Object.assign({}, window.i18n || {}, {
       gameOver: go,
       pressRToRestart: 'serpmonn',
     });
   }, LANG === 'en' ? 'Almost…' : 'Почти…');
-  // Force near-miss crash at the end
+
   for (const [nx, ny] of [
     [1, 0],
     [0, 1],
@@ -299,9 +317,12 @@ async function main() {
 
     const silent = `/tmp/snake-update-${LANG}-silent.mp4`;
     const crashAt = ((jpgs.length - 8) / FPS).toFixed(2);
-    const line1 = LANG === 'en'
-      ? (MODE === 'walls' ? 'Walls hit different…' : MODE === 'portals' ? 'One more portal…' : 'One more turn…')
-      : (MODE === 'walls' ? 'Со стенами жёстче…' : MODE === 'portals' ? 'Ещё один портал…' : 'Ещё один поворот…');
+    const t1 = (Number(crashAt) / 3).toFixed(2);
+    const t2 = ((Number(crashAt) * 2) / 3).toFixed(2);
+    const lines =
+      LANG === 'en'
+        ? ['One more turn…', 'Walls hit different…', 'One more portal…']
+        : ['Ещё один поворот…', 'Со стенами жёстче…', 'Ещё один портал…'];
     const lineCrash = LANG === 'en' ? 'Almost…' : 'Почти…';
     await run('ffmpeg', [
       '-y',
@@ -319,7 +340,9 @@ async function main() {
       '-vf',
       [
         'scale=1080:1920:flags=lanczos',
-        `drawtext=fontfile=${FONT}:text='${line1}':fontsize=50:fontcolor=white:borderw=4:bordercolor=black@0.8:x=(w-text_w)/2:y=h*0.88:enable='lt(t,${crashAt})'`,
+        `drawtext=fontfile=${FONT}:text='${lines[0]}':fontsize=48:fontcolor=white:borderw=4:bordercolor=black@0.8:x=(w-text_w)/2:y=h*0.88:enable='lt(t,${t1})'`,
+        `drawtext=fontfile=${FONT}:text='${lines[1]}':fontsize=46:fontcolor=white:borderw=4:bordercolor=black@0.8:x=(w-text_w)/2:y=h*0.88:enable='gte(t,${t1})*lt(t,${t2})'`,
+        `drawtext=fontfile=${FONT}:text='${lines[2]}':fontsize=48:fontcolor=white:borderw=4:bordercolor=black@0.8:x=(w-text_w)/2:y=h*0.88:enable='gte(t,${t2})*lt(t,${crashAt})'`,
         `drawtext=fontfile=${FONT}:text='${lineCrash}':fontsize=70:fontcolor=white:borderw=4:bordercolor=black@0.85:x=(w-text_w)/2:y=h*0.86:enable='gte(t,${crashAt})*lt(n\\,${jpgs.length})'`,
         `drawtext=fontfile=${FONT}:text='serpmonn':fontsize=32:fontcolor=white@0.9:borderw=3:bordercolor=black@0.7:x=(w-text_w)/2:y=h*0.92:enable='gte(t,${crashAt})*lt(n\\,${jpgs.length})'`,
       ].join(','),
