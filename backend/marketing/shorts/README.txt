@@ -23,6 +23,7 @@
 - Fifteen — One more slide… — https://youtube.com/shorts/y8a_pPuBjD0
 - Typing — Faster… — https://youtube.com/shorts/dayj59TE1fk
 - Falling Shapes (redsquare2) — One more catch… — https://youtube.com/shorts/6XD_04MiQLE
+- Obрыв — Don't fall… / Не сорвись… — https://youtube.com/shorts/flxmZ-dIVXI
 
 RU готово к проверке (не выкладывать без ok):
 - Typing RU — Быстрее… — out/shorts/typing-vk-ru.mp4
@@ -38,7 +39,7 @@ RU готово к проверке (не выкладывать без ok):
 - https://serpmonn.ru/shorts-preview/serphold-preview-en-serpmonn.mp4
 
 Готово локально, но уже выложено (не предлагать снова):
-- neli / rat / snake / coins / redsquare / redsquare2 / minesweeper / breakout / 2048 / flappy / fifteen / typing / neon EN / serphold
+- neli / rat / snake / coins / redsquare / redsquare2 / minesweeper / breakout / 2048 / flappy / fifteen / typing / neon EN / serphold / obryv
 
 EN-файлы (*-preview-en.mp4) — основной набор для выкладки:
 1) snake-preview-en.mp4
