@@ -4,7 +4,10 @@ import { execFileSync } from 'child_process';
 import bcrypt from 'bcryptjs';
 import { query } from '../../database/config.mjs';
 import { mailQuery } from '../../database/mailDatabase.config.mjs';
-import { sendMailboxPasswordChangedEmail } from '../../utils/mailer.mjs';
+import {
+    sendMailboxPasswordChangedEmail,
+    sendMailboxDeletedEmail
+} from '../../utils/mailer.mjs';
 
 const { compare } = bcrypt;
 
@@ -95,17 +98,35 @@ async function updateMailPassword(fullEmail, newPassword) {
     await mailQuery('UPDATE users SET password = ? WHERE email = ?', [dovecotPassword, fullEmail]);
 }
 
+function localPartFromMailboxEmail(fullEmail) {
+    if (typeof fullEmail !== 'string') return null;
+    const at = fullEmail.lastIndexOf('@');
+    if (at <= 0) return null;
+    const local = fullEmail.slice(0, at).trim().toLowerCase();
+    const domain = fullEmail.slice(at + 1).trim().toLowerCase();
+    if (domain !== MAIL_DOMAIN || !LOCAL_PART_RE.test(local)) return null;
+    return local;
+}
+
+async function destroyMailboxStorage(fullEmail) {
+    const localPart = localPartFromMailboxEmail(fullEmail);
+    if (!localPart) {
+        throw new Error('INVALID_MAILBOX_EMAIL');
+    }
+    await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]);
+    const mailDir = `/var/vmail/${MAIL_DOMAIN}/${localPart}`;
+    try {
+        execFileSync('rm', ['-rf', mailDir]);
+    } catch (fsError) {
+        console.warn('⚠️ Не удалось удалить директорию почты:', fsError);
+    }
+}
+
 async function rollbackMailboxCreation(emailLocalPart) {
     const fullEmail = `${emailLocalPart}@${MAIL_DOMAIN}`;
     try {
         console.log('🔄 Откат изменений для:', fullEmail);
-        await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]);
-        const mailDir = `/var/vmail/${MAIL_DOMAIN}/${emailLocalPart}`;
-        try {
-            execFileSync('rm', ['-rf', mailDir]);
-        } catch (fsError) {
-            console.warn('⚠️ Не удалось удалить директорию:', fsError);
-        }
+        await destroyMailboxStorage(fullEmail);
     } catch (error) {
         console.error('❌ Ошибка при откате изменений:', error);
         throw error;
@@ -334,4 +355,73 @@ export const linkMailbox = async (req, res) => {
     }
 };
 
-export default { createMailbox, changeMailboxPassword, linkMailbox };
+/**
+ * Permanently delete the linked @onnmail.ru mailbox and free the address.
+ * Requires Serpmonn account password + exact confirmEmail match.
+ */
+export const deleteMailbox = async (req, res) => {
+    try {
+        const { accountPassword, confirmEmail } = req.body || {};
+        const user = await getSerpmonnUser(req);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+        if (!user.mailbox_created || !user.mailbox_email) {
+            return res.status(400).json({
+                message: 'Нет привязанного почтового ящика для удаления'
+            });
+        }
+
+        const expected = String(user.mailbox_email).trim().toLowerCase();
+        const confirmed = typeof confirmEmail === 'string' ? confirmEmail.trim().toLowerCase() : '';
+        if (!confirmed || confirmed !== expected) {
+            return res.status(400).json({
+                message: 'Введите полный адрес ящика для подтверждения удаления'
+            });
+        }
+
+        const accountOk = await assertAccountPassword(user, accountPassword);
+        if (!accountOk) {
+            return res.status(403).json({ message: 'Неверный пароль аккаунта Serpmonn' });
+        }
+
+        const deletedEmail = user.mailbox_email;
+        try {
+            await destroyMailboxStorage(deletedEmail);
+        } catch (err) {
+            if (err.message === 'INVALID_MAILBOX_EMAIL') {
+                return res.status(400).json({ message: 'Некорректный адрес почтового ящика' });
+            }
+            throw err;
+        }
+
+        await query(
+            'UPDATE users SET mailbox_created = 0, mailbox_email = NULL WHERE id = ?',
+            [user.id]
+        );
+
+        try {
+            await sendMailboxDeletedEmail(user.email, {
+                mailboxEmail: deletedEmail,
+                ip: clientIp(req),
+                when: new Date().toISOString()
+            });
+        } catch (mailErr) {
+            console.error('Mailbox deleted, but notify email failed:', mailErr);
+        }
+
+        console.log(`🗑️ Mailbox deleted for user ${user.id}: ${deletedEmail}`);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Почтовый ящик удалён',
+            email: deletedEmail
+        });
+    } catch (error) {
+        console.error('💥 Ошибка удаления почты:', error);
+        return res.status(500).json({ message: 'Ошибка сервера при удалении почтового ящика' });
+    }
+};
+
+export default { createMailbox, changeMailboxPassword, linkMailbox, deleteMailbox };

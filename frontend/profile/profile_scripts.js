@@ -104,10 +104,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const block = actions.closest('.profile-panel-block') || actions.parentElement;
     if (block) {
       if (!block.id) block.id = 'onnmailBlock';
-      const heading = block.querySelector('.profile-panel__heading');
+      let heading = block.querySelector('.profile-panel__heading');
       if (heading && !heading.id) heading.id = 'onnmailHeading';
       const hint = block.querySelector('.profile-panel__hint');
       if (hint && !hint.id) hint.id = 'onnmailHint';
+
+      let identity = document.getElementById('onnmailIdentity');
+      if (!identity && heading) {
+        identity = document.createElement('div');
+        identity.className = 'profile-onnmail-identity';
+        identity.id = 'onnmailIdentity';
+        heading.parentNode.insertBefore(identity, heading);
+        identity.appendChild(heading);
+      }
+      if (identity && !document.getElementById('onnmailManageButton')) {
+        const manageBtn = document.createElement('button');
+        manageBtn.type = 'button';
+        manageBtn.id = 'onnmailManageButton';
+        manageBtn.className = 'profile-onnmail-manage';
+        manageBtn.hidden = true;
+        manageBtn.setAttribute('aria-haspopup', 'dialog');
+        manageBtn.setAttribute('aria-controls', 'onnmailManageSheet');
+        manageBtn.innerHTML = '<span aria-hidden="true">···</span>';
+        identity.appendChild(manageBtn);
+      }
     }
 
     const ensureActionBtn = (id, beforeId = null) => {
@@ -125,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     };
 
-    // Order: Create → Open → Link → Change password
+    // Order: Create → Open → Link → Change password (legacy fallback; hidden when manage sheet is used)
     ensureActionBtn('linkOnnmailButton', 'changeOnnmailPasswordButton');
     ensureActionBtn('changeOnnmailPasswordButton');
 
@@ -176,6 +196,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>`;
       document.body.appendChild(modal);
     }
+
+    if (!document.getElementById('onnmailManageSheet')) {
+      const sheet = document.createElement('div');
+      sheet.id = 'onnmailManageSheet';
+      sheet.className = 'profile-onnmail-sheet';
+      sheet.hidden = true;
+      sheet.innerHTML = `
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-sheet-close aria-label="Close"></button>
+        <div class="profile-onnmail-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="onnmailManageSheetTitle">
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailManageSheetTitle" class="profile-onnmail-sheet__title"></h3>
+          <p class="profile-onnmail-sheet__email" id="onnmailManageSheetEmail"></p>
+          <div class="profile-onnmail-sheet__actions">
+            <button type="button" class="profile-onnmail-sheet__action" data-onnmail-sheet-action="password"></button>
+            <button type="button" class="profile-onnmail-sheet__action profile-onnmail-sheet__action--danger" data-onnmail-sheet-action="delete"></button>
+          </div>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-sheet-close></button>
+        </div>`;
+      document.body.appendChild(sheet);
+    }
+
+    if (!document.getElementById('onnmailDeleteSheet')) {
+      const sheet = document.createElement('div');
+      sheet.id = 'onnmailDeleteSheet';
+      sheet.className = 'profile-onnmail-sheet profile-onnmail-sheet--delete';
+      sheet.hidden = true;
+      sheet.innerHTML = `
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-delete-close aria-label="Close"></button>
+        <div class="profile-onnmail-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="onnmailDeleteTitle">
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailDeleteTitle" class="profile-onnmail-sheet__title"></h3>
+          <p class="profile-onnmail-sheet__warn" id="onnmailDeleteWarn"></p>
+          <label class="profile-onnmail-form__label" for="onnmailDeleteConfirmEmail"></label>
+          <input type="email" id="onnmailDeleteConfirmEmail" class="profile-onnmail-form__input" autocomplete="off" spellcheck="false" />
+          <label class="profile-onnmail-form__label" for="onnmailDeleteAccountPassword"></label>
+          <input type="password" id="onnmailDeleteAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+          <p id="onnmailDeleteMessage" class="profile-onnmail-form__status" role="status"></p>
+          <button type="button" id="onnmailDeleteHold" class="profile-onnmail-hold" aria-describedby="onnmailDeleteHoldHint">
+            <span class="profile-onnmail-hold__fill" aria-hidden="true"></span>
+            <span class="profile-onnmail-hold__label" id="onnmailDeleteHoldLabel"></span>
+          </button>
+          <p class="profile-onnmail-hold__hint" id="onnmailDeleteHoldHint"></p>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-delete-close></button>
+        </div>`;
+      document.body.appendChild(sheet);
+    }
+
+    // Sheets must be on <body> so fixed positioning isn't clipped by profile layout
+    ['onnmailManageSheet', 'onnmailDeleteSheet', 'onnmailPasswordModal'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement !== document.body) {
+        document.body.appendChild(el);
+      }
+    });
   }
 
   ensureOnnmailDom();
@@ -183,6 +257,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const changeOnnmailPasswordButton = document.getElementById('changeOnnmailPasswordButton');
   const linkOnnmailButton = document.getElementById('linkOnnmailButton');
   const onnmailHeadingEl = document.getElementById('onnmailHeading');
+  const onnmailManageButton = document.getElementById('onnmailManageButton');
+  const onnmailManageSheet = document.getElementById('onnmailManageSheet');
+  const onnmailDeleteSheet = document.getElementById('onnmailDeleteSheet');
+  const onnmailDeleteHold = document.getElementById('onnmailDeleteHold');
   const onnmailPasswordModal = document.getElementById('onnmailPasswordModal');
   const onnmailPasswordForm = document.getElementById('onnmailPasswordForm');
   const onnmailPasswordTitle = document.getElementById('onnmailPasswordTitle');
@@ -198,10 +276,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     createOnnmailButton,
     loginOnnmailButton,
     linkOnnmailButton,
-    changeOnnmailPasswordButton
+    changeOnnmailPasswordButton,
+    onnmailManageButton
   ].forEach((btn) => {
     if (btn) btn.hidden = true;
   });
+
+  let onnmailDeleteHoldTimer = null;
+  let onnmailDeleteHoldRaf = 0;
+  let onnmailDeleteHoldStartedAt = 0;
+  let onnmailDeleteInFlight = false;
+  const ONNMAIL_DELETE_HOLD_MS = 1800;
 
   const favoriteContainer = document.getElementById('favoriteTools');
   const noFavoritesMessage = document.getElementById('noFavoritesMessage');
@@ -947,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const created = Boolean(data?.mailbox_created);
     const mailboxEmail = data?.mailbox_email || null;
     const needsLink = created && !mailboxEmail;
+    const linked = created && Boolean(mailboxEmail);
     currentMailboxEmail = mailboxEmail;
 
     const onnmailHeading = document.getElementById('onnmailHeading');
@@ -970,13 +1056,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
     if (onnmailHint) {
-      onnmailHint.hidden = false;
       if (!created) {
+        onnmailHint.hidden = false;
         onnmailHint.textContent = t('profile.onnmailHintCreate');
       } else if (needsLink) {
+        onnmailHint.hidden = false;
         onnmailHint.textContent = t('profile.onnmailHintLink');
       } else {
-        onnmailHint.textContent = t('profile.onnmailHintLinked');
+        // Linked mailbox: UI is self-explanatory (address / ··· / Sign in)
+        onnmailHint.hidden = true;
+        onnmailHint.textContent = '';
       }
     }
 
@@ -985,17 +1074,233 @@ document.addEventListener('DOMContentLoaded', async () => {
       createOnnmailButton.textContent = t('profile.onnmailCreate');
     }
     if (loginOnnmailButton) {
+      // Primary CTA stays visible; change-password moves into ··· sheet when linked
       loginOnnmailButton.hidden = !created;
       loginOnnmailButton.textContent = t('profile.onnmailOpen');
     }
     if (changeOnnmailPasswordButton) {
-      changeOnnmailPasswordButton.hidden = !(created && mailboxEmail);
+      // Keep button for legacy/deep-link, but hide from primary row when manage menu exists
+      changeOnnmailPasswordButton.hidden = true;
       changeOnnmailPasswordButton.textContent = t('profile.onnmailChangePassword');
     }
     if (linkOnnmailButton) {
       linkOnnmailButton.hidden = !needsLink;
       linkOnnmailButton.textContent = t('profile.onnmailLinkMailbox');
     }
+    if (onnmailManageButton) {
+      onnmailManageButton.hidden = !linked;
+      onnmailManageButton.setAttribute('aria-label', t('profile.onnmailManage'));
+    }
+  }
+
+  function openOnnmailWebmail() {
+    const mailUrl = 'https://serpmonn.ru/mail/';
+    const inAppShell =
+      Boolean(window.__SPN_ANDROID_APP__) ||
+      document.documentElement.classList.contains('android-app') ||
+      new URLSearchParams(window.location.search).get('app') === '1';
+    if (inAppShell && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage(
+          {
+            type: 'spn-app-open-mail',
+            url: '/mail/',
+            title: t('profile.onnmailOpen') || 'Почта'
+          },
+          '*'
+        );
+        return;
+      } catch (_) {
+        /* fall through */
+      }
+    }
+    window.location.href = mailUrl;
+  }
+
+  function setOnnmailManageSheetOpen(open) {
+    if (!onnmailManageSheet) return;
+    onnmailManageSheet.hidden = !open;
+    document.body.classList.toggle('profile-onnmail-sheet-open', open || Boolean(onnmailDeleteSheet && !onnmailDeleteSheet.hidden));
+    if (!open) return;
+
+    const title = document.getElementById('onnmailManageSheetTitle');
+    const emailEl = document.getElementById('onnmailManageSheetEmail');
+    if (title) title.textContent = t('profile.onnmailManage');
+    if (emailEl) emailEl.textContent = currentMailboxEmail || '';
+
+    const setAction = (action, key) => {
+      const btn = onnmailManageSheet.querySelector(`[data-onnmail-sheet-action="${action}"]`);
+      if (btn) btn.textContent = t(key);
+    };
+    setAction('password', 'profile.onnmailChangePassword');
+    setAction('delete', 'profile.onnmailDelete');
+    const cancel = onnmailManageSheet.querySelector('[data-onnmail-sheet-close].profile-onnmail-sheet__cancel');
+    if (cancel) cancel.textContent = t('profile.onnmailSheetClose');
+  }
+
+  function resetOnnmailDeleteHoldUi() {
+    if (onnmailDeleteHoldTimer) {
+      clearTimeout(onnmailDeleteHoldTimer);
+      onnmailDeleteHoldTimer = null;
+    }
+    if (onnmailDeleteHoldRaf) {
+      cancelAnimationFrame(onnmailDeleteHoldRaf);
+      onnmailDeleteHoldRaf = 0;
+    }
+    onnmailDeleteHoldStartedAt = 0;
+    if (onnmailDeleteHold) {
+      onnmailDeleteHold.classList.remove('is-holding', 'is-busy');
+      onnmailDeleteHold.style.setProperty('--hold-progress', '0');
+      onnmailDeleteHold.disabled = false;
+    }
+  }
+
+  function setOnnmailDeleteSheetOpen(open) {
+    if (!onnmailDeleteSheet) return;
+    onnmailDeleteSheet.hidden = !open;
+    document.body.classList.toggle(
+      'profile-onnmail-sheet-open',
+      open || Boolean(onnmailManageSheet && !onnmailManageSheet.hidden)
+    );
+    resetOnnmailDeleteHoldUi();
+    if (!open) {
+      const pwd = document.getElementById('onnmailDeleteAccountPassword');
+      const conf = document.getElementById('onnmailDeleteConfirmEmail');
+      const msg = document.getElementById('onnmailDeleteMessage');
+      if (pwd) pwd.value = '';
+      if (conf) conf.value = '';
+      if (msg) msg.textContent = '';
+      return;
+    }
+
+    const title = document.getElementById('onnmailDeleteTitle');
+    const warn = document.getElementById('onnmailDeleteWarn');
+    const holdLabel = document.getElementById('onnmailDeleteHoldLabel');
+    const holdHint = document.getElementById('onnmailDeleteHoldHint');
+    const msg = document.getElementById('onnmailDeleteMessage');
+    if (title) title.textContent = t('profile.onnmailDeleteTitle');
+    if (warn) warn.textContent = t('profile.onnmailDeleteWarn');
+    if (holdLabel) holdLabel.textContent = t('profile.onnmailDeleteHold');
+    if (holdHint) holdHint.textContent = t('profile.onnmailDeleteHoldHint');
+    if (msg) msg.textContent = '';
+
+    const setLabel = (id, key) => {
+      const label = document.querySelector(`label[for="${id}"]`);
+      if (label) label.textContent = t(key);
+    };
+    setLabel('onnmailDeleteConfirmEmail', 'profile.onnmailDeleteConfirmEmail');
+    setLabel('onnmailDeleteAccountPassword', 'profile.onnmailAccountPassword');
+
+    const cancel = onnmailDeleteSheet.querySelector('[data-onnmail-delete-close].profile-onnmail-sheet__cancel');
+    if (cancel) cancel.textContent = t('profile.cancel');
+
+    const conf = document.getElementById('onnmailDeleteConfirmEmail');
+    if (conf) {
+      conf.placeholder = currentMailboxEmail || 'name@onnmail.ru';
+      conf.focus();
+    }
+  }
+
+  async function submitOnnmailDelete() {
+    if (onnmailDeleteInFlight) return;
+    const msg = document.getElementById('onnmailDeleteMessage');
+    const confirmEmail = (document.getElementById('onnmailDeleteConfirmEmail')?.value || '').trim();
+    const accountPassword = document.getElementById('onnmailDeleteAccountPassword')?.value || '';
+
+    if (!currentMailboxEmail) {
+      if (msg) msg.textContent = t('profile.onnmailNeedMailbox');
+      return;
+    }
+    if (confirmEmail.toLowerCase() !== String(currentMailboxEmail).toLowerCase()) {
+      if (msg) msg.textContent = t('profile.onnmailDeleteConfirmMismatch');
+      return;
+    }
+    if (!accountPassword) {
+      if (msg) msg.textContent = t('profile.onnmailDeleteNeedPassword');
+      return;
+    }
+
+    onnmailDeleteInFlight = true;
+    if (onnmailDeleteHold) {
+      onnmailDeleteHold.disabled = true;
+      onnmailDeleteHold.classList.add('is-busy');
+    }
+    if (msg) msg.textContent = '';
+
+    try {
+      const response = await fetch('/mail-api/delete-mailbox', {
+        method: 'POST',
+        headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
+        credentials: 'include',
+        body: JSON.stringify({ accountPassword, confirmEmail })
+      });
+      const data = await safeJson(response);
+      if (!response.ok) {
+        const fallback =
+          response.status === 404
+            ? t('profile.onnmailDeleteFailed')
+            : (data?.message || t('profile.onnmailDeleteFailed'));
+        if (msg) msg.textContent = data?.message || fallback;
+        return;
+      }
+      setGlobalMessage(data?.message || t('profile.onnmailDeleteSuccess'), 'success');
+      setOnnmailDeleteSheetOpen(false);
+      setOnnmailManageSheetOpen(false);
+      getProfile();
+    } catch (error) {
+      console.error('Onnmail delete error:', error);
+      if (msg) msg.textContent = t('profile.onnmailDeleteFailed');
+    } finally {
+      onnmailDeleteInFlight = false;
+      resetOnnmailDeleteHoldUi();
+    }
+  }
+
+  function startOnnmailDeleteHold(event) {
+    if (onnmailDeleteInFlight || !onnmailDeleteHold) return;
+    if (event?.pointerType === 'mouse' && event.button !== 0) return;
+    event?.preventDefault?.();
+
+    const confirmEmail = (document.getElementById('onnmailDeleteConfirmEmail')?.value || '').trim();
+    const accountPassword = document.getElementById('onnmailDeleteAccountPassword')?.value || '';
+    const msg = document.getElementById('onnmailDeleteMessage');
+    if (!currentMailboxEmail || confirmEmail.toLowerCase() !== String(currentMailboxEmail).toLowerCase()) {
+      if (msg) msg.textContent = t('profile.onnmailDeleteConfirmMismatch');
+      return;
+    }
+    if (!accountPassword) {
+      if (msg) msg.textContent = t('profile.onnmailDeleteNeedPassword');
+      return;
+    }
+    if (msg) msg.textContent = '';
+
+    resetOnnmailDeleteHoldUi();
+    onnmailDeleteHoldStartedAt = performance.now();
+    onnmailDeleteHold.classList.add('is-holding');
+    onnmailDeleteHold.style.setProperty('--hold-progress', '0');
+    try {
+      if (event?.pointerId != null) onnmailDeleteHold.setPointerCapture(event.pointerId);
+    } catch (_) {
+      /* ignore */
+    }
+
+    const tick = (now) => {
+      const elapsed = now - onnmailDeleteHoldStartedAt;
+      const progress = Math.min(1, elapsed / ONNMAIL_DELETE_HOLD_MS);
+      onnmailDeleteHold.style.setProperty('--hold-progress', String(progress));
+      if (progress >= 1) {
+        onnmailDeleteHoldRaf = 0;
+        submitOnnmailDelete();
+        return;
+      }
+      onnmailDeleteHoldRaf = requestAnimationFrame(tick);
+    };
+    onnmailDeleteHoldRaf = requestAnimationFrame(tick);
+  }
+
+  function stopOnnmailDeleteHold() {
+    if (onnmailDeleteInFlight) return;
+    resetOnnmailDeleteHoldUi();
   }
 
   async function copyMailboxEmail() {
@@ -1478,27 +1783,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   loginOnnmailButton?.addEventListener('click', () => {
-    const mailUrl = 'https://serpmonn.ru/mail/';
-    const inAppShell =
-      Boolean(window.__SPN_ANDROID_APP__) ||
-      document.documentElement.classList.contains('android-app') ||
-      new URLSearchParams(window.location.search).get('app') === '1';
-    if (inAppShell && window.parent && window.parent !== window) {
-      try {
-        window.parent.postMessage(
-          {
-            type: 'spn-app-open-mail',
-            url: '/mail/',
-            title: t('profile.onnmailOpen') || 'Почта'
-          },
-          '*'
-        );
-        return;
-      } catch (_) {
-        /* fall through */
-      }
-    }
-    window.location.href = mailUrl;
+    openOnnmailWebmail();
   });
 
   changeOnnmailPasswordButton?.addEventListener('click', () => {
@@ -1517,6 +1802,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       copyMailboxEmail();
+    }
+  });
+
+  onnmailManageButton?.addEventListener('click', () => {
+    setOnnmailManageSheetOpen(true);
+  });
+
+  onnmailManageSheet?.addEventListener('click', (event) => {
+    if (event.target.closest('[data-onnmail-sheet-close]')) {
+      setOnnmailManageSheetOpen(false);
+      return;
+    }
+    const actionBtn = event.target.closest('[data-onnmail-sheet-action]');
+    if (!actionBtn) return;
+    const action = actionBtn.getAttribute('data-onnmail-sheet-action');
+    if (action === 'password') {
+      setOnnmailManageSheetOpen(false);
+      setOnnmailModalOpen(true, 'change');
+      return;
+    }
+    if (action === 'delete') {
+      setOnnmailManageSheetOpen(false);
+      setOnnmailDeleteSheetOpen(true);
+    }
+  });
+
+  onnmailDeleteSheet?.addEventListener('click', (event) => {
+    if (event.target.closest('[data-onnmail-delete-close]')) {
+      setOnnmailDeleteSheetOpen(false);
+    }
+  });
+
+  if (onnmailDeleteHold) {
+    onnmailDeleteHold.addEventListener('pointerdown', startOnnmailDeleteHold);
+    onnmailDeleteHold.addEventListener('pointerup', stopOnnmailDeleteHold);
+    onnmailDeleteHold.addEventListener('pointerleave', stopOnnmailDeleteHold);
+    onnmailDeleteHold.addEventListener('pointercancel', stopOnnmailDeleteHold);
+    onnmailDeleteHold.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') startOnnmailDeleteHold(e);
+    });
+    onnmailDeleteHold.addEventListener('keyup', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') stopOnnmailDeleteHold();
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (onnmailDeleteSheet && !onnmailDeleteSheet.hidden) {
+      setOnnmailDeleteSheetOpen(false);
+      return;
+    }
+    if (onnmailManageSheet && !onnmailManageSheet.hidden) {
+      setOnnmailManageSheetOpen(false);
     }
   });
 

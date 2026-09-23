@@ -1736,7 +1736,7 @@ function ensureFindingsUiInApp() {
   if (!findingsUiReady) {
     findingsUiReady = Promise.all([
       loadStylesheet('/frontend/find/find-view.css?v=app-feed', 'spn-findview-css-feed'),
-      loadStylesheet('/frontend/profile/profile_styles.css?v=app-feed', 'spn-profile-css-feed'),
+      loadStylesheet('/frontend/profile/profile_styles.css?v=onnmail-manage5', 'spn-profile-css-feed'),
       import(FINDINGS_MODALS_URL),
     ]).then(([, , mod]) => mod);
   }
@@ -4001,7 +4001,7 @@ const profileBackBtn = document.getElementById('profileBackBtn');
 const profileBar = document.getElementById('profileBar');
 const settingsLogoutBtn = document.getElementById('settingsLogoutBtn');
 const settingsLogoutWrap = document.getElementById('settingsLogoutWrap');
-const PROFILE_URL = '/frontend/profile/profile.html';
+const PROFILE_URL = '/frontend/profile/profile.html?v=onnmail-manage5';
 function profileUrl() {
   const path = localizeFrontendPath(PROFILE_URL);
   try {
@@ -4132,7 +4132,7 @@ function ensureInboxShellStyles() {
       style.textContent = INBOX_APP_CSS;
       await Promise.all([
         loadStylesheet('/frontend/styles/styles.css?v=dm-lightbox1', 'spn-site-css-for-inbox'),
-        loadStylesheet('/frontend/profile/profile_styles.css?v=avatar-crop', 'spn-profile-css-for-inbox'),
+        loadStylesheet('/frontend/profile/profile_styles.css?v=onnmail-manage5', 'spn-profile-css-for-inbox'),
         loadStylesheet('/frontend/find/find-view.css?v=app-inbox', 'spn-findview-css-for-inbox'),
       ]);
     })();

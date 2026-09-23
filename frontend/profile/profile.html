@@ -226,10 +226,10 @@
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/profile/profile_styles.css">
+  <link rel="stylesheet" href="/frontend/profile/profile_styles.css?v=onnmail-manage5">
   <link rel="stylesheet" href="/frontend/find/find-view.css">
 
-  <script type="module" src="/frontend/profile/profile_scripts.js" defer></script>
+  <script type="module" src="/frontend/profile/profile_scripts.js?v=onnmail-manage5" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body class="profile-page" data-findings-summary-tpl="{total} находок · {public} в ленте" data-search-path="/frontend/main.html">
@@ -283,14 +283,27 @@
     <!-- Профиль -->
     <section id="tab-profile" class="profile-panel profile-panel--active" role="tabpanel" data-profile-panel="profile" aria-labelledby="tab-btn-profile">
       <div class="profile-panel-block" id="onnmailBlock">
-        <h2 class="profile-panel__heading" id="onnmailHeading">Почта @onnmail</h2>
-        <p class="profile-panel__hint" id="onnmailHint">Бесплатная почта на @onnmail.ru. Создайте ящик и пользуйтесь им свободно.</p>
+        <div class="profile-onnmail-identity" id="onnmailIdentity">
+          <h2 class="profile-panel__heading" id="onnmailHeading">Почта @onnmail</h2>
+          <button
+            type="button"
+            id="onnmailManageButton"
+            class="profile-onnmail-manage"
+            hidden
+            aria-haspopup="dialog"
+            aria-controls="onnmailManageSheet"
+            aria-label="Управление почтой"
+          >
+            <span aria-hidden="true">···</span>
+          </button>
+        </div>
+        <p class="profile-panel__hint" id="onnmailHint">Бесплатная почта @onnmail.ru</p>
         <div class="profile-onnmail-actions">
           <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             Создать
           </button>
           <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
-            Войти в почту
+            Войти
           </button>
           <button id="linkOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             Привязать ящик
@@ -298,6 +311,61 @@
           <button id="changeOnnmailPasswordButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             Сменить пароль
           </button>
+        </div>
+      </div>
+
+      <div id="onnmailManageSheet" class="profile-onnmail-sheet" hidden>
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-sheet-close aria-label="Закрыть"></button>
+        <div
+          class="profile-onnmail-sheet__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onnmailManageSheetTitle"
+        >
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailManageSheetTitle" class="profile-onnmail-sheet__title">Управление почтой</h3>
+          <p class="profile-onnmail-sheet__email" id="onnmailManageSheetEmail"></p>
+          <div class="profile-onnmail-sheet__actions">
+            <button type="button" class="profile-onnmail-sheet__action" data-onnmail-sheet-action="password">
+              Сменить пароль
+            </button>
+            <button type="button" class="profile-onnmail-sheet__action profile-onnmail-sheet__action--danger" data-onnmail-sheet-action="delete">
+              Удалить ящик
+            </button>
+          </div>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-sheet-close>Закрыть</button>
+        </div>
+      </div>
+
+      <div id="onnmailDeleteSheet" class="profile-onnmail-sheet profile-onnmail-sheet--delete" hidden>
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-delete-close aria-label="Закрыть"></button>
+        <div
+          class="profile-onnmail-sheet__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onnmailDeleteTitle"
+        >
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailDeleteTitle" class="profile-onnmail-sheet__title">Удалить ящик</h3>
+          <p class="profile-onnmail-sheet__warn" id="onnmailDeleteWarn">
+            Письма и адрес будут удалены безвозвратно. Адрес можно будет создать заново.
+          </p>
+          <label class="profile-onnmail-form__label" for="onnmailDeleteConfirmEmail">Введите адрес ящика</label>
+          <input type="email" id="onnmailDeleteConfirmEmail" class="profile-onnmail-form__input" autocomplete="off" spellcheck="false" />
+          <label class="profile-onnmail-form__label" for="onnmailDeleteAccountPassword">Пароль Serpmonn</label>
+          <input type="password" id="onnmailDeleteAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+          <p id="onnmailDeleteMessage" class="profile-onnmail-form__status" role="status"></p>
+          <button
+            type="button"
+            id="onnmailDeleteHold"
+            class="profile-onnmail-hold"
+            aria-describedby="onnmailDeleteHoldHint"
+          >
+            <span class="profile-onnmail-hold__fill" aria-hidden="true"></span>
+            <span class="profile-onnmail-hold__label" id="onnmailDeleteHoldLabel">Удерживайте, чтобы удалить</span>
+          </button>
+          <p class="profile-onnmail-hold__hint" id="onnmailDeleteHoldHint">Удерживайте кнопку около 2 секунд</p>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-delete-close>Отмена</button>
         </div>
       </div>
 

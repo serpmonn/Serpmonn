@@ -7,6 +7,7 @@
 Название: EN | RU (две аудитории сразу).
 
 Выложено (YouTube / Serpmonn Ads):
+- Serphold — One more wave… / Ещё одна волна… — https://youtube.com/shorts/c0vMfXWSvBA
 - Serphold — Hold the wall… / Удержи стену… — https://youtube.com/shorts/c9ocpDE2yLQ
 - Neon EN — Almost made it… / Почти успел… — https://youtube.com/shorts/u4bWu-za_Ko
 - Neon (ранее) — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
@@ -22,6 +23,11 @@
 - Fifteen — One more slide… — https://youtube.com/shorts/y8a_pPuBjD0
 - Typing — Faster… — https://youtube.com/shorts/dayj59TE1fk
 - Falling Shapes (redsquare2) — One more catch… — https://youtube.com/shorts/6XD_04MiQLE
+
+RU готово к проверке (не выкладывать без ok):
+- Typing RU — Быстрее… — out/shorts/typing-vk-ru.mp4
+- Falling Shapes RU — Ещё один улов… — out/shorts/redsquare2-vk-ru.mp4
+  Запись: node tools/record-typing-ru-short.cjs | node tools/record-redsquare2-ru-short.cjs
 
 Ещё без Shorts на канале: —
 

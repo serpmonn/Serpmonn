@@ -1,7 +1,12 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import verifyToken from '../verifyToken.mjs';
-import { createMailbox, changeMailboxPassword, linkMailbox } from './onnmailController.mjs';
+import {
+    createMailbox,
+    changeMailboxPassword,
+    linkMailbox,
+    deleteMailbox
+} from './onnmailController.mjs';
 
 const router = express.Router();
 
@@ -20,5 +25,6 @@ const passwordLimiter = rateLimit({
 router.post('/create-mailbox', apiLimiter, verifyToken, createMailbox);
 router.post('/change-password', passwordLimiter, verifyToken, changeMailboxPassword);
 router.post('/link-mailbox', passwordLimiter, verifyToken, linkMailbox);
+router.post('/delete-mailbox', passwordLimiter, verifyToken, deleteMailbox);
 
 export default router;
