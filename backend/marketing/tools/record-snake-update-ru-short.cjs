@@ -19,8 +19,8 @@ const TMP = `/tmp/snake-update-${LANG}-short-frames`;
 const W = 1080;
 const H = 1920;
 const FPS = 12;
-const DURATION_MS = 15000;
-const TARGET_SEC = 12;
+const DURATION_MS = 12000;
+const TARGET_SEC = 9;
 const MODE = process.env.SNAKE_MODE || 'classic';
 
 const MIME = {
@@ -89,7 +89,7 @@ async function playTowardFoodThenCrash(page) {
   await sleep(150);
   // Чуть медленнее — длиннее читаемый геймплей в кадре
   await page.evaluate(() => {
-    if (window.__rec.slow) window.__rec.slow(170);
+    if (window.__rec.slow) window.__rec.slow(110);
   });
   const playUntil = Date.now() + DURATION_MS - 3200;
   while (Date.now() < playUntil) {
@@ -98,7 +98,7 @@ async function playTowardFoodThenCrash(page) {
       if (!st) return false;
       if (!st.alive) {
         window.__rec.restart();
-        if (window.__rec.slow) window.__rec.slow(170);
+        if (window.__rec.slow) window.__rec.slow(110);
         return true;
       }
       if (!st.food || !st.snake.length) return false;
@@ -136,7 +136,7 @@ async function playTowardFoodThenCrash(page) {
       }
       return false;
     });
-    await sleep(70);
+    await sleep(55);
   }
   await page.evaluate((go) => {
     window.i18n = Object.assign({}, window.i18n || {}, {
@@ -354,6 +354,19 @@ async function main() {
       '+faststart',
       OUT_FINAL,
     ]);
+
+    // Чуть ускорить итоговый ролик (~12%) для экшена
+    const sped = `/tmp/snake-update-${LANG}-sped.mp4`;
+    await run('ffmpeg', [
+      '-y', '-i', OUT_FINAL,
+      '-filter_complex', '[0:v]setpts=0.88*PTS[v];[0:a]atempo=1.136[a]',
+      '-map', '[v]', '-map', '[a]',
+      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '18',
+      '-c:a', 'aac', '-b:a', '128k',
+      '-movflags', '+faststart',
+      sped,
+    ]);
+    fs.copyFileSync(sped, OUT_FINAL);
 
     await run('ffmpeg', ['-y', '-ss', '0.4', '-i', OUT_FINAL, '-frames:v', '1', path.join(OUT_DIR, `snake-update-${LANG}-firstframe.jpg`)]);
     await run('ffmpeg', ['-y', '-sseof', '-0.5', '-i', OUT_FINAL, '-frames:v', '1', path.join(OUT_DIR, `snake-update-${LANG}-lastframe.jpg`)]);
