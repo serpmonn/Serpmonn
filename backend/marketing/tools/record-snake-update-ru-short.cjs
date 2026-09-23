@@ -19,8 +19,9 @@ const TMP = `/tmp/snake-update-${LANG}-short-frames`;
 const W = 1080;
 const H = 1920;
 const FPS = 12;
-const DURATION_MS = 7200;
-const MODE = process.env.SNAKE_MODE || 'walls'; // walls reads well on Shorts
+const DURATION_MS = 15000;
+const TARGET_SEC = 12;
+const MODE = process.env.SNAKE_MODE || 'classic';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -85,12 +86,22 @@ function pickAudio() {
 
 async function playTowardFoodThenCrash(page) {
   await page.waitForFunction(() => window.__rec && window.__rec.getState, { timeout: 10000 });
-  await sleep(120);
-  const start = Date.now();
-  while (Date.now() - start < DURATION_MS - 2000) {
+  await sleep(150);
+  // Чуть медленнее — длиннее читаемый геймплей в кадре
+  await page.evaluate(() => {
+    if (window.__rec.slow) window.__rec.slow(170);
+  });
+  const playUntil = Date.now() + DURATION_MS - 3200;
+  while (Date.now() < playUntil) {
     await page.evaluate(() => {
       const st = window.__rec.getState();
-      if (!st || !st.alive || !st.food || !st.snake.length) return false;
+      if (!st) return false;
+      if (!st.alive) {
+        window.__rec.restart();
+        if (window.__rec.slow) window.__rec.slow(170);
+        return true;
+      }
+      if (!st.food || !st.snake.length) return false;
       const head = st.snake[0];
       const body = new Set(st.snake.slice(1).map((s) => `${s.x},${s.y}`));
       const walls = st.mode === 'walls';
@@ -125,7 +136,7 @@ async function playTowardFoodThenCrash(page) {
       }
       return false;
     });
-    await sleep(80);
+    await sleep(70);
   }
   await page.evaluate((go) => {
     window.i18n = Object.assign({}, window.i18n || {}, {
@@ -133,7 +144,7 @@ async function playTowardFoodThenCrash(page) {
       pressRToRestart: 'serpmonn',
     });
   }, LANG === 'en' ? 'Almost…' : 'Почти…');
-  // Force a crash into wall / self
+  // Force near-miss crash at the end
   for (const [nx, ny] of [
     [1, 0],
     [0, 1],
@@ -142,11 +153,18 @@ async function playTowardFoodThenCrash(page) {
     [1, 0],
     [0, 1],
     [1, 0],
+    [0, -1],
   ]) {
-    await page.evaluate(({ nx, ny }) => window.__rec.setDir(nx, ny), { nx, ny });
-    await sleep(140);
+    const dead = await page.evaluate(({ nx, ny }) => {
+      const st = window.__rec.getState();
+      if (st && !st.alive) return true;
+      window.__rec.setDir(nx, ny);
+      return false;
+    }, { nx, ny });
+    if (dead) break;
+    await sleep(150);
   }
-  await sleep(900);
+  await sleep(1600);
 }
 
 async function main() {
@@ -245,12 +263,12 @@ async function main() {
     let capturing = true;
     const captureLoop = (async () => {
       const t0 = Date.now();
-      while (capturing && Date.now() - t0 < DURATION_MS + 800) {
+      while (capturing && Date.now() - t0 < DURATION_MS + 2500) {
         const shotT = Date.now();
         await page.screenshot({
           path: path.join(TMP, `f${String(frameIdx).padStart(5, '0')}.jpg`),
           type: 'jpeg',
-          quality: 86,
+          quality: 82,
         });
         frameIdx++;
         await sleep(Math.max(0, Math.floor(1000 / FPS) - (Date.now() - shotT)));
@@ -266,20 +284,20 @@ async function main() {
     let jpgs = fs.readdirSync(TMP).filter((f) => f.endsWith('.jpg')).sort();
     if (jpgs.length < 20) throw new Error(`too few frames: ${jpgs.length}`);
 
-    const keep = Math.min(jpgs.length, Math.round(FPS * 6.2));
+    const keep = Math.min(jpgs.length, Math.round(FPS * TARGET_SEC));
     for (const f of jpgs) {
       const n = parseInt(f.replace(/\D/g, ''), 10);
       if (n >= keep) fs.unlinkSync(path.join(TMP, f));
     }
     jpgs = fs.readdirSync(TMP).filter((f) => f.endsWith('.jpg')).sort();
-    const loopN = Math.min(7, Math.max(5, Math.round(FPS * 0.4)));
+    const loopN = Math.min(10, Math.max(6, Math.round(FPS * 0.5)));
     for (let i = 0; i < loopN; i++) {
       fs.copyFileSync(path.join(TMP, jpgs[Math.min(i, 3)]), path.join(TMP, `f${String(jpgs.length + i).padStart(5, '0')}.jpg`));
     }
     const total = jpgs.length + loopN;
     console.log('frames', jpgs.length, 'total', total, 'mode', MODE);
 
-    const silent = '/tmp/snake-update-ru-silent.mp4';
+    const silent = `/tmp/snake-update-${LANG}-silent.mp4`;
     const crashAt = ((jpgs.length - 8) / FPS).toFixed(2);
     const line1 = LANG === 'en'
       ? (MODE === 'walls' ? 'Walls hit different…' : MODE === 'portals' ? 'One more portal…' : 'One more turn…')
