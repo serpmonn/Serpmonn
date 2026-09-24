@@ -338,7 +338,7 @@ function initVkIdOneTap() {
   window.__VKID_LOADING = true;
 
   const script = document.createElement('script');
-  script.src = 'https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js';
+  script.src = '/frontend/vendor/vkid-sdk.umd.js';
   script.async = true;
   script.onload = () => {
     window.__VKID_LOADING = false;

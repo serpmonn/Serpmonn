@@ -4605,7 +4605,7 @@ function loadVkIdSdk() {
   if (window.VKIDSDK) return Promise.resolve(window.VKIDSDK);
   return new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js';
+    s.src = '/frontend/vendor/vkid-sdk.umd.js';
     s.async = true;
     s.onload = () => resolve(window.VKIDSDK);
     s.onerror = () => reject(new Error('VKID SDK load failed'));

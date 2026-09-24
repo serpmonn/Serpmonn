@@ -1,5 +1,5 @@
 {
-  "_comment": "Пути относительно frontend/ (и dist/frontend/). deploy-locales НИКОГДА не перезаписывает их из Eleventy — источник правды: git frontend/.",
+  "_comment": "Пути относительно frontend/ (и dist/frontend/). deploy-locales НИКОГДА не перезаписывает их из Eleventy — источник правды: git frontend/. Protect оставлен только для app shell (не Eleventy). main/profile/onnmail/findings/snake/menu/auth — правда в njk.",
   "paths": [
     "app/index.html",
     "app/catalog.json",
@@ -8,59 +8,18 @@
     "app/push-client.js",
     "app/push-native.js",
     "app/push-sw.js",
-    "app/spn-sound.js",
-    "auth/auth.html",
-    "profile/profile.html",
-    "profile/onnmail/onnmail.html",
-    "findings/inbox.html",
-    "findings/feed.html",
-    "games/snake/snake.html",
-    "main.html",
-    "menu.html"
+    "app/spn-sound.js"
   ],
-  "localeRelativePaths": [
-    "auth/auth.html",
-    "profile/profile.html",
-    "profile/onnmail/onnmail.html",
-    "findings/inbox.html",
-    "findings/feed.html",
-    "menu.html"
-  ],
+  "localeRelativePaths": [],
   "asserts": [
     {
       "path": "app/index.html",
       "minBytes": 15000,
-      "mustInclude": ["__SPN_ANDROID_APP__", "spn-tabs", "data-tab=\"inbox\""]
-    },
-    {
-      "path": "auth/auth.html",
-      "minBytes": 12000,
-      "mustInclude": ["auth-app-boot", "auth_scripts.js"]
-    },
-    {
-      "path": "profile/profile.html",
-      "minBytes": 20000,
-      "mustInclude": ["onnmailManageSheet", "onnmailDeleteSheet"]
-    },
-    {
-      "path": "findings/inbox.html",
-      "minBytes": 1000,
-      "mustInclude": ["findings-inbox.js"]
-    },
-    {
-      "path": "games/snake/snake.html",
-      "minBytes": 8000,
-      "mustInclude": ["modeSelect", "nicknameForm"]
-    },
-    {
-      "path": "main.html",
-      "minBytes": 20000,
-      "mustInclude": ["ai-search-form", "Serpmonn-96x96.png"]
-    },
-    {
-      "path": "menu.html",
-      "minBytes": 20000,
-      "mustInclude": ["themeToggleBtn", "menu.css?v=sn11", "languageSelectorContainer"]
+      "mustInclude": [
+        "__SPN_ANDROID_APP__",
+        "spn-tabs",
+        "data-tab=\"inbox\""
+      ]
     }
   ]
 }
