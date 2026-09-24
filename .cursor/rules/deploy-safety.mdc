@@ -12,7 +12,7 @@ alwaysApply: true
 | Зона | Правда | Деплой |
 |------|--------|--------|
 | `frontend/app/index.html`, `app.js`, `app.css`, push-* | git `frontend/` | **никогда** из Eleventy |
-| `auth/`, `profile/`, `findings/`, `games/snake/snake.html`, `main.html` | git `frontend/` | **никогда** из Eleventy (см. `assembly/protected-frontend-paths.json`) |
+| `auth/`, `profile/`, `findings/`, `games/snake/snake.html`, `main.html`, `menu.html` | git `frontend/` | **никогда** из Eleventy (см. `assembly/protected-frontend-paths.json`) |
 | Лендинг приложения `**/serpmonn-app.html` | `assembly/site/serpmonn-app.njk` → frontend | только `npm run deploy:landing` |
 | KB / tools / локали / витрины | `.njk` + Eleventy | `npm run deploy:prod` ок |
 
@@ -24,12 +24,12 @@ alwaysApply: true
 - Полный сайт: `npm run deploy:prod` — **не** для правок лендинга/оболочки
 - **Запрещено** агенту: полный site-deploy «заодно», если задача только лендинг/APK/сторы
 
-## Как править protect-страницы
+## Как править страницы сайта
 
-1. Редактировать **`frontend/...html`** (не надеяться, что старый `.njk` выкатит правку).
-2. Проверить в браузере.
-3. **Закоммитить** в git — иначе следующий человек/агент может потерять правку с диска.
-4. `.njk` догонять отдельно, если страница ещё генерируется для локалей; RU protect всё равно не перезапишется.
+1. Править **`assembly/site/*.njk`** (правда в njk), затем `deploy:dev` / `deploy:landing:dev`.
+2. Не патчить сгенерированный `frontend/**/*.html` вместо njk.
+3. Protect — страховка, пока njk полностью не догнаны; цель — njk = live.
+4. Оболочка `frontend/app/*` (не Eleventy) — исключение, правь в git `frontend/`.
 
 ## Перед любым деплоем
 

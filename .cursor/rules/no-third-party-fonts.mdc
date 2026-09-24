@@ -1,0 +1,20 @@
+---
+description: Never load fonts from third-party CDNs; self-host only
+alwaysApply: true
+---
+
+# Шрифты — только свои, без сторонних CDN
+
+## Запрещено
+
+- `fonts.googleapis.com`, `fonts.gstatic.com`
+- Bunny Fonts, Adobe Fonts, jsDelivr/CDN как runtime-источник шрифтов страницы
+- `<link>` / `@import` на чужие CDN для `@font-face`
+
+## Как правильно
+
+1. Файлы `.woff2` лежат в репо под `frontend/fonts/…` (или рядом с лендингом, если уникальны).
+2. Подключение: локальный CSS с `@font-face` + `font-display: swap`.
+3. Меню / лендинги / статьи — тот же принцип; не тащить Google Fonts «для красоты».
+
+Исключение: скачать шрифт **один раз** при подготовке ассета (с лицензией OFL и т.п.) и положить в git — это ок. В рантайме у пользователя CDN быть не должно.

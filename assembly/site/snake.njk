@@ -12,7 +12,7 @@ eleventyComputed:
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}" data-langs="ru en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="{{ locale }}">
@@ -34,6 +34,10 @@ eleventyComputed:
   <meta property="twitter:image" content="{{ site.baseUrl }}/frontend/images/snake.png">
 
   <link rel="canonical" href="{{ canonical }}">
+  {# Полноценный перевод змейки — только RU/EN #}
+  <link rel="alternate" hreflang="ru" href="{{ site.baseUrl }}/frontend/games/snake/snake.html">
+  <link rel="alternate" hreflang="en" href="{{ site.baseUrl }}/frontend/en/games/snake/snake.html">
+  <link rel="alternate" hreflang="x-default" href="{{ site.baseUrl }}/frontend/games/snake/snake.html">
   <link rel="icon" href="/frontend/images/snake.png" type="image/x-icon">
 
   <link rel="stylesheet" href="/frontend/styles/styles.css">

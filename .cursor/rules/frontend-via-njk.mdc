@@ -1,0 +1,26 @@
+---
+description: Frontend content is edited via Eleventy .njk, not hand-patched live HTML
+alwaysApply: true
+---
+
+# Фронт контента — через `.njk`
+
+Рабочий контур: **destin** (`/var/www/serpmonn-dev`, ветка `develop`).
+
+## Источник правды для страниц сайта
+
+| Зона | Править | Выкат |
+|------|---------|--------|
+| KB, tools, menu, games pages, install-guide, локали | `assembly/site/*.njk` (+ `_data`) | `deploy:dev` / `deploy:landing:dev` |
+| Лендинг Serpmonn App | `serpmonn-app.njk` | только `deploy:landing` / `:dev` |
+| Статичные APK-лендинги без njk (Neon и т.п.) | `frontend/downloads/...` | точечно, без Eleventy |
+
+**Не править** сгенерированный `frontend/**/*.html` «вместо» njk — правка пропадёт на следующем деплое. Сначала njk → деплой → проверка.
+
+Исключение: оболочка приложения `frontend/app/index.html` + `app.js` / `app.css` (не Eleventy) — только git `frontend/`.
+
+`protected-frontend-paths.json` — страховка на переходный период, не замена дисциплины «правда в njk».
+
+## Языки в меню
+
+На странице в njk задавай `data-langs="ru en …"` — только локали с **реальным переводом**. Селектор не показывает остальные. Не полагаться на «файл есть = перевод есть».
