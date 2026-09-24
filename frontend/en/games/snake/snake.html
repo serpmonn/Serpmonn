@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -114,7 +115,7 @@
       </div>
 
       <div class="panel">
-        <h2>Stats</h2>
+        <h2>Statistics</h2>
 
         <div class="stats">
           <div class="stat">Score<br><b id="score">0</b></div>
@@ -134,16 +135,16 @@
         <label class="mode-label" for="modeSelect">Mode</label>
         <select id="modeSelect" class="mode-select" aria-label="Game mode">
           <option value="classic">Classic — wrap edges</option>
-          <option value="walls">Walls — solid borders</option>
-          <option value="portals">Portals — teleports</option>
+          <option value="walls">Walls — solid walls</option>
+          <option value="portals">Portals — portals</option>
         </select>
 
         <form id="nicknameForm" class="nickname-panel">
-          <label for="nickname">Leaderboard nick (optional)</label>
+          <label for="nickname">Leaderboard nickname (optional)</label>
           <input type="text" id="nickname" maxlength="24" placeholder="Your nick" autocomplete="nickname">
           <div class="action-row">
             <button type="submit" class="btn primary">Save</button>
-            <button type="button" class="btn" id="btnSkipNick">No nick</button>
+            <button type="button" class="btn" id="btnSkipNick">Skip</button>
           </div>
         </form>
 
@@ -177,10 +178,10 @@
       finalScore: "Score",
       soundOn: "Sound: on",
       soundOff: "Sound: off",
-      bannedNicknameAlert: "This nickname is not allowed",
+      bannedNicknameAlert: "This nickname cannot be used",
       changeNick: "Change nick",
       setNick: "Set nick",
-      scoreTableUrl: "/frontend/en/games/redsquare2/score_table.html",
+      scoreTableUrl: "/frontend/games/redsquare2/score_table.html",
       instructionsDesktop: "• Arrows or WASD — move\n• Space / Esc / Enter — pause (resets combo)\n• R — restart\n• Modes: Classic / Walls / Portals\n• Apples in a row give combo ×2…×8",
       instructionsMobile: "• Swipes — move\n• Start/Pause — buttons\n• Modes and combo — in the side panel"
     };
@@ -188,7 +189,8 @@
   <script type="module" src="/frontend/games/snake/snake-ads.js?v=1" defer></script>
   <script src="/frontend/games/snake/snake.js?v=12" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
+  
+  
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Close ad" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -203,7 +205,8 @@
   initMobileAnchorAd();
 </script>
 
-<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js?v=56"></script>
 
 </body>
 </html>

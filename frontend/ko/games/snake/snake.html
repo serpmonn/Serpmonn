@@ -7,18 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>스네이크 — Serpmonn</title>
-  <meta name="description" content="클래식 스네이크: 사과를 최대한 모으고 충돌을 피하세요.">
+  <meta name="description" content="Serpmonn Snake: classic, walls and portals. Combo, sound and leaderboard.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
   <meta property="og:title" content="스네이크 — Serpmonn">
-  <meta property="og:description" content="클래식 스네이크: 사과를 최대한 모으고 충돌을 피하세요.">
+  <meta property="og:description" content="Serpmonn Snake: classic, walls and portals. Combo, sound and leaderboard.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
   <meta property="twitter:title" content="스네이크 — Serpmonn">
-  <meta property="twitter:description" content="클래식 스네이크: 사과를 최대한 모으고 충돌을 피하세요.">
+  <meta property="twitter:description" content="Serpmonn Snake: classic, walls and portals. Combo, sound and leaderboard.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
-  <link rel="stylesheet" href="/frontend/games/snake/snake.css?v=2">
+  <link rel="stylesheet" href="/frontend/games/snake/snake.css?v=10">
 
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
   <script>
@@ -63,6 +63,7 @@
     function showInstructions(){
       try{
         if (localStorage.getItem('game_instructions_snake_shown') === '1') return;
+        try { if (new URLSearchParams(location.search).get('rec')) return; } catch(e) {}
 
         var ov = document.createElement('div');
         ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
@@ -104,13 +105,13 @@
     </div>
     <header>
       <img src="/frontend/images/snake.png" width="28" height="28" alt="게임" style="border-radius:6px;">
-      <h1>스네이크</h1>
+      <h1>Snake <span class="brand-tag">Serpmonn</span></h1>
     </header>
 
     <div class="wrap">
-      <div class="panel">
+      <div class="panel playfield" id="shakeLayer">
         <canvas id="game" width="480" height="480" aria-label="게임판"></canvas>
-        <div class="hint">조작: 방향키 또는 WASD. 일시정지 — 스페이스. 다시 시작 — R.</div>
+        <div class="hint">Controls: arrows or WASD. Pause — Space. Restart — R. Combo grows with apples in a row (resets on pause).</div>
       </div>
 
       <div class="panel">
@@ -123,13 +124,39 @@
 
         <div class="stats">
           <div class="stat">속도<br><b id="speed">1x</b></div>
-          <div class="stat">판 크기<br><b>24×24</b></div>
+          <div class="stat">Combo<br><b id="combo">—</b></div>
         </div>
 
-        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
+        <div class="stats">
+          <div class="stat">Nick<br><b id="nickValue">—</b></div>
+          <div class="stat">Field<br><b>24×24</b></div>
+        </div>
+
+        <label class="mode-label" for="modeSelect">Mode</label>
+        <select id="modeSelect" class="mode-select" aria-label="Game mode">
+          <option value="classic">Classic — wrap edges</option>
+          <option value="walls">Walls — solid walls</option>
+          <option value="portals">Portals — portals</option>
+        </select>
+
+        <form id="nicknameForm" class="nickname-panel">
+          <label for="nickname">Leaderboard nickname (optional)</label>
+          <input type="text" id="nickname" maxlength="24" placeholder="Your nick" autocomplete="nickname">
+          <div class="action-row">
+            <button type="submit" class="btn primary">Save</button>
+            <button type="button" class="btn" id="btnSkipNick">Skip</button>
+          </div>
+        </form>
+
+        <div class="action-row">
           <button class="btn primary" id="btnStart">시작</button>
           <button class="btn" id="btnPause">일시정지</button>
           <button class="btn" id="btnReset">다시</button>
+        </div>
+        <div class="action-row">
+          <button class="btn" id="btnChangeNick" type="button">Change nick</button>
+          <button class="btn" id="btnSound" type="button" aria-pressed="true">Sound: on</button>
+          <button class="btn" id="btnLeaderboard" type="button">Leaderboard</button>
         </div>
 
         <div class="controls" aria-label="모바일 조작">
@@ -148,12 +175,19 @@
     window.i18n = {
       gameOver: "게임 오버",
       pressRToRestart: "R — 다시 시작",
-      instructionsDesktop: "• 방향키 또는 WASD — 조작\n• 스페이스 — 일시정지\n• R — 다시 시작",
-      instructionsMobile: "• 스와이프 — 조작\n• 시작/일시정지 — 버튼"
+      finalScore: "Score",
+      soundOn: "Sound: on",
+      soundOff: "Sound: off",
+      bannedNicknameAlert: "This nickname cannot be used",
+      changeNick: "Change nick",
+      setNick: "Set nick",
+      scoreTableUrl: "/frontend/games/redsquare2/score_table.html",
+      instructionsDesktop: "• Arrows or WASD — move\n• Space / Esc / Enter — pause (resets combo)\n• R — restart\n• Modes: Classic / Walls / Portals\n• Apples in a row give combo ×2…×8",
+      instructionsMobile: "• Swipes — move\n• Start/Pause — buttons\n• Modes and combo — in the side panel"
     };
   </script>
   <script type="module" src="/frontend/games/snake/snake-ads.js?v=1" defer></script>
-  <script src="/frontend/games/snake/snake.js?v=4" defer></script>
+  <script src="/frontend/games/snake/snake.js?v=12" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   
@@ -172,7 +206,7 @@
 </script>
 
 
-<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+<script type="module" src="/frontend/scripts/ad-slot-init.js?v=56"></script>
 
 </body>
 </html>
