@@ -368,7 +368,12 @@
   }
 
   async function loadWallet() {
-    const { wallet, feeRate, holdDays, maxHoldDays: maxHold, yookassa, topupRequisites } = await api('/wallet');
+    const { wallet, feeRate, holdDays, maxHoldDays: maxHold, yookassa, topupRequisites, minTopup, maxTopup } = await api('/wallet');
+    const amountInput = document.querySelector('#topupForm input[name="amount"]');
+    if (amountInput) {
+      if (minTopup != null) amountInput.min = String(minTopup);
+      if (maxTopup != null) amountInput.max = String(maxTopup);
+    }
     defaultHoldDays = Number.isFinite(Number(holdDays)) ? Number(holdDays) : 7;
     maxHoldDays = Number.isFinite(Number(maxHold)) ? Number(maxHold) : 180;
     syncHoldFieldLimits();

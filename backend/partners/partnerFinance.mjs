@@ -10,6 +10,18 @@ export const MIN_PAYOUT_AMOUNT = (() => {
   return Number.isFinite(n) && n > 0 ? n : 1000;
 })();
 
+/** Максимум одной заявки на пополнение (₽). Защита от мусорных/абузивных сумм до ЮKassa и писем. */
+export const MAX_TOPUP_AMOUNT = (() => {
+  const n = Number(process.env.PARTNER_MAX_TOPUP);
+  return Number.isFinite(n) && n > 0 ? n : 500000;
+})();
+
+/** Минимум одной заявки на пополнение (₽) */
+export const MIN_TOPUP_AMOUNT = (() => {
+  const n = Number(process.env.PARTNER_MIN_TOPUP);
+  return Number.isFinite(n) && n > 0 ? n : 100;
+})();
+
 /** Дефолтный холд начислений паблишеру (дней), если в оффере не задано */
 export const CONVERSION_HOLD_DAYS = (() => {
   const n = Number(process.env.PARTNER_CONVERSION_HOLD_DAYS);
@@ -447,6 +459,14 @@ export async function createTopup({ advertiserId, amount, provider = 'manual' })
   await ensureFinanceTables();
   const amt = round2(amount);
   if (!(amt > 0)) throw Object.assign(new Error('Сумма должна быть > 0'), { status: 400 });
+  if (amt < MIN_TOPUP_AMOUNT) {
+    throw Object.assign(new Error(`Минимум пополнения: ${MIN_TOPUP_AMOUNT} ₽`), { status: 400 });
+  }
+  if (amt > MAX_TOPUP_AMOUNT) {
+    throw Object.assign(new Error(`Максимум пополнения за раз: ${MAX_TOPUP_AMOUNT.toLocaleString('ru-RU')} ₽`), {
+      status: 400
+    });
+  }
   const prov = provider === 'yookassa' ? 'yookassa' : 'manual';
   const result = await query(
     `INSERT INTO partner_topups (advertiser_id, amount, status, provider) VALUES (?, ?, 'pending', ?)`,
