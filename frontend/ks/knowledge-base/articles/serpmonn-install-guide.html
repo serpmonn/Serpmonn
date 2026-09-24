@@ -1,13 +1,30 @@
 
 <!DOCTYPE html>
-<html lang="ks" dir="rtl">
+<html lang="ks" dir="rtl" data-themes="light dark">
 <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('spn_theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.colorScheme = t;
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ks">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    
+    
+    
+    
+    
+    
     
 
     <title>Serpmonn کِتھہٕ انسٹال کْریو: ہوم سکرین تہ Android</title>
@@ -16,14 +33,14 @@
 
     <meta property="og:title" content="Serpmonn کِتھہٕ انسٹال کْریو">
     <meta property="og:description" content="ہوم سکرین یا Android APK — مختصر رہنمائی۔">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og-en.png?v=25">
     <meta property="og:url" content="https://serpmonn.ru/frontend/ks/knowledge-base/articles/serpmonn-install-guide.html">
     <meta property="og:type" content="article">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Serpmonn کِتھہٕ انسٹال کْریو">
     <meta name="twitter:description" content="ہوم سکرین یا Android APK — مختصر رہنمائی۔">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og-en.png?v=25">
 
     <link rel="canonical" href="https://serpmonn.ru/frontend/ks/knowledge-base/articles/serpmonn-install-guide.html" />
 
@@ -33,9 +50,9 @@
       "@type": "HowTo",
       "name": "Serpmonn کِتھہٕ انسٹال کْریو: ہوم سکرین تہ Android",
       "description": "Serpmonn فون ہوم سکرین پٮ۪ٹھہٕ رٲیو یا Android APK ڈاؤن لوڈ کْریو۔ فرق کْیا چھُ تہ کٔنۍ کُس ژٲریو۔",
-      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "image": "https://serpmonn.ru/frontend/images/stores/serpmonn-app-og-en.png?v=25",
       "datePublished": "2026-07-23",
-      "dateModified": "2026-07-23",
+      "dateModified": "2026-09-24",
       "inLanguage": "ks",
       "url": "https://serpmonn.ru/frontend/ks/knowledge-base/articles/serpmonn-install-guide.html",
       "author": { "@type": "Organization", "name": "Serpmonn" },
@@ -246,14 +263,16 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/serpmonn-install-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
-    <link rel="stylesheet" href="/frontend/styles/articles/serpmonn-install-guide.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css?v=theme2" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css?v=theme1">
+    <link rel="stylesheet" href="/frontend/styles/articles/serpmonn-install-guide.css?v=26">
 </head>
-<body>
+<body class="install-guide">
 
 
 
@@ -305,159 +324,188 @@
 
 <nav id="menuContainer" aria-label="مینیو"></nav>
 
-<article class="article-container" tabindex="0">
-  <header class="article-header">
-    <div class="ad-top-banner ad-banner loading">
-      <ins class="mrg-tag"
-          style="display:inline-block;"
-          data-ad-client="ad-1897960"
-          data-ad-slot="1897960">
-      </ins>
-    </div>
-    <h1 class="article-title">Serpmonn کِتھہٕ انسٹال کْریو: فون سکرین تہ Android APK</h1>
-    <div class="article-date">۲۳ جُلَے ۲۰۲۶ • ۴ منٹ پرُن</div>
-  </header>
+<main class="page">
+  <article class="article-container" tabindex="0">
+    <header class="article-header">
+      <div class="ad-top-banner ad-banner loading">
+        <ins class="mrg-tag"
+            style="display:inline-block;"
+            data-ad-client="ad-1897960"
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <h1 class="article-title">Serpmonn کِتھہٕ انسٹال کْریو: فون سکرین تہ Android APK</h1>
+      <div class="article-date">۲۳ جُلَے ۲۰۲۶ · ۴ منٹ پرُن</div>
+    </header>
 
-  <div class="article-content">
-    <div class="summary">
-      <strong>مختصر:</strong> زٕ آپشن۔ «ہوم سکرینَس پؠٹھ جمع کْریو» براؤزر استعمال کران چھُ — بغیر ایپ سٹور۔ APK چھُ Android انسٹال فائل ییلہِ الگ سِسٹم ایپ آئیکان گژھان.
-    </div>
+    <div class="article-content">
+      <div class="summary">
+        <strong>مختصر:</strong> زٕ آپشن۔ «ہوم سکرینَس پؠٹھ جمع کْریو» براؤزر استعمال کران چھُ — بغیر ایپ سٹور۔ APK چھُ Android انسٹال فائل ییلہِ الگ سِسٹم ایپ آئیکان گژھان.
+      </div>
 
-    
-    <h2 id="choose">Which to choose</h2>
-
-    
-
-    
-
-    
-    <ul>
       
-      <li><strong>Add to Home Screen</strong> — the site opens like an app: its own icon and a fuller screen. Best for most people. No store download.</li>
+      <h2 id="choose">Which to choose</h2>
+
       
-      <li><strong>Serpmonn for Android (.apk)</strong> — an install file. Useful if the browser doesn’t offer install, or you want a classic Android app icon.</li>
+
       
-      <li><strong>Serpmonn Messenger</strong> — a separate Android app (beta). There is no web chat yet: the menu item opens a page where you download the Messenger APK.</li>
+
       
-    </ul>
-    
-
-    
-
-    
-    
-    <h2 id="homescreen">Add to Home Screen</h2>
-
-    
-    <p>Open <a href="https://serpmonn.ru/">serpmonn.ru</a> in your phone browser, then follow your OS.</p>
-    
-
-    
-    <ol>
+      <ul>
+        
+        <li><strong>Add to Home Screen</strong> — the site opens like an app: its own icon and a fuller screen. Best for most people. No store download.</li>
+        
+        <li><strong>Serpmonn for Android (.apk)</strong> — an install file. Useful if the browser doesn’t offer install, or you want a classic Android app icon.</li>
+        
+        <li><strong>Serpmonn Messenger</strong> — a separate Android app (beta). There is no web chat yet: the menu item opens a page where you download the Messenger APK.</li>
+        
+      </ul>
       
-      <li><strong>Android (Chrome):</strong> browser menu (⋮) → “Install app” / “Add to Home screen” → confirm. Or in the Serpmonn menu: Apps → “Add to Home Screen”.</li>
+
       
-      <li><strong>iPhone / iPad (Safari):</strong> Share → “Add to Home Screen” → Add.</li>
+
       
-      <li>Then open the Serpmonn icon from your Home Screen — it launches without the full browser chrome.</li>
       
-    </ol>
-    
+      <h2 id="homescreen">Add to Home Screen</h2>
 
-    
-
-    
-    <div class="note">If you don’t see Install, update the browser or try Chrome / Safari. On some devices the option appears after visiting the site again.</div>
-    
-
-    
-    
-    <h2 id="android">Download for Android (.apk)</h2>
-
-    
-    <p>Find it under Apps → Mobile apps → “Serpmonn for Android (.apk)”.</p>
-    
-
-    
-    <ol>
       
-      <li>Download the file to your phone.</li>
+      <p>Open <a href="https://serpmonn.ru/">serpmonn.ru</a> in your phone browser, then follow your OS.</p>
       
-      <li>Open the download. If Android asks to allow installs from that source, allow it for the Files app or browser.</li>
+
       
-      <li>Install and open Serpmonn from the Home Screen.</li>
+      <ol>
+        
+        <li><strong>Android (Chrome):</strong> browser menu (⋮) → “Install app” / “Add to Home screen” → confirm. Or in the Serpmonn menu: Apps → “Add to Home Screen”.</li>
+        
+        <li><strong>iPhone / iPad (Safari):</strong> Share → “Add to Home Screen” → Add.</li>
+        
+        <li>Then open the Serpmonn icon from your Home Screen — it launches without the full browser chrome.</li>
+        
+      </ol>
       
-    </ol>
-    
 
-    
-
-    
-    <div class="note">This APK is not from Google Play, so Android may show a warning — expected for sideloading. Only download from serpmonn.ru.</div>
-    
-
-    
-    
-    <h2 id="messenger">About Messenger</h2>
-
-    
-    <p>“Serpmonn Messenger” opens the app page. Messenger currently works only as a native Android app — download the APK from that page and install it on your phone. You cannot chat in the browser yet; a web client is not available. This is not the same as “Serpmonn for Android” (site shortcut): Messenger has its own install file.</p>
-    
-
-    
-
-    
-
-    
-
-    
-    
-    <h2 id="faq">FAQ</h2>
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="faq">
       
-      <h3>Home Screen vs APK?</h3>
-      <p>Home Screen is a browser-installed shortcut to the site. APK is an Android package. Both open Serpmonn; pick APK if browser install isn’t available.</p>
-      
-      <h3>Do I need Google Play or the App Store?</h3>
-      <p>No. The browser or the site APK is enough.</p>
-      
-      <h3>Is it safe?</h3>
-      <p>Install only from serpmonn.ru. Don’t install “Serpmonn” from random sites or messages.</p>
-      
-      <h3>Can I install both?</h3>
-      <p>Yes, but one method is usually enough so you don’t end up with two icons.</p>
-      
-    </div>
-    
-    
 
-    
-    <div class="note">
-      <strong>خلاصہ:</strong> گۄڈٕ «ہوم سکرینَس پؠٹھ جمع کْریو» آزمائیو۔ اگر ناکام گژھِ، «Serpmonn for Android» ڈاؤن لوڈ کْریو۔ میسنجر چھُ الگ: صرف پنٕنِ صفحہٕ پؠٹھ Android APK — وؠب ورژن تہنٛدۍ نہٕ.
-    </div>
-    
-
-    <div class="install-cta-row">
-      <a href="#" class="cta-button" id="installGuidePwaCta">ہوم سکرینَس پؠٹھ جمع کْریو</a>
-      <a href="/frontend/downloads/Serpmonn-1.2.8.apk" download="Serpmonn-1.2.8.apk" class="cta-button cta-button--secondary">Android باپتھ ڈاؤن لوڈ</a>
       
-      <a href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" class="cta-button cta-button--rustore">RuStore منز کھولیو</a>
+      <div class="note">If you don’t see Install, update the browser or try Chrome / Safari. On some devices the option appears after visiting the site again.</div>
       
-    </div>
 
-    
-    
-    
+      
+      
+      <h2 id="android">Download for Android (.apk)</h2>
+
+      
+      <p>Find it under Apps → Mobile apps → “Serpmonn for Android (.apk)”.</p>
+      
+
+      
+      <ol>
+        
+        <li>Download the file to your phone.</li>
+        
+        <li>Open the download. If Android asks to allow installs from that source, allow it for the Files app or browser.</li>
+        
+        <li>Install and open Serpmonn from the Home Screen.</li>
+        
+      </ol>
+      
+
+      
+
+      
+      <div class="note">This APK is not from Google Play, so Android may show a warning — expected for sideloading. Only download from serpmonn.ru.</div>
+      
+
+      
+      
+      <h2 id="messenger">About Messenger</h2>
+
+      
+      <p>“Serpmonn Messenger” opens the chat page — messaging works in the browser and as a separate Android app (download the APK from that page). This is not the same as “Serpmonn for Android”: Messenger has its own install file.</p>
+      
+
+      
+
+      
+
+      
+
+      
+      
+      <h2 id="faq">FAQ</h2>
+
+      
+
+      
+
+      
+
+      
+
+      
+      <div class="faq">
+        
+        <details class="faq-item">
+          <summary>Home Screen vs APK?</summary>
+          <p>Home Screen is a browser-installed shortcut to the site. APK is an Android package. Both open Serpmonn; pick APK if browser install isn’t available.</p>
+        </details>
+        
+        <details class="faq-item">
+          <summary>Do I need Google Play or the App Store?</summary>
+          <p>No. The browser or the site APK is enough.</p>
+        </details>
+        
+        <details class="faq-item">
+          <summary>Is it safe?</summary>
+          <p>Install only from serpmonn.ru. Don’t install “Serpmonn” from random sites or messages.</p>
+        </details>
+        
+        <details class="faq-item">
+          <summary>Can I install both?</summary>
+          <p>Yes, but one method is usually enough so you don’t end up with two icons.</p>
+        </details>
+        
+      </div>
+      
+      
+
+      
+      <div class="note">
+        <strong>خلاصہ:</strong> گۄڈٕ «ہوم سکرینَس پؠٹھ جمع کْریو» آزمائیو۔ اگر ناکام گژھِ، «Serpmonn for Android» ڈاؤن لوڈ کْریو۔ میسنجر چھُ الگ: صرف پنٕنِ صفحہٕ پؠٹھ Android APK — وؠب ورژن تہنٛدۍ نہٕ.
+      </div>
+      
+
+      <div class="install-cta" aria-label="Android باپتھ ڈاؤن لوڈ">
+        <p class="install-cta-label">Android app</p>
+        <div class="cta-row">
+          
+          <a class="store-badge store-badge--primary" href="https://play.google.com/store/apps/details?id=ru.serpmonn" target="_blank" rel="noopener" aria-label="Google Play">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-google-play-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-google-play-en.svg?v=13" width="200" height="58" alt="Google Play">
+            </picture>
+          </a>
+          <a class="store-badge store-badge--secondary" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" aria-label="RuStore">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-en.svg?v=13" width="150" height="44" alt="RuStore">
+            </picture>
+          </a>
+          
+          <a class="store-badge store-badge--apk" href="/frontend/downloads/serpmonn/Serpmonn-latest.apk" download="Serpmonn-1.2.7.apk" aria-label="Android باپتھ ڈاؤن لوڈ">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-serpmonn-en.svg?v=13" width="140" height="38" alt="Serpmonn">
+            </picture>
+          </a>
+        </div>
+        <p class="build">Current build 1.2.7</p>
+        <a href="#" class="cta-pwa" id="installGuidePwaCta">ہوم سکرینَس پؠٹھ جمع کْریو</a>
+      </div>
+
+      
+      
+      
 
 <div class="related-articles">
   <h3>Related articles</h3>
@@ -473,13 +521,14 @@
 </div>
 
 
-  </div>
+    </div>
 
-  <div class="social-buttons">
-    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Telegram پؠٹھ فالو کْریو</a>
-    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK پؠٹھ فالو کْریو</a>
-  </div>
-</article>
+    <div class="social-buttons">
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Telegram پؠٹھ فالو کْریو</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK پؠٹھ فالو کْریو</a>
+    </div>
+  </article>
+</main>
 
 <button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
 
