@@ -68,7 +68,7 @@ eleventyComputed:
 
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/Serpmonn-96x96.png" alt="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" class="logo" title="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" width="65" height="65" decoding="sync" fetchpriority="high">
+    <img src="/frontend/images/Serpmonn-96x96.png?v=3d2" alt="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" class="logo" title="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" width="65" height="65" decoding="sync" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="{{ searchPlaceholder }}"
@@ -292,9 +292,4 @@ eleventyComputed:
   </div>
 </div>
 
-<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
-<script>
-  if (window.vkBridge) {
-    vkBridge.send('VKWebAppInit');
-  }
-</script>
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js" defer onload="window.vkBridge&&vkBridge.send('VKWebAppInit')"></script>
