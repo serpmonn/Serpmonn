@@ -39,6 +39,8 @@ fi
 export DEPLOY_TARGET="$TARGET"
 
 echo "==> site deploy: $TARGET (branch=$branch, root=$ROOT)"
+echo "    ВНИМАНИЕ: полный деплой. Для лендинга приложения используйте: npm run deploy:landing"
+echo "    Protect: assembly/protected-frontend-paths.json (app/auth/profile/findings/snake/main)"
 cd "$ROOT/assembly"
 node ../scripts/build-ad-info-partners.mjs || true
 node ../scripts/sync-admitad-games.mjs || true
