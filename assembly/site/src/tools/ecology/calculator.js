@@ -178,7 +178,14 @@ class EcoFootprintCalculator {
     }
     try {
       if (!window.jspdf) {
-        await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = '/frontend/vendor/jspdf.umd.min.js';
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('jspdf load failed'));
+        document.head.appendChild(s);
+      });
       }
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -199,7 +206,16 @@ class EcoFootprintCalculator {
     const canvas = document.getElementById('ecoChart');
     if (!canvas || !this.results?.products?.length) return;
     try {
-      if (!window.Chart) await import('https://cdn.jsdelivr.net/npm/chart.js');
+      if (!window.Chart) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/frontend/vendor/chart.umd.min.js';
+          s.async = true;
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error('chart.js load failed'));
+          document.head.appendChild(s);
+        });
+      }
     } catch { return; }
     if (!window.Chart) return;
     if (this.chartInstance) this.chartInstance.destroy();

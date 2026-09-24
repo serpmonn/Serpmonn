@@ -1,0 +1,12 @@
+{# Full-locale hreflang for pages paginated over `locales`.
+   Set hreflangPath to the path under /frontend/ for RU (no locale prefix).
+   Example: hreflangPath = "games/2048/2048.html"
+#}
+{% for loc in locales %}
+  {% if loc == 'ru' %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ hreflangPath }}" hreflang="{{ loc }}" />
+  {% else %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/{{ hreflangPath }}" hreflang="{{ loc }}" />
+  {% endif %}
+{% endfor %}
+<link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ hreflangPath }}" hreflang="x-default" />

@@ -244,16 +244,27 @@ function showComparison(inputs, baseResult) {
   renderChart(chartLabels, chartCosts, baseResult);
 }
 
+async function ensureChartJs() {
+  if (window.Chart) return;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = '/frontend/vendor/chart.umd.min.js';
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('chart.js load failed'));
+    document.head.appendChild(s);
+  });
+}
+
 async function renderChart(labels, costs, result) {
   const canvas = document.getElementById('fuelChart');
-  if (!canvas || !window.Chart) {
-    try {
-      if (!window.Chart) await import('https://cdn.jsdelivr.net/npm/chart.js');
-    } catch (_) {
-      return;
-    }
+  if (!canvas) return;
+  try {
+    await ensureChartJs();
+  } catch (_) {
+    return;
   }
-  if (!window.Chart || !canvas) return;
+  if (!window.Chart) return;
   if (chartInstance) chartInstance.destroy();
   chartInstance = new Chart(canvas.getContext('2d'), {
     type: 'bar',
@@ -399,7 +410,14 @@ export async function exportToPDF() {
   if (!ensureExportReady()) return;
   try {
     if (!window.jspdf) {
-      await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = '/frontend/vendor/jspdf.umd.min.js';
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('jspdf load failed'));
+        document.head.appendChild(s);
+      });
     }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();

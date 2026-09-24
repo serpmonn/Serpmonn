@@ -77,16 +77,36 @@ function setCurrentYearMax() {
 }
 
 
+async function ensureChartJs() {
+  if (window.Chart) return;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = '/frontend/vendor/chart.umd.min.js';
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('chart.js load failed'));
+    document.head.appendChild(s);
+  });
+}
+
+async function ensureJsPdf() {
+  if (window.jspdf) return;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = '/frontend/vendor/jspdf.umd.min.js';
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('jspdf load failed'));
+    document.head.appendChild(s);
+  });
+}
+
 async function loadChartJs() {
-  if (!window.Chart) {
-    await import('https://cdn.jsdelivr.net/npm/chart.js');
-  }
+  await ensureChartJs();
 }
 
 async function loadJsPDF() {
-  if (!window.jspdf) {
-    await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-  }
+  await ensureJsPdf();
 }
 
 const pdfFontCache = {};

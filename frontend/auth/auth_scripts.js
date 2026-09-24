@@ -1,8 +1,6 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, safeReplaceLocation, getCurrentLocale } from '../scripts/locale-paths.js';
+import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, getCurrentLocale } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
-import { appFetch } from '../scripts/app-api.js?v=2';
-import { setAuthSession } from '../scripts/auth-session.js';
 
 const t = await getPageT('auth');
 
@@ -62,18 +60,7 @@ function markAndroidPostAuth() {
 function notifyAndroidAppAuthOk() {
   try {
     if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'spn-app-auth-ok', fresh: true }, '*');
-      return true;
-    }
-  } catch (_) {}
-  return false;
-}
-
-/** Уже залогинены и попали на auth (Back/history) — тихо закрыть viewer, без «Вы вошли». */
-function notifyAndroidAppCloseViewer() {
-  try {
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'spn-app-close-viewer' }, '*');
+      window.parent.postMessage({ type: 'spn-app-auth-ok' }, '*');
       return true;
     }
   } catch (_) {}
@@ -104,76 +91,16 @@ function authRedirectTarget() {
   return safeReturnPath || getFrontendPath('profile/profile.html');
 }
 
-function revealAuthAppUi() {
-  try {
-    document.documentElement.classList.remove('auth-app-boot');
-  } catch (_) {}
-}
-
-function hideAuthAppUi() {
-  try {
-    document.documentElement.classList.add('auth-app-boot');
-  } catch (_) {}
-}
-
-function isAuthEmbeddedInApp() {
-  try {
-    return Boolean(window.parent && window.parent !== window);
-  } catch (_) {
-    return true;
-  }
-}
-
 function safeNavigate(url) {
   if (isAndroidAppShell()) {
-    // iframe внутри app viewer — родитель закроет экран входа, history WebView не трогаем
+    // iframe внутри app viewer — родитель закроет экран входа
     if (notifyAndroidAppAuthOk()) return;
-    // полный WebView (deep link на auth.html): replace, без auth в стеке
+    // полный WebView приложения — всегда на вкладку профиля
     markAndroidPostAuth();
-    safeReplaceLocation(withProfileTab(url));
+    safeAssignLocation(withProfileTab(url));
     return;
   }
   safeAssignLocation(url);
-}
-
-/** Сразу уводим с формы после успеха — без паузы, из‑за которой мелькает логин. */
-function finishAuthSuccess() {
-  setAuthSession(true);
-  if (isAndroidAppShell()) {
-    hideAuthAppUi();
-    safeNavigate(authRedirectTarget());
-    return;
-  }
-  setTimeout(() => {
-    safeNavigate(authRedirectTarget());
-  }, 800);
-}
-
-/** Если сессия уже есть — закрываем auth без тоста «Вы вошли». */
-async function redirectIfAlreadyAuthedInApp() {
-  if (!isAndroidAppShell()) return false;
-  const embedded = isAuthEmbeddedInApp();
-  try {
-    const res = await appFetch('/auth/protected', {
-      credentials: 'include',
-      cache: 'no-store',
-    });
-    if (!res.ok) return false;
-    setAuthSession(true);
-    hideAuthAppUi();
-    if (embedded) {
-      // Не auth-ok: иначе Back на старый auth в history снова орёт «Вы вошли» и кидает на профиль
-      notifyAndroidAppCloseViewer();
-      return true;
-    }
-    markAndroidPostAuth();
-    safeReplaceLocation(
-      withProfileTab(sanitizeReturnPath(urlParams.get('return')) || APP_AFTER_AUTH)
-    );
-    return true;
-  } catch (_) {
-    return false;
-  }
 }
 
 const authFormsView = document.getElementById('authFormsView');
@@ -244,7 +171,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   }
 
   try {
-    const response = await appFetch('/auth/login', {
+    const response = await fetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -267,17 +194,12 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     }
 
     showMessage(data.message || t('auth.loginSuccess'), 'success');
-    finishAuthSuccess();
+    setTimeout(() => {
+      safeNavigate(authRedirectTarget());
+    }, 800);
   } catch (error) {
     console.error('Login error:', error);
-    const hint = String(error?.message || '');
-    if (/refused|failed to fetch|networkerror|network error|load failed/i.test(hint)) {
-      showMessage(
-        'Не удалось связаться с сервером. Проверьте интернет и попробуйте снова. Если не поможет — откройте serpmonn.ru в браузере телефона.'
-      );
-    } else {
-      showMessage(t('login.connectionError'));
-    }
+    showMessage(t('login.connectionError'));
   }
 });
 
@@ -297,7 +219,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
   }
 
   try {
-    const response = await appFetch('/auth/register', {
+    const response = await fetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -350,10 +272,10 @@ function initVkIdOneTap() {
 
     VKID.Config.init({
       app: 54486564,
-      // Для приложения — возврат в оболочку текущего стенда
+      // Для приложения — возврат в оболочку, не на главную сайта
       redirectUrl: isAndroidAppShell()
-        ? `${location.origin}/frontend/app/index.html?app=1`
-        : `${location.origin}/`,
+        ? 'https://serpmonn.ru/frontend/app/index.html?app=1'
+        : 'https://serpmonn.ru/',
       responseMode: VKID.ConfigResponseMode.Callback,
       source: VKID.ConfigSource.LOWCODE,
       scope: 'vkid.personal_info email'
@@ -387,7 +309,7 @@ function initVkIdOneTap() {
 
           if (!vkUserId) return;
 
-          const resp = await appFetch('/api/vkid-login', {
+          const resp = await fetch('/api/vkid-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -396,7 +318,7 @@ function initVkIdOneTap() {
 
           const data = await resp.json();
           if (data?.success) {
-            finishAuthSuccess();
+            safeNavigate(authRedirectTarget());
           } else {
             showMessage(t('login.error'));
           }
@@ -416,7 +338,7 @@ function initVkIdOneTap() {
   window.__VKID_LOADING = true;
 
   const script = document.createElement('script');
-  script.src = 'https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js';
+  script.src = '/frontend/vendor/vkid-sdk.umd.js';
   script.async = true;
   script.onload = () => {
     window.__VKID_LOADING = false;
@@ -543,7 +465,7 @@ async function prefetchMessengerChallenge() {
   if (!isAndroidAppShell()) return;
   if (messengerDeepLink && messengerChallengeId) return;
   try {
-    const resp = await appFetch('/api/messenger-auth/challenge', {
+    const resp = await fetch('/api/messenger-auth/challenge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -590,7 +512,7 @@ async function renderMessengerQr(payload) {
 }
 
 async function exchangeMessengerSession(exchangeCode) {
-  const resp = await appFetch('/api/messenger-auth/exchange', {
+  const resp = await fetch('/api/messenger-auth/exchange', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -626,7 +548,7 @@ function startMessengerPolling(challengeId) {
         messengerPollTimer = null;
         setMessengerStatus('Подтверждено, входим…');
         await exchangeMessengerSession(data.exchangeCode);
-        finishAuthSuccess();
+        safeNavigate(authRedirectTarget());
       }
     } catch (e) {
       console.error('messenger status poll error:', e);
@@ -681,7 +603,6 @@ async function startMessengerLogin(ev) {
     });
     if (btn) btn.disabled = false;
     // Фоном обновим challenge на следующий раз
-    messengerDeepLink = messengerDeepLink; // keep current for this session
     prefetchNextChallengeAfterOpen();
     return;
   }
@@ -689,7 +610,7 @@ async function startMessengerLogin(ev) {
   setMessengerStatus(inApp ? 'Готовим вход…' : 'Ожидаем подтверждение…');
 
   try {
-    const resp = await appFetch('/api/messenger-auth/challenge', {
+    const resp = await fetch('/api/messenger-auth/challenge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -799,8 +720,13 @@ function initAuthAppShell() {
     back.setAttribute('aria-label', backLabel);
     back.title = backLabel;
     back.addEventListener('click', () => {
-      // Всегда replace в app: history.back() мог вернуть на старый auth или выкинуть из WebView.
-      safeReplaceLocation('/frontend/app/index.html?app=1');
+      try {
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+      } catch (_) {}
+      safeAssignLocation('/frontend/app/index.html?app=1');
     });
   }
 
@@ -813,9 +739,7 @@ function initAuthAppShell() {
   });
 }
 
-async function bootAuthPage() {
-  if (await redirectIfAlreadyAuthedInApp()) return;
-  revealAuthAppUi();
+function bootAuthPage() {
   initAuthAppShell();
   if (!isAndroidAppShell()) {
     generateCombinedBackground();
@@ -824,17 +748,6 @@ async function bootAuthPage() {
   initVkIdOneTap();
   initMessengerLogin();
 }
-
-// bfcache: при возврате «назад» на auth сразу проверяем сессию без показа формы.
-window.addEventListener('pageshow', (ev) => {
-  if (!ev.persisted || !isAndroidAppShell()) return;
-  try {
-    document.documentElement.classList.add('auth-app-boot');
-  } catch (_) {}
-  redirectIfAlreadyAuthedInApp().then((redirected) => {
-    if (!redirected) revealAuthAppUi();
-  });
-});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bootAuthPage);
