@@ -63,10 +63,10 @@ eleventyComputed:
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/profile/profile_styles.css">
+  <link rel="stylesheet" href="/frontend/profile/profile_styles.css?v=onnmail-manage5">
   <link rel="stylesheet" href="/frontend/find/find-view.css">
 
-  <script type="module" src="/frontend/profile/profile_scripts.js" defer></script>
+  <script type="module" src="/frontend/profile/profile_scripts.js?v=onnmail-manage5" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body class="profile-page" data-findings-summary-tpl="{{ findingsSummaryTpl }}" data-search-path="{{ searchPath }}">
@@ -120,15 +120,22 @@ eleventyComputed:
     <!-- Профиль -->
     <section id="tab-profile" class="profile-panel profile-panel--active" role="tabpanel" data-profile-panel="profile" aria-labelledby="tab-btn-profile">
       <div class="profile-panel-block" id="onnmailBlock">
-        <h2 class="profile-panel__heading" id="onnmailHeading">{{ onnmailSectionTitle }}</h2>
-        <p class="profile-panel__hint" id="onnmailHint">{{ profile[locale].profile.extraSection.onnmailDescription }}</p>
-        <p id="onnmailAddressRow" class="profile-onnmail-address" hidden>
-          <span id="onnmailAddressValue" class="profile-onnmail-address__value"></span>
-        </p>
-        <div class="profile-onnmail-actions">
-          <button id="copyOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
-            {{ profile[locale].profile.extraSection.copyOnnmail or 'Copy' }}
+        <div class="profile-onnmail-identity" id="onnmailIdentity">
+          <h2 class="profile-panel__heading" id="onnmailHeading">{{ onnmailSectionTitle }}</h2>
+          <button
+            type="button"
+            id="onnmailManageButton"
+            class="profile-onnmail-manage"
+            hidden
+            aria-haspopup="dialog"
+            aria-controls="onnmailManageSheet"
+            aria-label="{{ profile[locale].profile.extraSection.manageOnnmailAria or 'Manage mailbox' }}"
+          >
+            <span aria-hidden="true">···</span>
           </button>
+        </div>
+        <p class="profile-panel__hint" id="onnmailHint">{{ profile[locale].profile.extraSection.onnmailDescription }}</p>
+        <div class="profile-onnmail-actions">
           <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
             {{ profile[locale].profile.extraSection.createOnnmail }}
           </button>
@@ -144,9 +151,64 @@ eleventyComputed:
         </div>
       </div>
 
-      <div id="onnmailPasswordModal" class="messenger-modal" hidden>
+      <div id="onnmailManageSheet" class="profile-onnmail-sheet" hidden>
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-sheet-close aria-label="{{ profile[locale].profile.extraSection.close or 'Close' }}"></button>
+        <div
+          class="profile-onnmail-sheet__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onnmailManageSheetTitle"
+        >
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailManageSheetTitle" class="profile-onnmail-sheet__title">{{ profile[locale].profile.extraSection.manageOnnmailTitle or 'Manage mailbox' }}</h3>
+          <p class="profile-onnmail-sheet__email" id="onnmailManageSheetEmail"></p>
+          <div class="profile-onnmail-sheet__actions">
+            <button type="button" class="profile-onnmail-sheet__action" data-onnmail-sheet-action="password">
+              {{ profile[locale].profile.extraSection.changeOnnmailPassword or 'Change password' }}
+            </button>
+            <button type="button" class="profile-onnmail-sheet__action profile-onnmail-sheet__action--danger" data-onnmail-sheet-action="delete">
+              {{ profile[locale].profile.extraSection.deleteOnnmail or 'Delete mailbox' }}
+            </button>
+          </div>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-sheet-close>{{ profile[locale].profile.extraSection.close or 'Close' }}</button>
+        </div>
+      </div>
+
+      <div id="onnmailDeleteSheet" class="profile-onnmail-sheet profile-onnmail-sheet--delete" hidden>
+        <button type="button" class="profile-onnmail-sheet__backdrop" data-onnmail-delete-close aria-label="{{ profile[locale].profile.extraSection.close or 'Close' }}"></button>
+        <div
+          class="profile-onnmail-sheet__panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onnmailDeleteTitle"
+        >
+          <div class="profile-onnmail-sheet__handle" aria-hidden="true"></div>
+          <h3 id="onnmailDeleteTitle" class="profile-onnmail-sheet__title">{{ profile[locale].profile.extraSection.deleteOnnmailTitle or 'Delete mailbox' }}</h3>
+          <p class="profile-onnmail-sheet__warn" id="onnmailDeleteWarn">
+            {{ profile[locale].profile.extraSection.deleteOnnmailWarn or 'Messages and address will be permanently deleted. You can create the address again later.' }}
+          </p>
+          <label class="profile-onnmail-form__label" for="onnmailDeleteConfirmEmail">{{ profile[locale].profile.extraSection.deleteConfirmEmailLabel or 'Enter mailbox address' }}</label>
+          <input type="email" id="onnmailDeleteConfirmEmail" class="profile-onnmail-form__input" autocomplete="off" spellcheck="false" />
+          <label class="profile-onnmail-form__label" for="onnmailDeleteAccountPassword">{{ profile[locale].profile.extraSection.accountPasswordLabel or 'Serpmonn password' }}</label>
+          <input type="password" id="onnmailDeleteAccountPassword" class="profile-onnmail-form__input" autocomplete="current-password" />
+          <p id="onnmailDeleteMessage" class="profile-onnmail-form__status" role="status"></p>
+          <button
+            type="button"
+            id="onnmailDeleteHold"
+            class="profile-onnmail-hold"
+            aria-describedby="onnmailDeleteHoldHint"
+          >
+            <span class="profile-onnmail-hold__fill" aria-hidden="true"></span>
+            <span class="profile-onnmail-hold__label" id="onnmailDeleteHoldLabel">{{ profile[locale].profile.extraSection.deleteHoldLabel or 'Hold to delete' }}</span>
+          </button>
+          <p class="profile-onnmail-hold__hint" id="onnmailDeleteHoldHint">{{ profile[locale].profile.extraSection.deleteHoldHint or 'Hold the button for about 2 seconds' }}</p>
+          <button type="button" class="profile-onnmail-sheet__cancel" data-onnmail-delete-close>{{ profile[locale].profile.extraSection.cancelOnnmail or 'Cancel' }}</button>
+        </div>
+      </div>
+
+      <div id="onnmailPasswordModal" class="messenger-modal profile-onnmail-modal" hidden>
         <div class="messenger-modal__backdrop" data-onnmail-modal-close></div>
-        <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="onnmailPasswordTitle">
+        <div class="messenger-modal__card profile-onnmail-modal__card" role="dialog" aria-modal="true" aria-labelledby="onnmailPasswordTitle">
           <h3 id="onnmailPasswordTitle">{{ profile[locale].profile.extraSection.changeOnnmailTitle or 'Change @onnmail password' }}</h3>
           <p class="messenger-modal__hint" id="onnmailPasswordHint"></p>
           <form id="onnmailPasswordForm" class="profile-onnmail-form">
@@ -167,8 +229,8 @@ eleventyComputed:
               <label class="profile-onnmail-form__label" for="onnmailNewPasswordConfirm">{{ profile[locale].profile.extraSection.confirmMailPasswordLabel or 'Confirm password' }}</label>
               <input type="password" id="onnmailNewPasswordConfirm" class="profile-onnmail-form__input" autocomplete="new-password" minlength="8" />
             </div>
-            <p id="onnmailPasswordMessage" class="messenger-modal__status" role="status"></p>
-            <button type="submit" class="profile-btn profile-btn--block" id="onnmailPasswordSubmit">{{ profile[locale].profile.extraSection.saveOnnmailPassword or 'Save' }}</button>
+            <p id="onnmailPasswordMessage" class="messenger-modal__status profile-onnmail-form__status" role="status"></p>
+            <button type="submit" class="profile-btn profile-btn--primary profile-btn--block" id="onnmailPasswordSubmit">{{ profile[locale].profile.extraSection.saveOnnmailPassword or 'Save' }}</button>
             <button type="button" class="profile-btn profile-btn--ghost profile-btn--block" data-onnmail-modal-close>{{ profile[locale].profile.extraSection.cancelOnnmail or 'Cancel' }}</button>
           </form>
         </div>

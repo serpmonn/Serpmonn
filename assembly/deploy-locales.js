@@ -95,13 +95,16 @@ function smartCopy(source, target, overwrite = false) {
 // Функция для синхронизации папки
 // options.htmlOnly — копировать только .html/.htm (для локалей)
 // options.skipDirNames — Set имён подпапок, которые пропускаем на этом уровне
+// options.skipRelPaths — Set относительных путей от DIST_PATH (posix), которые не трогаем
 function syncFolder(sourceFolder, targetFolder, overwriteRules = {}, options = {}) {
     if (!fs.existsSync(sourceFolder)) return { added: 0, updated: 0, skipped: 0 };
     
     const items = fs.readdirSync(sourceFolder);
     let stats = { added: 0, updated: 0, skipped: 0 };
     const skipDirNames = options.skipDirNames || null;
+    const skipRelPaths = options.skipRelPaths || null;
     const htmlOnly = Boolean(options.htmlOnly);
+    const distRoot = options.distRoot || DIST_PATH;
     
     for (const item of items) {
         const sourcePath = path.join(sourceFolder, item);
@@ -115,6 +118,16 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}, options = {
         if (userFolders.includes(item)) {
             console.log(`   ⏭️  Пропущена пользовательская папка: ${item}`);
             continue;
+        }
+
+        // Не затирать живую Android-оболочку устаревшими артефактами Eleventy
+        if (skipRelPaths) {
+            const rel = path.relative(distRoot, sourcePath).split(path.sep).join('/');
+            if (skipRelPaths.has(rel)) {
+                console.log(`   ⏭️  Защищён (не перезаписываем): ${rel}`);
+                stats.skipped++;
+                continue;
+            }
         }
         
         const stat = fs.statSync(sourcePath);
@@ -209,10 +222,42 @@ const OVERWRITE_RULES = {
 let totalStats = { added: 0, updated: 0, skipped: 0 };
 
 console.log('\n📋 Синхронизация корневой папки (русский + общая статика):');
+
+// Источник правды для «живых» страниц — git frontend/, не Eleventy.
+// Список: assembly/protected-frontend-paths.json
+const PROTECTED_CONFIG = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'protected-frontend-paths.json'), 'utf8')
+);
+const PROTECTED_FRONTEND_PATHS = new Set(PROTECTED_CONFIG.paths || []);
+const PROTECTED_LOCALE_REL = new Set(PROTECTED_CONFIG.localeRelativePaths || []);
+
+function unlinkQuiet(filePath, label) {
+  if (!fs.existsSync(filePath)) return false;
+  fs.unlinkSync(filePath);
+  console.log(`⚠️  Убран из dist (protect): ${label}`);
+  return true;
+}
+
+// Вычищаем protect-файлы из dist ДО копирования (иначе add/overwrite их всё равно подтянет).
+for (const rel of PROTECTED_FRONTEND_PATHS) {
+  unlinkQuiet(path.join(DIST_PATH, ...rel.split('/')), rel);
+}
+// И из каждой локали в dist
+for (const locale of locales) {
+  for (const rel of PROTECTED_LOCALE_REL) {
+    unlinkQuiet(
+      path.join(DIST_PATH, locale, ...rel.split('/')),
+      `${locale}/${rel}`
+    );
+  }
+}
+
 const rootStats = syncFolder(DIST_PATH, TARGET_PATH, OVERWRITE_RULES, {
     // В корне локальные папки языков не трогаем этим проходом —
     // их синхронизируем отдельно и только HTML.
     skipDirNames: new Set(locales),
+    skipRelPaths: PROTECTED_FRONTEND_PATHS,
+    distRoot: DIST_PATH,
 });
 totalStats.added += rootStats.added;
 totalStats.updated += rootStats.updated;
@@ -229,6 +274,8 @@ for (const locale of locales) {
         console.log(`\n   📁 Язык: ${locale}`);
         const localeStats = syncFolder(sourceLocalePath, targetLocalePath, OVERWRITE_RULES, {
             htmlOnly: true,
+            skipRelPaths: PROTECTED_LOCALE_REL,
+            distRoot: sourceLocalePath,
         });
         totalStats.added += localeStats.added;
         totalStats.updated += localeStats.updated;
@@ -260,6 +307,36 @@ if (totalChanged === 0) {
 }
 
 console.log('🎉 Умная синхронизация завершена!');
+
+// Финальный сторож: protect-файлы должны остаться целыми после деплоя.
+(function assertProtectedFrontendIntact() {
+    const asserts = PROTECTED_CONFIG.asserts || [];
+    let failed = 0;
+    for (const rule of asserts) {
+        const livePath = path.join(TARGET_PATH, ...String(rule.path).split('/'));
+        if (!fs.existsSync(livePath)) {
+            console.error(`\n❌ КРИТИЧНО: нет ${rule.path} после деплоя`);
+            failed++;
+            continue;
+        }
+        const html = fs.readFileSync(livePath, 'utf8');
+        const size = Buffer.byteLength(html);
+        const minBytes = Number(rule.minBytes) || 0;
+        const must = Array.isArray(rule.mustInclude) ? rule.mustInclude : [];
+        const missing = must.filter((m) => !html.includes(m));
+        if (size < minBytes || missing.length) {
+            console.error(`\n❌ КРИТИЧНО: ${rule.path} повреждён или подменён после деплоя`);
+            console.error(`   size=${size} (min ${minBytes}), missing=${missing.join(', ') || '—'}`);
+            failed++;
+            continue;
+        }
+        console.log(`✅ protect OK: ${rule.path} (${size} bytes)`);
+    }
+    if (failed) {
+        console.error(`\n❌ Деплой остановлен: ${failed} protect-файл(ов) не прошли проверку`);
+        process.exit(1);
+    }
+})();
 
 // Удаляем устаревшие дубли статики из локалей (images/fonts/styles/…)
 try {

@@ -1,0 +1,45 @@
+---
+description: Protect live frontend from destructive deploys; safe collaboration rules
+alwaysApply: true
+---
+
+# Deploy safety — не уничтожать живой прод
+
+После инцидента (полный `deploy:prod` затёр auth/profile/snake устаревшими `.njk`) действуют жёсткие правила.
+
+## Источник правды
+
+| Зона | Правда | Деплой |
+|------|--------|--------|
+| `frontend/app/index.html`, `app.js`, `app.css`, push-* | git `frontend/` | **никогда** из Eleventy |
+| `auth/`, `profile/`, `findings/`, `games/snake/snake.html`, `main.html` | git `frontend/` | **никогда** из Eleventy (см. `assembly/protected-frontend-paths.json`) |
+| Лендинг приложения `**/serpmonn-app.html` | `assembly/site/serpmonn-app.njk` → frontend | только `npm run deploy:landing` |
+| KB / tools / локали / витрины | `.njk` + Eleventy | `npm run deploy:prod` ок |
+
+Список protect: `assembly/protected-frontend-paths.json`. Менять только осознанно.
+
+## Команды
+
+- Лендинг Serpmonn App: **`npm run deploy:landing`** (prod) / `deploy:landing:dev`
+- Полный сайт: `npm run deploy:prod` — **не** для правок лендинга/оболочки
+- **Запрещено** агенту: полный site-deploy «заодно», если задача только лендинг/APK/сторы
+
+## Как править protect-страницы
+
+1. Редактировать **`frontend/...html`** (не надеяться, что старый `.njk` выкатит правку).
+2. Проверить в браузере.
+3. **Закоммитить** в git — иначе следующий человек/агент может потерять правку с диска.
+4. `.njk` догонять отдельно, если страница ещё генерируется для локалей; RU protect всё равно не перезапишется.
+
+## Перед любым деплоем
+
+1. Спросить / уточнить: landing-only или полный сайт.
+2. Не коммитить результат полного деплоя, если он откатил protect-файлы (сравнить маркеры: `onnmailManageSheet`, `auth-app-boot`, `modeSelect`, `__SPN_ANDROID_APP__`).
+3. После полного деплоя — смотреть, что `deploy-locales` напечатал `✅ protect OK` по всем asserts.
+
+## Совместная работа (агент ↔ человек)
+
+- Не затирать чужие незакоммиченные правки в `frontend/` без явного «можно».
+- Не делать `git checkout` / restore широким мазком по `frontend/` без списка файлов и причины.
+- Спор «диск vs git»: для protect-зон сначала **сохранить** живое (бэкап/коммит), потом решать.
+- Push только по явной просьбе пользователя.
