@@ -22,7 +22,7 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 const envPath = isDevTree
   ? '/etc/serpmonn/backend-dev.env'
   : nodeEnv === 'production'
-    ? '/etc/serpmonn/backend.env'
+    ? '/etc/serpmonn/backend-dev.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath, override: true });

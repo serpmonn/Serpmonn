@@ -12,6 +12,7 @@
 - Neon EN — Almost made it… / Почти успел… — https://youtube.com/shorts/u4bWu-za_Ko
 - Neon (ранее) — Almost made it… / Почти успел… — https://youtube.com/shorts/usNwZZ8vuzo
 - Snake — One more turn… — https://youtube.com/shorts/ajp_FD8ihZc
+- Snake update — Three modes. Almost… / Три режима. Почти… — https://youtube.com/shorts/f8g55FfGwnQ
 - Flappy — So close… — https://youtube.com/shorts/aErIqeZ95nw
 - Breakout — One more brick… — https://youtube.com/shorts/y1ew8rKD0MI
 - 2048 — Almost 2048… — https://youtube.com/shorts/Jhh5IUx2eRg
@@ -25,7 +26,13 @@
 - Falling Shapes (redsquare2) — One more catch… — https://youtube.com/shorts/6XD_04MiQLE
 - Obрыв — Don't fall… / Не сорвись… — https://youtube.com/shorts/flxmZ-dIVXI
 
+- App preview EN — Search. Play. Discover… | Поиск. Игры. Лента… — https://youtube.com/shorts/yYRjNG8ogNM
+- App preview RU — Поиск. Игры. Лента… | Search. Play. Discover… — https://youtube.com/shorts/JPzw0B0TITk
+
 RU готово к проверке (не выкладывать без ok):
+- Snake update — One more turn… / Ещё один поворот… — out/shorts/snake-update-en-serpmonn.mp4 + snake-update-ru-serpmonn.mp4
+  Запись: SNAKE_LANG=en|ru node tools/record-snake-update-ru-short.cjs
+
 - Typing RU — Быстрее… — out/shorts/typing-vk-ru.mp4
 - Falling Shapes RU — Ещё один улов… — out/shorts/redsquare2-vk-ru.mp4
   Запись: node tools/record-typing-ru-short.cjs | node tools/record-redsquare2-ru-short.cjs
@@ -34,6 +41,7 @@ RU готово к проверке (не выкладывать без ok):
 
 Готово к проверке:
 —
+
 Публичные превью:
 - https://serpmonn.ru/shorts-preview/neon-preview-en-serpmonn.mp4
 - https://serpmonn.ru/shorts-preview/serphold-preview-en-serpmonn.mp4

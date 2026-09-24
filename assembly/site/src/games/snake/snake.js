@@ -795,9 +795,20 @@
             paused,
             grid: GRID_SIZE,
             mode,
+            tickMs,
           };
         },
         setDir: setDirection,
+        restart() {
+          beginPlay();
+        },
+        slow(ms) {
+          const n = Number(ms);
+          if (!Number.isFinite(n) || n < 60) return;
+          tickMs = n;
+          updateSpeedDisplay();
+          if (!paused && alive) startGameLoop();
+        },
         setMode(m) {
           if (!['classic', 'walls', 'portals'].includes(m)) return;
           mode = m;
