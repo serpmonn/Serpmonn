@@ -434,6 +434,41 @@ function generateIndex(langs) {
   return outPath;
 }
 
+function generateSitemapForAppDownloads() {
+  const today = formatDateYYYYMMDD(new Date());
+  // Короткие канонические URL лендингов приложений (см. scripts/nginx-short-redirects.conf)
+  const entries = [
+    { loc: `${SITE_BASE}/neon-runner`, priority: '0.85' },
+    { loc: `${SITE_BASE}/neon-runner/en`, priority: '0.85' },
+    { loc: `${SITE_BASE}/serphold`, priority: '0.80' },
+    { loc: `${SITE_BASE}/animals`, priority: '0.80' },
+    { loc: `${SITE_BASE}/frontend/app/serpmonn-app.html`, priority: '0.90' },
+    { loc: `${SITE_BASE}/frontend/app/index.html`, priority: '0.80' },
+  ];
+
+  const parts = [];
+  parts.push('<?xml version="1.0" encoding="UTF-8"?>');
+  parts.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">');
+  for (const e of entries) {
+    parts.push('  <url>');
+    parts.push(`    <loc>${e.loc}</loc>`);
+    parts.push(`    <lastmod>${today}</lastmod>`);
+    parts.push('    <changefreq>weekly</changefreq>');
+    parts.push(`    <priority>${e.priority}</priority>`);
+    if (e.loc.endsWith('/neon-runner') || e.loc.endsWith('/neon-runner/en')) {
+      parts.push(`    <xhtml:link rel="alternate" hreflang="ru" href="${SITE_BASE}/neon-runner"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="en" href="${SITE_BASE}/neon-runner/en"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_BASE}/neon-runner"/>`);
+    }
+    parts.push('  </url>');
+  }
+  parts.push('</urlset>');
+  const outPath = path.join(OUTPUT_DIR, 'sitemap-app.xml');
+  writeFileEnsured(outPath, parts.join('\n'));
+  console.log(`\nСоздан sitemap-app.xml (${entries.length} URL)`);
+  return outPath;
+}
+
 async function main() {
   console.log('=== Генерация sitemap для Serpmonn ===');
   console.log(`PROJECT_ROOT: ${PROJECT_ROOT}`);
@@ -481,6 +516,10 @@ async function main() {
     generated.push(p);
   }
   
+  // Лендинги приложений / downloads (короткие URL)
+  console.log('\nГенерация sitemap-app (downloads landings)...');
+  generated.push(generateSitemapForAppDownloads());
+
   // Создаем hreflang sitemap
   console.log('\nГенерация hreflang sitemap...');
   generated.push(generateHreflangSitemap(langs));
