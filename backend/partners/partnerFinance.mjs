@@ -13,7 +13,7 @@ export const MIN_PAYOUT_AMOUNT = (() => {
 /** Максимум одной заявки на пополнение (₽). Защита от мусорных/абузивных сумм до ЮKassa и писем. */
 export const MAX_TOPUP_AMOUNT = (() => {
   const n = Number(process.env.PARTNER_MAX_TOPUP);
-  return Number.isFinite(n) && n > 0 ? n : 500000;
+  return Number.isFinite(n) && n > 0 ? n : 1000000;
 })();
 
 /** Минимум одной заявки на пополнение (₽) */
