@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/app/serpmonn-app.html">
   <meta property="og:title" content="Serpmonn para Android">
   <meta property="og:description" content="AI search, messages, news and games — in one Android app.">
-  <meta property="og:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og.png?v=1">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og.png?v=13">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/app/serpmonn-app.html">
@@ -18,7 +18,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Serpmonn para Android">
   <meta name="twitter:description" content="AI search, messages, news and games — in one Android app.">
-  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og.png?v=1">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/stores/serpmonn-app-og.png?v=13">
   
     
       <link rel="alternate" href="https://serpmonn.ru/frontend/app/serpmonn-app.html" hreflang="ru" />
@@ -256,6 +256,7 @@
         --phone-screen: #1c2129;
         --hero-glow: rgba(217, 44, 44, 0.3);
       }
+      .phone { --screen-fill: var(--phone-screen); }
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -283,7 +284,9 @@
       align-items: center;
       min-height: calc(100svh - 6.5rem);
       margin-bottom: clamp(3rem, 8vw, 5.5rem);
+      overflow: visible;
     }
+    .hero > * { overflow: visible; min-width: 0; }
     .hero-copy {
       display: grid;
       gap: 1.35rem;
@@ -385,6 +388,8 @@
       min-height: 620px;
       display: grid;
       place-items: center;
+      overflow: visible;
+      padding: 1.75rem 3.75rem 2.25rem;
       opacity: 0;
       transform: translateY(24px) scale(0.98);
       animation: rise 1s var(--ease) 0.18s forwards;
@@ -398,53 +403,76 @@
       animation: pulse 5.5s ease-in-out infinite;
     }
     .phone {
+      --bezel: 1.5px;
+      --ui-zoom: 0.99;
+      --phone-radius: 2rem;
+      --screen-fill: #f7f7f8;
       position: relative;
       width: min(100%, 280px);
       aspect-ratio: 9 / 19.4;
-      padding: 0.52rem;
-      border-radius: 2.35rem;
-      background: var(--phone-shell);
+      padding: 0;
+      border-radius: var(--phone-radius);
+      /* Фон = экран (не корпус): scale не должен открывать тёмные «толстые» края */
+      background: var(--screen-fill);
       box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.14) inset,
         0 30px 60px rgba(20, 24, 32, 0.28),
         0 8px 20px rgba(20, 24, 32, 0.18);
       overflow: hidden;
     }
+    /* Волосяная тёмная кромка */
+    .phone::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 var(--bezel) #0e1116;
+      pointer-events: none;
+      z-index: 4;
+    }
     .phone::before {
       content: "";
       position: absolute;
-      top: 0.72rem;
+      top: 7px;
       left: 50%;
-      width: 28%;
-      height: 0.72rem;
+      width: 22%;
+      height: 0.4rem;
       transform: translateX(-50%);
       border-radius: 999px;
-      background: #0b0d11;
-      z-index: 2;
+      background: #0a0c10;
+      z-index: 5;
+      pointer-events: none;
     }
-    .phone img,
-    .phone video {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center center;
-      border-radius: 1.85rem;
-      background: var(--phone-screen);
-    }
-    .phone--hero .phone-media {
+    .phone > img,
+    .phone > video,
+    .phone .phone-media {
       position: absolute;
-      left: 50%;
-      top: 52%;
-      width: 84%;
-      height: 84%;
-      transform: translate(-50%, -50%);
-      object-fit: contain;
+      top: 0;
+      left: 0;
+      right: auto;
+      bottom: auto;
+      box-sizing: border-box;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: block;
+      object-fit: cover;
       object-position: center center;
-      border-radius: 1.55rem;
+      border-radius: inherit;
+      background: transparent;
+      transform: scale(var(--ui-zoom));
+      transform-origin: center center;
     }
-    .phone--hero .phone-media--still { display: none; }
-    .phone--hero .phone-media--video { display: block; }
+    .phone--hero .phone-media--still {
+      display: block;
+      z-index: 0;
+    }
+    .phone--hero .phone-media--video {
+      display: block;
+      z-index: 1;
+      background: transparent;
+    }
     .phone--hero {
       width: min(100%, 352px);
       z-index: 2;
@@ -452,24 +480,24 @@
     }
     .phone--sat {
       position: absolute;
-      width: min(34%, 148px);
-      opacity: 0.62;
+      width: min(26%, 118px);
+      opacity: 0.9;
       z-index: 1;
-      filter: saturate(0.92);
+      filter: saturate(0.95);
       animation: float 7.2s ease-in-out infinite;
     }
     .phone--sat-left {
-      left: 0;
-      top: 18%;
+      left: 2rem;
+      top: 22%;
       transform: rotate(-10deg);
       animation-delay: -1.4s;
     }
     .phone--sat-right {
-      right: -2%;
-      bottom: 10%;
+      right: 2rem;
+      bottom: 16%;
       transform: rotate(9deg);
       animation-delay: -2.8s;
-      opacity: 0.55;
+      opacity: 0.88;
     }
 
     /* Gallery */
@@ -640,7 +668,7 @@
       .store-badge, .shot, .shot .phone { transition: none; }
       .store-badge:hover, .shot:hover .phone { transform: none; }
       .shot { opacity: 1; transform: none; }
-      .phone--hero .phone-media--video { display: none; }
+      .phone--hero .phone-media--video { opacity: 0; }
       .phone--hero .phone-media--still { display: block; }
     }
   </style>
@@ -655,20 +683,20 @@
         <div class="cta-row">
           <a class="store-badge" id="cta-play" href="https://play.google.com/store/apps/details?id=ru.serpmonn" target="_blank" rel="noopener" aria-label="Google Play">
             <picture>
-              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-google-play-en-light.svg?v=5">
-              <img src="/frontend/images/stores/badge-google-play-en.svg?v=5" width="180" height="54" alt="Google Play">
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-google-play-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-google-play-en.svg?v=13" width="180" height="54" alt="Google Play">
             </picture>
           </a>
           <a class="store-badge" id="cta-rustore" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" aria-label="RuStore">
             <picture>
-              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-en-light.svg?v=5">
-              <img src="/frontend/images/stores/badge-rustore-en.svg?v=5" width="180" height="54" alt="RuStore">
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-en.svg?v=13" width="180" height="54" alt="RuStore">
             </picture>
           </a>
           <a class="store-badge store-badge--apk" id="cta-apk" href="/frontend/downloads/serpmonn/Serpmonn-1.2.7.apk" download="Serpmonn-1.2.7.apk" aria-label="Baixar para Android">
             <picture>
-              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-en-light.svg?v=5">
-              <img src="/frontend/images/stores/badge-serpmonn-en.svg?v=5" width="180" height="54" alt="Serpmonn">
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-en-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-serpmonn-en.svg?v=13" width="180" height="54" alt="Serpmonn">
             </picture>
           </a>
         </div>
@@ -687,7 +715,7 @@
       <div class="hero-stage" aria-hidden="true">
         <div class="hero-glow"></div>
         <div class="phone phone--sat phone--sat-left">
-          <img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=133" alt="" width="360" height="780" loading="eager">
+          <img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=13" alt="" width="360" height="780" loading="eager">
         </div>
         <div class="phone phone--hero">
           
@@ -698,15 +726,15 @@
             loop
             playsinline
             preload="metadata"
-            poster="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=133"
+            poster="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=13"
             width="360"
             height="780"
           >
-            <source src="/frontend/images/stores/hero-preview-en.mp4?v=5" type="video/mp4">
+            <source src="/frontend/images/stores/hero-preview-en.mp4?v=22" type="video/mp4">
           </video>
           <img
             class="phone-media phone-media--still"
-            src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=133"
+            src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=13"
             alt=""
             width="360"
             height="780"
@@ -714,7 +742,7 @@
           >
         </div>
         <div class="phone phone--sat phone--sat-right">
-          <img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=133" alt="" width="360" height="780" loading="eager">
+          <img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=22" alt="" width="360" height="780" loading="eager">
         </div>
       </div>
     </section>
@@ -726,31 +754,31 @@
       </div>
       <div class="rail" aria-label="Capturas">
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=133" alt="Feed de achados na app Serpmonn" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=13" alt="Feed de achados na app Serpmonn" width="360" height="780" loading="lazy"></div>
           <figcaption>Achados</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/08-messages.png?v=133" alt="Messages tab in the Serpmonn app" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/08-messages.png?v=21" alt="Messages tab in the Serpmonn app" width="360" height="780" loading="lazy"></div>
           <figcaption>Messages</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=133" alt="Busca no app Serpmonn" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=13" alt="Busca no app Serpmonn" width="360" height="780" loading="lazy"></div>
           <figcaption>Busca</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/03-news.png?v=133" alt="Feed de notícias na app Serpmonn" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/03-news.png?v=13" alt="Feed de notícias na app Serpmonn" width="360" height="780" loading="lazy"></div>
           <figcaption>Feed de notícias</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/04-tools.png?v=133" alt="Tools in the Serpmonn app" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/04-tools.png?v=13" alt="Tools in the Serpmonn app" width="360" height="780" loading="lazy"></div>
           <figcaption>Tools</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=133" alt="Jogos no app Serpmonn" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=22" alt="Jogos no app Serpmonn" width="360" height="780" loading="lazy"></div>
           <figcaption>Jogos</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/06-profile.png?v=133" alt="Profile in the Serpmonn app" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/06-profile.png?v=13" alt="Profile in the Serpmonn app" width="360" height="780" loading="lazy"></div>
           <figcaption>Profile</figcaption>
         </figure>
       </div>
@@ -822,7 +850,7 @@
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
-  <script src="/frontend/scripts/direct-conversion-goals.js?v=1" defer></script>
+  <script src="/frontend/scripts/direct-conversion-goals.js?v=13" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
   <script>
     (function () {

@@ -30,6 +30,8 @@ import {
 import {
   PARTNER_FEE_RATE,
   MIN_PAYOUT_AMOUNT,
+  MIN_TOPUP_AMOUNT,
+  MAX_TOPUP_AMOUNT,
   CONVERSION_HOLD_DAYS,
   MAX_HOLD_DAYS,
   clampHoldDays,
@@ -220,6 +222,8 @@ router.get('/wallet', verifyPartnerToken, async (req, res) => {
       wallet: walletPublic(wallet),
       feeRate: PARTNER_FEE_RATE,
       minPayout: MIN_PAYOUT_AMOUNT,
+      minTopup: MIN_TOPUP_AMOUNT,
+      maxTopup: MAX_TOPUP_AMOUNT,
       holdDays: CONVERSION_HOLD_DAYS,
       maxHoldDays: MAX_HOLD_DAYS,
       topupRequisites: getTopupRequisites() || null,
