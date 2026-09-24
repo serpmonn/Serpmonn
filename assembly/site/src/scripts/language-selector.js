@@ -33,12 +33,44 @@
         document.head.appendChild(l);
     }
     
+    function isNeonRunnerPath(pathname){
+        return /(?:^|\/)(?:frontend\/)?downloads\/neon-runner(?:\/|$)/.test(pathname)
+            || /^\/neon-runner(?:\/|$)/.test(pathname);
+    }
+
+    function neonRunnerLangFromPath(pathname){
+        if (/neon-runner\/en(?:\/|$)/.test(pathname)) return 'en';
+        if (isNeonRunnerPath(pathname)) return 'ru';
+        return null;
+    }
+
+    function neonRunnerTarget(lang){
+        const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
+        if (safe === 'en') return '/frontend/downloads/neon-runner/en/';
+        if (safe === 'ru') return '/frontend/downloads/neon-runner/';
+        // Только RU/EN лендинги — остальные языки уводим на главную локали
+        return safe === 'ru' || !safe ? RU_DEFAULT : `/frontend/${safe}/index.html`;
+    }
+
     function redirectToLang(lang, list){
         try {
             const url = new URL(location.href);
             const parts = url.pathname.split('/').filter(Boolean);
             const idx = parts.indexOf('frontend');
             const supported = new Set((list||[]).map(l=>l.code));
+            const suffix = url.search + url.hash;
+
+            // Neon Runner: EN живёт в .../neon-runner/en/, не в /frontend/en/...
+            if (isNeonRunnerPath(url.pathname)) {
+                const target = neonRunnerTarget(lang);
+                const norm = (p) => String(p || '')
+                    .replace(/\/index\.html$/i, '/')
+                    .replace(/\/?$/, '/');
+                if (target && norm(target) !== norm(url.pathname)) {
+                    location.assign(target + suffix);
+                }
+                return;
+            }
             
             if (idx === -1) {
                 // Нет /frontend в пути: переходим на домашнюю для локали
@@ -82,7 +114,6 @@
             if (newPath === `/frontend/${lang}`) newPath += '/index.html';
             if (newPath !== url.pathname) {
                 const pathOnly = newPath.split('?')[0];
-                const suffix = url.search + url.hash;
                 if (pathOnly === RU_DEFAULT) {
                     location.assign(RU_DEFAULT + suffix);
                 } else if (/^\/frontend\/[a-zA-Z0-9./_-]+$/.test(pathOnly)) {
@@ -93,6 +124,10 @@
     }
     
     function injectHreflang(list, currentLang){
+        // У Neon уже стоят правильные hreflang на /neon-runner и /neon-runner/en —
+        // стандартная схема /frontend/{lang}/... их ломает.
+        if (isNeonRunnerPath(location.pathname)) return;
+
         Array.from(document.querySelectorAll('link[rel="alternate"][hreflang]')).forEach(n=>n.remove());
         const base = location.origin + '/frontend/';
         list.forEach(item=>{
@@ -167,7 +202,12 @@
                 return response.json();
             })
             .then(list => {
-                const currentLang = getCurrentLang();
+                const pathLang = neonRunnerLangFromPath(location.pathname);
+                const currentLang = pathLang || getCurrentLang();
+                if (pathLang) {
+                    try { localStorage.setItem(LS_KEY, pathLang); } catch (_) {}
+                    document.documentElement.lang = pathLang;
+                }
                 
                 // Заполняем селектор
                 populateSelector(select, list, currentLang);
