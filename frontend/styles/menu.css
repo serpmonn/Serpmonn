@@ -141,8 +141,8 @@
   align-items: center;
   gap: 8px;
   margin: 6px -2px -2px;
-  padding: 6px 2px 0;
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 8px 2px 2px;
+  border-top: 1px solid rgba(20, 24, 32, 0.08);
   background: transparent;
   backdrop-filter: none;
 }
@@ -194,9 +194,12 @@
   height: 28px;
   line-height: 26px;
   font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
   padding: 2px 18px 2px 6px;
-  border-color: rgba(15, 23, 42, 0.12);
-  background-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(20, 24, 32, 0.12);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.72);
   color: #4b5563;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -416,36 +419,67 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
     position: fixed;
     top: 50px;
     right: 10px;
-    max-width: 25%;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    width: min(18.5rem, calc(100vw - 1.25rem));
+    max-width: min(18.5rem, calc(100vw - 1.25rem));
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border: 1px solid rgba(20, 24, 32, 0.1);
+    box-shadow:
+      0 1px 2px rgba(20, 24, 32, 0.04),
+      0 18px 40px rgba(20, 24, 32, 0.14);
+    padding: 8px;
     z-index: 10000;
-    border-radius: 10px;
+    border-radius: 14px;
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-12px) scale(0.98);
     visibility: hidden;
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    transition:
+      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.28s;
     max-height: 80vh;
     overflow-y: auto;
     overflow-x: hidden;
+    font-family: "Manrope", "Segoe UI", system-ui, sans-serif;
+    color: #141820;
+    letter-spacing: -0.015em;
+    backdrop-filter: blur(16px) saturate(1.15);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 24, 32, 0.22) transparent;
+}
+
+.menu-container::-webkit-scrollbar {
+  width: 5px;
+}
+.menu-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.menu-container::-webkit-scrollbar-thumb {
+  background-color: rgba(20, 24, 32, 0.2);
+  border-radius: 999px;
 }
 
 .menu-container.active {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     visibility: visible;
     z-index: 10002; /* выше .menu-corner (колокольчик), ниже по геометрии кнопки Sn */
 }
 
 .menu-container a {
     display: block;
-    padding: 10px;
-    color: #333;
+    padding: 0.65rem 0.75rem;
+    color: #1a1f28;
     text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+    border-radius: 10px;
+    font-weight: 650;
+    font-size: 0.92rem;
+    line-height: 1.3;
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease,
+      transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .menu-container a[hidden] {
@@ -453,15 +487,18 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
 }
 
 .menu-container a:hover {
-    background-color: #f0f0f0;
+    background-color: rgba(217, 44, 44, 0.07);
+    color: #141820;
 }
 
 .submenu-container {
     display: none;
-    padding-left: 20px;
+    padding-left: 0.55rem;
+    margin: 0.15rem 0 0.35rem;
+    border-left: 1px solid rgba(20, 24, 32, 0.08);
     opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .submenu-container.active {
@@ -471,30 +508,29 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
 }
 
 .submenu-group-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #666;
-    padding: 10px 12px 4px;
-    margin: 4px 0 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #6b7280;
+    padding: 0.65rem 0.75rem 0.25rem;
+    margin: 0.15rem 0 0;
     text-transform: none;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
     pointer-events: none;
     user-select: none;
 }
 
 .submenu-container a {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    margin: 2px 0;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    font-weight: bold;
+    font-size: 0.88rem;
+    padding: 0.55rem 0.7rem;
+    margin: 1px 0;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
 .submenu-container a:hover {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    transform: translateX(3px);
+    background-color: rgba(217, 44, 44, 0.08);
+    color: #c01f1f;
+    transform: none;
 }
 
 /* Serpmonn Android: APK row + quiet RuStore link */
@@ -543,23 +579,25 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
 
 .menu-item[data-submenu] {
     position: relative;
-    font-weight: bold;
+    font-weight: 650;
 }
 
 /* СТРЕЛОЧКИ ДЛЯ LTR (СПРАВА) */
 .menu-item[data-submenu]:after {
-    content: '▶';
+    content: '›';
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.8rem;
-    color: #666;
-    transition: transform 0.2s ease;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #9aa3b2;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .menu-item[data-submenu][aria-expanded="true"]:after {
     transform: translateY(-50%) rotate(90deg);
+    color: #d92c2c;
 }
 
 /* Стили для плейсхолдеров инструментов */
@@ -597,10 +635,10 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
     text-align: center;
     flex-shrink: 0;
     vertical-align: middle;
-    color: #e53935; /* активный бренд; иерархия — через stroke, не через серый */
+    color: #d92c2c; /* активный бренд; иерархия — через stroke, не через серый */
 }
 .tool-icon--cat {
-    color: #e53935;
+    color: #d92c2c;
 }
 .tool-icon svg {
     display: block;
@@ -858,7 +896,7 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
 
 /* СТРЕЛОЧКИ ДЛЯ RTL (СЛЕВА) */
 [dir="rtl"] .menu-item[data-submenu]:after {
-    content: '◀' !important;
+    content: '‹' !important;
     right: auto !important;
     left: 10px !important;
     transform: translateY(-50%) !important;
@@ -928,9 +966,9 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
     padding-right: 20px !important;
 }
 
-/* HOVER-ЭФФЕКТ ДЛЯ RTL (ДВИЖЕНИЕ ВЛЕВО) */
+/* HOVER-ЭФФЕКТ ДЛЯ RTL — без сдвига, как в LTR */
 [dir="rtl"] .submenu-container a:hover {
-    transform: translateX(-3px) !important;
+    transform: none !important;
 }
 
 /* СТРЕЛОЧКИ В ПОДМЕНЮ ДЛЯ RTL */
@@ -1101,6 +1139,7 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
 
 @media (max-width: 600px) {
     .menu-container {
+        width: min(85%, 18rem);
         max-width: min(85%, 18rem);
         max-height: 80vh;
         overflow-y: auto;
@@ -1108,8 +1147,9 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
         top: 10px;
         right: 5px;
         padding: 8px;
+        border-radius: 14px;
         scrollbar-width: thin;
-        scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+        scrollbar-color: rgba(20, 24, 32, 0.25) transparent;
     }
 
     .menu-container::-webkit-scrollbar {
@@ -1121,21 +1161,21 @@ html[data-theme="dark"] .menu-theme-btn__icon--sun {
     }
 
     .menu-container::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(20, 24, 32, 0.25);
         border-radius: 2px;
     }
 
     .menu-container::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(20, 24, 32, 0.4);
     }
 
     .menu-container a {
-        padding: 8px;
+        padding: 0.6rem 0.7rem;
         font-size: 0.9rem;
     }
 
     .submenu-container {
-        padding-left: 12px;
+        padding-left: 0.45rem;
     }
 
     .submenu-container a {
@@ -3706,12 +3746,16 @@ html[data-theme="dark"] .menu-button-unread-dot {
 }
 
 html[data-theme="dark"] .menu-container {
-  background-color: rgba(18, 24, 34, 0.96);
+  background:
+    linear-gradient(180deg, rgba(28, 36, 48, 0.96) 0%, rgba(18, 24, 34, 0.94) 100%);
   border-color: rgba(238, 241, 246, 0.12);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 18px 40px rgba(0, 0, 0, 0.45);
   color: #eef1f6;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  scrollbar-color: rgba(238, 241, 246, 0.22) transparent;
 }
 
 html[data-theme="dark"] .menu-container a,
@@ -3721,8 +3765,12 @@ html[data-theme="dark"] .menu-container .menu-item {
 
 html[data-theme="dark"] .menu-container a:hover,
 html[data-theme="dark"] .menu-container .menu-item:hover {
-  background-color: rgba(238, 241, 246, 0.08) !important;
+  background-color: rgba(217, 44, 44, 0.14) !important;
   color: #fff !important;
+}
+
+html[data-theme="dark"] .submenu-container {
+  border-left-color: rgba(238, 241, 246, 0.1);
 }
 
 html[data-theme="dark"] .submenu-group-label {
@@ -3731,6 +3779,16 @@ html[data-theme="dark"] .submenu-group-label {
 
 html[data-theme="dark"] .menu-item[data-submenu]:after {
   color: #9aa3b2;
+}
+
+html[data-theme="dark"] .menu-item[data-submenu][aria-expanded="true"]:after {
+  color: #f87171;
+}
+
+html[data-theme="dark"] .submenu-container a:hover {
+  background-color: rgba(217, 44, 44, 0.16) !important;
+  color: #ffb4ae !important;
+  transform: none;
 }
 
 html[data-theme="dark"] .menu-chrome {
@@ -3778,11 +3836,8 @@ html[data-theme="dark"] .menu-settings-panel .a11y-toggle {
 }
 
 html[data-theme="dark"] .game-placeholder,
-html[data-theme="dark"] .menu-container a.game-placeholder {
+html[data-theme="dark"] .menu-container a.game-placeholder,
+html[data-theme="dark"] .tool-placeholder:hover {
   background-color: rgba(238, 241, 246, 0.05) !important;
   color: #9aa3b2 !important;
-}
-
-html[data-theme="dark"] .submenu-container {
-  border-color: rgba(238, 241, 246, 0.08);
 }
