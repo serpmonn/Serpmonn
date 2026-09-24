@@ -10,15 +10,32 @@ eleventyComputed:
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}" data-themes="light dark">
 <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('spn_theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.colorScheme = t;
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {% set article = serpmonnInstallGuide[locale] or serpmonnInstallGuide['en'] or serpmonnInstallGuide['ru'] %}
+    {% set badgeLang = 'ru' if locale == 'ru' else 'en' %}
+    {% set primaryStore = 'rustore' if locale == 'ru' else 'play' %}
+    {% set apkHref = serpmonnAppMeta.apkHref %}
+    {% set apkVersion = serpmonnAppMeta.apkVersion %}
+    {% set apkFileName = serpmonnAppMeta.apkFileName %}
+    {% set ogFile = 'serpmonn-app-og-ru.png' if locale == 'ru' else 'serpmonn-app-og-en.png' %}
 
     <title>{{ article.meta.title }}</title>
     <meta name="description" content="{{ article.meta.description }}">
@@ -26,14 +43,14 @@ eleventyComputed:
 
     <meta property="og:title" content="{{ article.meta.og.title }}">
     <meta property="og:description" content="{{ article.meta.og.description }}">
-    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/stores/{{ ogFile }}?v=25">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ article.meta.twitter.title }}">
     <meta name="twitter:description" content="{{ article.meta.twitter.description }}">
-    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/stores/{{ ogFile }}?v=25">
 
     <link rel="canonical" href="{{ canonical }}" />
 
@@ -43,9 +60,9 @@ eleventyComputed:
       "@type": "HowTo",
       "name": "{{ article.meta.title | replace('"', '&quot;') }}",
       "description": "{{ article.meta.description | replace('"', '&quot;') }}",
-      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "image": "{{ site.baseUrl }}/frontend/images/stores/{{ ogFile }}?v=25",
       "datePublished": "2026-07-23",
-      "dateModified": "2026-07-23",
+      "dateModified": "2026-09-24",
       "inLanguage": "{{ locale }}",
       "url": "{{ canonical }}",
       "author": { "@type": "Organization", "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" },
@@ -66,14 +83,16 @@ eleventyComputed:
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/serpmonn-install-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
-    <link rel="stylesheet" href="/frontend/styles/articles/serpmonn-install-guide.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css?v=theme2" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css?v=theme1">
+    <link rel="stylesheet" href="/frontend/styles/articles/serpmonn-install-guide.css?v=26">
 </head>
-<body>
+<body class="install-guide">
 {% set tocTitle = article.content.toc.title | default(locale | articleTocTitle, true) %}
 {% set tocItems = [] %}
 {% for item in article.content.toc.items %}
@@ -83,85 +102,122 @@ eleventyComputed:
 
 <nav id="menuContainer" aria-label="{{ article.common.menuLabel }}"></nav>
 
-<article class="article-container" tabindex="0">
-  <header class="article-header">
-    <div class="ad-top-banner ad-banner loading">
-      <ins class="mrg-tag"
-          style="display:inline-block;"
-          data-ad-client="ad-{{ mailAds.slots.top.id }}"
-          data-ad-slot="{{ mailAds.slots.top.id }}">
-      </ins>
-    </div>
-    <h1 class="article-title">{{ article.article.title }}</h1>
-    <div class="article-date">{{ article.article.date }} • {{ article.article.readingTime }}</div>
-  </header>
+<main class="page">
+  <article class="article-container" tabindex="0">
+    <header class="article-header">
+      <div class="ad-top-banner ad-banner loading">
+        <ins class="mrg-tag"
+            style="display:inline-block;"
+            data-ad-client="ad-{{ mailAds.slots.top.id }}"
+            data-ad-slot="{{ mailAds.slots.top.id }}">
+        </ins>
+      </div>
+      <h1 class="article-title">{{ article.article.title }}</h1>
+      <div class="article-date">{{ article.article.date }} · {{ article.article.readingTime }}</div>
+    </header>
 
-  <div class="article-content">
-    <div class="summary">
-      <strong>{{ article.content.summary.title }}</strong> {{ article.content.summary.text }}
-    </div>
+    <div class="article-content">
+      <div class="summary">
+        <strong>{{ article.content.summary.title }}</strong> {{ article.content.summary.text }}
+      </div>
 
-    {% for section in article.content.sections %}
-    <h2 id="{{ section.id }}">{{ section.title }}</h2>
+      {% for section in article.content.sections %}
+      <h2 id="{{ section.id }}">{{ section.title }}</h2>
 
-    {% if section.content %}
-    <p>{{ section.content | safe }}</p>
-    {% endif %}
-
-    {% if section.steps %}
-    <ol>
-      {% for step in section.steps %}
-      <li>{{ step | safe }}</li>
-      {% endfor %}
-    </ol>
-    {% endif %}
-
-    {% if section.items %}
-    <ul>
-      {% for item in section.items %}
-      <li>{{ item | safe }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-
-    {% if section.note %}
-    <div class="note">{{ section.note | safe }}</div>
-    {% endif %}
-
-    {% if section.faqItems %}
-    <div class="faq">
-      {% for faq in section.faqItems %}
-      <h3>{{ faq.question }}</h3>
-      <p>{{ faq.answer | safe }}</p>
-      {% endfor %}
-    </div>
-    {% endif %}
-    {% endfor %}
-
-    {% if article.content.conclusion %}
-    <div class="note">
-      <strong>{{ article.common.conclusion }}:</strong> {{ article.content.conclusion | safe }}
-    </div>
-    {% endif %}
-
-    <div class="install-cta-row">
-      <a href="#" class="cta-button" id="installGuidePwaCta">{{ article.buttons.installHome }}</a>
-      <a href="/frontend/downloads/Serpmonn-1.2.8.apk" download="Serpmonn-1.2.8.apk" class="cta-button cta-button--secondary">{{ article.buttons.downloadApk }}</a>
-      {% if article.buttons.openRustore %}
-      <a href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" class="cta-button cta-button--rustore">{{ article.buttons.openRustore }}</a>
+      {% if section.content %}
+      <p>{{ section.content | safe }}</p>
       {% endif %}
+
+      {% if section.steps %}
+      <ol>
+        {% for step in section.steps %}
+        <li>{{ step | safe }}</li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+
+      {% if section.items %}
+      <ul>
+        {% for item in section.items %}
+        <li>{{ item | safe }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if section.note %}
+      <div class="note">{{ section.note | safe }}</div>
+      {% endif %}
+
+      {% if section.faqItems %}
+      <div class="faq">
+        {% for faq in section.faqItems %}
+        <details class="faq-item">
+          <summary>{{ faq.question }}</summary>
+          <p>{{ faq.answer | safe }}</p>
+        </details>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endfor %}
+
+      {% if article.content.conclusion %}
+      <div class="note">
+        <strong>{{ article.common.conclusion }}:</strong> {{ article.content.conclusion | safe }}
+      </div>
+      {% endif %}
+
+      <div class="install-cta" aria-label="{{ article.buttons.downloadApk }}">
+        <p class="install-cta-label">{{ article.buttons.appStoresLabel | default('Serpmonn App') }}</p>
+        <div class="cta-row">
+          {% if primaryStore == 'rustore' %}
+          <a class="store-badge store-badge--primary" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" aria-label="RuStore">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-{{ badgeLang }}-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-{{ badgeLang }}.svg?v=13" width="200" height="58" alt="RuStore">
+            </picture>
+          </a>
+          <a class="store-badge store-badge--secondary" href="https://play.google.com/store/apps/details?id=ru.serpmonn" target="_blank" rel="noopener" aria-label="Google Play">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-google-play-{{ badgeLang }}-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-google-play-{{ badgeLang }}.svg?v=13" width="150" height="44" alt="Google Play">
+            </picture>
+          </a>
+          {% else %}
+          <a class="store-badge store-badge--primary" href="https://play.google.com/store/apps/details?id=ru.serpmonn" target="_blank" rel="noopener" aria-label="Google Play">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-google-play-{{ badgeLang }}-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-google-play-{{ badgeLang }}.svg?v=13" width="200" height="58" alt="Google Play">
+            </picture>
+          </a>
+          <a class="store-badge store-badge--secondary" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" aria-label="RuStore">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-{{ badgeLang }}-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-{{ badgeLang }}.svg?v=13" width="150" height="44" alt="RuStore">
+            </picture>
+          </a>
+          {% endif %}
+          <a class="store-badge store-badge--apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ article.buttons.downloadApk }}">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=13" width="140" height="38" alt="Serpmonn">
+            </picture>
+          </a>
+        </div>
+        <p class="build">{{ article.buttons.buildLabel | default('Build') }} {{ apkVersion }}</p>
+        <a href="#" class="cta-pwa" id="installGuidePwaCta">{{ article.buttons.installHome }}</a>
+      </div>
+
+      {% set relatedTitle = locale | articleRelatedTitle %}
+      {% set relatedItems = 'serpmonn-install-guide' | articleRelated(locale) %}
+      {% include "partials/article-related.njk" %}
     </div>
 
-    {% set relatedTitle = locale | articleRelatedTitle %}
-    {% set relatedItems = 'serpmonn-install-guide' | articleRelated(locale) %}
-    {% include "partials/article-related.njk" %}
-  </div>
-
-  <div class="social-buttons">
-    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">{{ article.buttons.telegram }}</a>
-    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">{{ article.buttons.vk }}</a>
-  </div>
-</article>
+    <div class="social-buttons">
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">{{ article.buttons.telegram }}</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">{{ article.buttons.vk }}</a>
+    </div>
+  </article>
+</main>
 
 <button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
 

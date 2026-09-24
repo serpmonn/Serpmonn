@@ -729,6 +729,13 @@ fetch(primaryMenuPath)
       console.error('❌ Ошибка загрузки скрипта селектора:', e);
     };
     document.body.appendChild(script);
+
+    const themeScript = document.createElement('script');
+    themeScript.src = '/frontend/scripts/theme-toggle.js?v=1';
+    themeScript.onerror = (e) => {
+      console.error('❌ Ошибка загрузки theme-toggle:', e);
+    };
+    document.body.appendChild(themeScript);
     // ========== КОНЕЦ ЗАГРУЗКИ СКРИПТА ==========
 
     // Инициализируем доступность ПОСЛЕ загрузки меню

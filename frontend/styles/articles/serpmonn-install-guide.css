@@ -1,228 +1,335 @@
 :root {
-  --article-accent: #e53935;
-  --article-accent-dark: #c62828;
-  --article-accent-soft: #fdecea;
-  --article-text: #1f2937;
-  --article-muted: #6b7280;
-  --article-border: #e5e7eb;
-  --article-surface: #f8f9fa;
-  --article-card: #ffffff;
+  --bg: #eef1f5;
+  --text: #141820;
+  --muted: #5a6472;
+  --accent: #d92c2c;
+  --font: "Manrope", system-ui, sans-serif;
+  --display: "Source Serif 4", Georgia, serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --page-bg:
+    radial-gradient(900px 520px at 12% -10%, rgba(217, 44, 44, 0.14), transparent 58%),
+    radial-gradient(700px 480px at 88% 8%, rgba(32, 112, 240, 0.1), transparent 55%),
+    linear-gradient(180deg, #fbfcfd 0%, var(--bg) 42%, #e8ecf2 100%);
+  --surface: rgba(255, 255, 255, 0.72);
+  --border: color-mix(in srgb, var(--muted) 22%, transparent);
 }
 
-body {
-  max-width: 800px;
+html[data-theme="dark"] {
+  --bg: #10141b;
+  --text: #eef1f6;
+  --muted: #9aa3b2;
+  --page-bg:
+    radial-gradient(900px 520px at 12% -10%, rgba(217, 44, 44, 0.22), transparent 58%),
+    radial-gradient(700px 480px at 88% 8%, rgba(32, 112, 240, 0.16), transparent 55%),
+    linear-gradient(180deg, #0c1016 0%, var(--bg) 45%, #0a0d12 100%);
+  --surface: rgba(22, 28, 38, 0.78);
+  --border: color-mix(in srgb, var(--muted) 28%, transparent);
+}
+
+html { scroll-behavior: smooth; }
+
+body.install-guide {
+  margin: 0;
+  min-height: 100%;
+  max-width: none;
+  padding: 0;
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.55;
+  background: var(--page-bg);
+  background-attachment: fixed;
+}
+
+body.install-guide .page a { color: inherit; }
+
+.install-guide .page {
+  width: min(760px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 16px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: #f5f5f5;
-  line-height: 1.7;
-  color: var(--article-text);
+  padding: 5rem 0 4.5rem;
 }
 
-article.article-container {
-  background: var(--article-card);
-  border-radius: 12px;
-  padding: 40px;
-  margin: 20px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+.install-guide article.article-container {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  max-width: none;
 }
 
-.article-header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--article-border);
+.install-guide .article-header {
+  text-align: left;
+  margin-bottom: 1.75rem;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
-.article-title {
-  font-size: 2.2rem;
-  color: var(--article-text);
-  margin-bottom: 10px;
+.install-guide .article-title {
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--text);
+  margin: 0 0 0.65rem;
   font-weight: 700;
 }
 
-.article-date {
-  color: var(--article-muted);
-  font-size: 1.05rem;
+.install-guide .article-date {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.install-guide .article-content {
+  font-size: 1.02rem;
   font-weight: 500;
 }
 
-.article-content {
-  font-size: 1.05rem;
+.install-guide .article-content h2 {
+  font-family: var(--display);
+  color: var(--text);
+  margin: 2.35rem 0 0.85rem;
+  font-size: clamp(1.35rem, 2.8vw, 1.7rem);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
-.article-content h2 {
+.install-guide .article-content p,
+.install-guide .article-content ul,
+.install-guide .article-content ol {
+  margin: 0 0 1rem;
+  color: var(--text);
+}
+
+.install-guide .article-content li {
+  margin-bottom: 0.55rem;
+  color: var(--muted);
+}
+
+.install-guide .article-content li strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.install-guide .article-content a {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.install-guide .article-content a:hover { color: var(--accent); }
+
+.install-guide .related-links a {
   color: var(--article-accent);
-  margin-top: 28px;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
+  text-decoration: none;
+}
+.install-guide .related-links a:hover {
+  color: var(--article-accent-dark);
+  text-decoration: underline;
 }
 
-.article-content p,
-.article-content ul,
-.article-content ol {
-  margin-bottom: 16px;
+.install-guide .summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.install-guide .summary strong {
+  color: var(--text);
+  font-weight: 750;
 }
 
-.article-content li {
-  margin-bottom: 8px;
-}
-
-.summary {
-  background: #eaf7ee;
-  border: 1px solid #cfe9d6;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 20px 0;
-  color: #155724;
-}
-
-.code {
-  background: var(--article-surface);
-  border: 1px solid var(--article-border);
-  border-radius: 6px;
-  padding: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+.install-guide .note {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 12px;
+  padding: 0.9rem 1.05rem;
+  margin: 1rem 0 1.25rem;
+  color: var(--muted);
   font-size: 0.95rem;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  margin: 16px 0;
+}
+.install-guide .note strong { color: var(--text); }
+
+.install-guide .faq {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
 }
 
-.note {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 16px 0;
-  color: #92400e;
-}
-
-.faq {
-  background: var(--article-surface);
-  border: 1px solid var(--article-border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.faq h3 {
-  margin: 0 0 10px;
-}
-
-.muted {
-  color: var(--article-muted);
-}
-
-.section-item {
-  margin-bottom: 10px;
-}
-
-.section-item-title {
-  font-weight: bold;
-}
-
-.cta-button {
-  display: block;
-  text-align: center;
-  background: var(--article-accent);
-  color: #fff;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.2s ease;
-  margin: 30px 0;
-  text-decoration: none;
-}
-
-.cta-button:hover {
-  transform: scale(1.02);
-  background: var(--article-accent-dark);
-  color: #fff;
-  text-decoration: none;
-}
-
-.social-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
-
-.tg-btn,
-.vk-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  border-radius: 25px;
-  color: #fff;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.tg-btn {
-  background: #229ed9;
-}
-
-.vk-btn {
-  background: #2787f5;
-}
-
-.tg-btn:hover,
-.vk-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-}
-
-.ad-top-banner {
-  text-align: center;
-  margin: 16px 0;
-}
-
-@media (max-width: 768px) {
-  article.article-container {
-    padding: 24px 18px;
-  }
-
-  .article-title {
-    font-size: 1.85rem;
-  }
-}
-
-.install-cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 24px 0 8px;
-}
-
-.install-cta-row .cta-button {
+.install-guide .faq-item {
   margin: 0;
-  flex: 1 1 auto;
-  min-width: min(100%, 180px);
+  border-bottom: 1px solid var(--border);
+}
+.install-guide .faq-item:last-child { border-bottom: 0; }
+.install-guide .faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: -0.015em;
+  padding: 0.85rem 1.6rem 0.85rem 0;
+  position: relative;
+  color: var(--text);
+}
+.install-guide .faq-item summary::-webkit-details-marker { display: none; }
+.install-guide .faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.install-guide .faq-item[open] summary::after { content: "–"; }
+.install-guide .faq-item p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 
-.cta-button--secondary {
-  background: #fff !important;
-  color: #e53935 !important;
-  border: 2px solid #e53935;
+.install-guide .install-cta {
+  margin: 2rem 0 0.5rem;
+  display: grid;
+  gap: 0.85rem;
+}
+.install-guide .install-cta-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+.install-guide .cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+}
+.install-guide .store-badge {
+  display: inline-block;
+  line-height: 0;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.28s var(--ease), filter 0.28s ease, opacity 0.2s ease;
+  filter: drop-shadow(0 10px 22px rgba(20, 24, 32, 0.14));
+  -webkit-tap-highlight-color: transparent;
+}
+.install-guide .store-badge img {
+  display: block;
+  height: 52px;
+  width: auto;
+  border-radius: 10px;
+}
+.install-guide .store-badge--primary img { height: 58px; }
+.install-guide .store-badge--secondary {
+  opacity: 0.88;
+  filter: drop-shadow(0 6px 14px rgba(20, 24, 32, 0.1));
+}
+.install-guide .store-badge--secondary img { height: 44px; }
+.install-guide .store-badge--apk {
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 10px rgba(20, 24, 32, 0.08));
+}
+.install-guide .store-badge--apk img { height: 38px; }
+.install-guide .store-badge:hover {
+  transform: translateY(-3px) scale(1.03);
+  opacity: 1;
+  filter: drop-shadow(0 16px 30px rgba(20, 24, 32, 0.2));
+}
+.install-guide .store-badge:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
-.cta-button--secondary:hover {
-  background: #fdecea !important;
+.install-guide .cta-pwa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.15rem 0 0;
+  padding: 0.7rem 1.15rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  width: fit-content;
+  backdrop-filter: blur(8px);
+  transition: transform 0.25s var(--ease), border-color 0.2s ease, color 0.2s ease;
+}
+.install-guide .cta-pwa:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--accent);
 }
 
-.cta-button--rustore {
-  background: #0077ff !important;
-  color: #fff !important;
-  border: 2px solid #0077ff;
+.install-guide .build {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 600;
 }
 
-.cta-button--rustore:hover {
-  background: #0066dd !important;
-  border-color: #0066dd;
-  color: #fff !important;
+.install-guide .social-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.install-guide .tg-btn,
+.install-guide .vk-btn {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 650;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease);
+}
+.install-guide .tg-btn { background: #229ed9; }
+.install-guide .vk-btn { background: #2787f5; }
+.install-guide .tg-btn:hover,
+.install-guide .vk-btn:hover {
+  transform: translateY(-2px);
+}
+
+.install-guide .ad-top-banner {
+  text-align: left;
+  margin: 0 0 1.25rem;
+}
+
+.install-guide .scroll-to-top {
+  background: var(--accent);
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .install-guide .page { padding-top: 4.25rem; }
+  .install-guide .store-badge--primary img { height: 52px; }
+  .install-guide .store-badge--secondary img { height: 40px; }
+  .install-guide .store-badge--apk img { height: 34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-guide .store-badge,
+  .install-guide .cta-pwa { transition: none; }
+  .install-guide .store-badge:hover,
+  .install-guide .cta-pwa:hover { transform: none; }
 }

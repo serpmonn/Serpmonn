@@ -63,6 +63,9 @@ eleventyComputed:
   menu_underline_links: "{{ menuTranslations[locale].underline_links }}"
   menu_reduce_animation: "{{ menuTranslations[locale].reduce_animation }}"
   menu_language: "{{ menuTranslations[locale].language }}"
+  menu_theme: "{{ menuTranslations[locale].theme or menuTranslations['en'].theme or 'Theme' }}"
+  menu_theme_to_light: "{{ menuTranslations[locale].theme_to_light or menuTranslations['en'].theme_to_light or 'Light theme' }}"
+  menu_theme_to_dark: "{{ menuTranslations[locale].theme_to_dark or menuTranslations['en'].theme_to_dark or 'Dark theme' }}"
   menu_soon: "{{ menuTranslations[locale].soon }}"
   menu_pwa_install: "{{ menuTranslations[locale].pwa_install }}"
   menu_pwa_instructions: "{{ menuTranslations[locale].pwa_instructions }}"
@@ -75,7 +78,7 @@ eleventyComputed:
 
 <!-- Стили (общие для всех локалей) -->
 <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-<link rel="stylesheet" href="/frontend/styles/menu.css?v=rustore1">
+<link rel="stylesheet" href="/frontend/styles/menu.css?v=theme2">
 <link rel="stylesheet" href="/frontend/styles/pwa.css">
 
 {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
@@ -528,11 +531,25 @@ eleventyComputed:
         {{ menu_support_project }}
     </a>
 
-    <!-- Служебный низ: язык + доступность -->
+    <!-- Служебный низ: язык + тема + доступность -->
     <div class="menu-chrome" id="menuChrome">
-      <div class="menu-chrome__lang lang-selector-item lang-selector-container" id="languageSelectorContainer">
-        {{ toolIcon('lang', 'cat') }}
-        <select class="lang-selector" id="langSelect" aria-label="{{ menu_language }}"></select>
+      <div class="menu-chrome__leading">
+        <div class="menu-chrome__lang lang-selector-item lang-selector-container" id="languageSelectorContainer">
+          {{ toolIcon('lang', 'cat') }}
+          <select class="lang-selector" id="langSelect" aria-label="{{ menu_language }}"></select>
+        </div>
+
+        <button type="button" class="menu-theme-btn" id="themeToggleBtn" hidden
+              aria-label="{{ menu_theme }}"
+              data-label-light="{{ menu_theme_to_light }}"
+              data-label-dark="{{ menu_theme_to_dark }}">
+          <span class="menu-theme-btn__icon menu-theme-btn__icon--moon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+          </span>
+          <span class="menu-theme-btn__icon menu-theme-btn__icon--sun" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </span>
+        </button>
       </div>
 
       <button type="button" class="menu-settings-btn" id="settingsButton"
