@@ -10,7 +10,7 @@ import {
 } from './search-query-log.mjs';
 
 // Same path as ai-search.mjs: env must be loaded before reading SECRET_KEY at module init
-dotenv.config({ path: '/etc/serpmonn/backend.env' });
+dotenv.config({ path: '/etc/serpmonn/backend-dev.env' });
 
 const { V2 } = paseto;
 

@@ -7,7 +7,7 @@ import { query as dbQuery } from '../database/config.mjs';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const envPath = isProduction
-  ? '/etc/serpmonn/backend.env'
+  ? '/etc/serpmonn/backend-dev.env'
   : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath });

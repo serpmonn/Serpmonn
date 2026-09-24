@@ -75,15 +75,15 @@ function buildPage(locale, data) {
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/leaderboards.css?v=2">
+  <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/leaderboards.css?v=3">
   <script>
-  window.lbI18n = ${JSON.stringify({ loadFail: data.loadFail })};
+  window.lbI18n = ${JSON.stringify({ loadFail: data.loadFail, empty: data.empty })};
   </script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=3" defer></script>
+  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=5" defer></script>
   <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
-<body>
+<body class="leaderboard-page">
     <div class="ad-container leaderboard-top-ad">
         <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px"
              data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
@@ -107,7 +107,7 @@ function buildPage(locale, data) {
         </section>
 
         <section class="leaderboard-board" id="neli-board">
-            <h2>Neli</h2>
+            <h2>${escapeHtml(locale === 'ru' ? 'Нэли — демо' : 'Neli')}</h2>
             <table>
                 <thead>
                     <tr>
@@ -117,6 +117,20 @@ function buildPage(locale, data) {
                     </tr>
                 </thead>
                 <tbody id="leaderboardBodyNeli"></tbody>
+            </table>
+        </section>
+
+        <section class="leaderboard-board" id="snake-board">
+            <h2>${escapeHtml(data.snakeName)}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>${escapeHtml(data.rank)}</th>
+                        <th>${escapeHtml(data.nick)}</th>
+                        <th>${escapeHtml(data.score)}</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBodySnake"></tbody>
             </table>
         </section>
     </div>
@@ -147,8 +161,10 @@ function collectLocaleData(locale) {
     pageH1: pick(PAGE_H1, locale),
     metaDescription: pick(META_DESCRIPTION, locale),
     loadFail: pick(LOAD_FAIL, locale),
+    empty: locale === 'ru' ? 'Пока нет результатов' : 'No results yet',
     canonical: canonicalUrl(locale),
     rs2Name: locale === 'ru' ? 'Падающие фигуры' : rs2Name,
+    snakeName: locale === 'ru' ? 'Змейка' : 'Snake',
     rank: headers[0],
     nick: headers[1],
     score: headers[2],

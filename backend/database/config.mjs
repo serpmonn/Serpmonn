@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '/etc/serpmonn/backend.env', override: true });
+dotenv.config({ path: '/etc/serpmonn/backend-dev.env', override: true });
 
 import mysql from 'mysql2';
 

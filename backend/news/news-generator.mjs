@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
 
-dotenv.config({ path: '/etc/serpmonn/backend.env' });
+dotenv.config({ path: '/etc/serpmonn/backend-dev.env' });
 
 // ─── Темы по локалям ────────────────────────────────────────────────────────
 // Формат: locale → массив тем { key, label, query }

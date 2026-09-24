@@ -22,7 +22,7 @@ import gatewayRouter from './gateway/gateway.routes.mjs';
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envPath =
   nodeEnv === 'production'
-    ? '/etc/serpmonn/backend.env'
+    ? '/etc/serpmonn/backend-dev.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath });
