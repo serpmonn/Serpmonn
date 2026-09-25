@@ -18,6 +18,7 @@ import voiceRoutes from '../voice/voiceRoutes.mjs';                             
 import aiSearchRouter from '../ai-search/ai-search.mjs';                                                                         // Импорт маршрута AI-поиска через SearxNG
 import i18nRoute from './i18n-route.mjs';                                                                                        // Импорт маршрута переводов для бэка
 import { outRoutes } from '../games/outRoutes.mjs';                                                                              // Импорт маршрута партнёрских редиректов /out
+import { storeGoRoutes } from '../marketing/storeGoRoutes.mjs';                                                                   // Клики RuStore / Play → /out/store/:app/:store
 import agentsRouter from '../agents/agents.routes.mjs';                                                                          // Импорт маршрутов агентов
 import subscriptionsRouter from '../agents/subscriptions.routes.mjs';                                                            // Импорт маршрутов подписок на агентов
 import logsRouter from '../agents/logs.routes.mjs';                                                                              // Импорт маршрутов логов агентов
@@ -85,4 +86,5 @@ export function connectRoutes(app, authLimiter) {                               
     }
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
     outRoutes(app);                                                                                                              // Подключаем партнёрские редиректы /out
+    storeGoRoutes(app);                                                                                                          // Клики в RuStore / Play
 }
