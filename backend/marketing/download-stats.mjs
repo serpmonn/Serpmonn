@@ -10,7 +10,7 @@ const LOG_DIR = '/var/log/nginx';
 
 const PRODUCTS = [
   { id: 'serpmonn', label: 'Serpmonn' },
-  { id: 'messenger', label: 'Messenger' },
+  { id: 'messenger', label: 'Serpmonn Messenger' },
   { id: 'neon-runner', label: 'Neon Runner' },
   { id: 'serphold', label: 'Serphold' },
   { id: 'animals', label: 'Animals' }
