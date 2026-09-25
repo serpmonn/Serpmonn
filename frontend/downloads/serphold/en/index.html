@@ -31,10 +31,33 @@
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="ru_RU">
   <meta property="og:type" content="website">
+  <meta property="og:video" content="https://serpmonn.ru/frontend/downloads/serphold/gameplay-en.mp4">
+  <meta property="og:video:secure_url" content="https://serpmonn.ru/frontend/downloads/serphold/gameplay-en.mp4">
+  <meta property="og:video:type" content="video/mp4">
+  <meta property="og:video:width" content="720">
+  <meta property="og:video:height" content="1280">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Serphold — Android">
   <meta name="twitter:description" content="Hold the fortress. Three roads, twenty waves. APK and RuStore on Serpmonn.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/downloads/serphold/poster-en.jpg?v=10">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "Serphold — gameplay",
+    "description": "Serphold gameplay: Android tower defense — three roads, twenty waves.",
+    "thumbnailUrl": "https://serpmonn.ru/frontend/downloads/serphold/poster-en.jpg",
+    "uploadDate": "2026-06-27T00:00:00+03:00",
+    "duration": "PT34S",
+    "contentUrl": "https://serpmonn.ru/frontend/downloads/serphold/gameplay-en.mp4",
+    "embedUrl": "https://serpmonn.ru/serphold/en",
+    "width": 720,
+    "height": 1280,
+    "isFamilyFriendly": true,
+    "inLanguage": "en",
+    "mainEntityOfPage": "https://serpmonn.ru/serphold/en"
+  }
+  </script>
   <link rel="icon" href="/frontend/downloads/serphold/favicon.png" sizes="48x48">
   <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
   <link rel="stylesheet" href="/frontend/fonts/serphold-landing.css?v=2">
@@ -481,7 +504,11 @@
         opacity: 1 !important;
         transform: none !important;
       }
-      .hero-media video { display: none; }
+      .hero-media video {
+        opacity: 0 !important;
+        visibility: hidden;
+        pointer-events: none;
+      }
     }
   </style>
 </head>
@@ -489,7 +516,7 @@
   <nav id="menuContainer" aria-label="Menu"></nav>
 
   <header class="hero" aria-labelledby="serphold-title">
-    <div class="hero-media" aria-hidden="true">
+    <div class="hero-media">
       <img
         class="hero-poster"
         src="/frontend/downloads/serphold/poster-en.jpg?v=10"
@@ -497,6 +524,7 @@
         width="900"
         height="2002"
         decoding="async"
+        aria-hidden="true"
       >
       <video
         id="hero-video"
@@ -506,10 +534,11 @@
         playsinline
         preload="metadata"
         poster="/frontend/downloads/serphold/poster-en.jpg?v=10"
+        aria-label="Serphold — gameplay"
       >
-        <source src="/frontend/downloads/serphold/gameplay-en.mp4" type="video/mp4">
+        <source src="https://serpmonn.ru/frontend/downloads/serphold/gameplay-en.mp4" type="video/mp4">
       </video>
-      <div class="hero-shade"></div>
+      <div class="hero-shade" aria-hidden="true"></div>
     </div>
     <div class="hero-copy">
       <h1 id="serphold-title" class="brand">Serphold</h1>
