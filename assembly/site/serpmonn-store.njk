@@ -1,0 +1,434 @@
+---
+pagination:
+  data: storeLocales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/store/index.html{% else %}/frontend/store/{{ locale }}/index.html{% endif %}"
+eleventyComputed:
+  title: "{{ storeTranslations[locale].pageTitle }}"
+  description: "{{ storeTranslations[locale].description }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/store{% else %}{{ site.baseUrl }}/store/{{ locale }}{% endif %}"
+---
+<!DOCTYPE html>
+<html lang="{{ locale }}" data-themes="light dark" data-langs="ru en">
+<head>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ storeTranslations[locale].pageTitle }}</title>
+  <meta name="description" content="{{ storeTranslations[locale].description }}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ canonical }}">
+  <link rel="alternate" hreflang="ru" href="{{ site.baseUrl }}/store">
+  <link rel="alternate" hreflang="en" href="{{ site.baseUrl }}/store/en">
+  <link rel="alternate" hreflang="x-default" href="{{ site.baseUrl }}/store">
+  <meta property="og:title" content="{{ storeTranslations[locale].ogTitle }}">
+  <meta property="og:description" content="{{ storeTranslations[locale].ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/serpmonn-512.png?v=4">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ storeTranslations[locale].ogTitle }}">
+  <meta name="twitter:description" content="{{ storeTranslations[locale].ogDescription }}">
+  <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/serpmonn-512.png?v=4">
+  <link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
+  <link rel="stylesheet" href="/frontend/fonts/manrope.css">
+  <link rel="stylesheet" href="/frontend/fonts/unbounded.css">
+  <style>
+    :root {
+      --bg: #f3f3f5;
+      --text: #121214;
+      --muted: #5c5c66;
+      --accent: #e03030;
+      --line: rgba(18, 18, 20, 0.1);
+      --surface: rgba(255, 255, 255, 0.72);
+      --font: "Manrope", system-ui, sans-serif;
+      --display: "Unbounded", "Manrope", system-ui, sans-serif;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --page-bg:
+        radial-gradient(920px 540px at 8% -18%, rgba(224, 48, 48, 0.18), transparent 58%),
+        radial-gradient(760px 480px at 92% 0%, rgba(18, 18, 20, 0.06), transparent 55%),
+        linear-gradient(180deg, #fbfbfc 0%, var(--bg) 40%, #ebebee 100%);
+      --row-hover: rgba(224, 48, 48, 0.06);
+      --row-active: rgba(224, 48, 48, 0.12);
+    }
+    html[data-theme="dark"] {
+      --bg: #0e0e10;
+      --text: #eeeef0;
+      --muted: #9a9aa6;
+      --accent: #ff4d4d;
+      --line: rgba(238, 238, 240, 0.1);
+      --surface: rgba(255, 255, 255, 0.04);
+      --page-bg:
+        radial-gradient(920px 540px at 8% -18%, rgba(224, 48, 48, 0.24), transparent 58%),
+        radial-gradient(760px 480px at 92% 0%, rgba(255, 255, 255, 0.04), transparent 55%),
+        linear-gradient(180deg, #0a0a0c 0%, var(--bg) 40%, #08080a 100%);
+      --row-hover: rgba(255, 77, 77, 0.08);
+      --row-active: rgba(255, 77, 77, 0.16);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; color-scheme: light dark; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      background: var(--page-bg);
+      background-attachment: fixed;
+    }
+    a { color: inherit; }
+    .page {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 5rem;
+    }
+    .hero {
+      padding: 2.2rem 0 1.6rem;
+      display: grid;
+      gap: 0.85rem;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(224, 48, 48, 0.22);
+    }
+    .brand {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(2rem, 5.5vw, 3rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+    .brand span {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.34em;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .lead {
+      margin: 0;
+      max-width: 34rem;
+      color: var(--muted);
+      font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+      font-weight: 600;
+    }
+    .catalog {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.6rem;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem 1.1rem;
+      align-items: start;
+      padding: 1.05rem 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      scroll-margin-top: 5.5rem;
+      transition: background 0.25s var(--ease), border-color 0.25s ease, transform 0.25s var(--ease);
+    }
+    .app:hover { background: var(--row-hover); }
+    .app.is-target {
+      background: var(--row-active);
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      transform: translateY(-1px);
+    }
+    .app-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    }
+    .app-body { min-width: 0; display: grid; gap: 0.55rem; }
+    .app-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.35rem 0.75rem;
+    }
+    .app-name {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .app-meta {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .app-desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 40rem;
+    }
+    .app-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+      margin-top: 0.15rem;
+    }
+    .store-badge {
+      display: inline-block;
+      line-height: 0;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 0.25s var(--ease), filter 0.25s ease;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.16));
+    }
+    .store-badge img {
+      display: block;
+      height: 44px;
+      width: auto;
+      border-radius: 10px;
+    }
+    .store-badge--file img { height: 38px; }
+    .store-badge:hover { transform: translateY(-2px) scale(1.03); }
+    .store-badge:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .btn-more {
+      display: inline-flex;
+      align-items: center;
+      height: 38px;
+      padding: 0 0.95rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .btn-more:hover {
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      background: var(--row-hover);
+    }
+    .note {
+      margin: 1.6rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .app { grid-template-columns: 56px 1fr; padding: 0.95rem; gap: 0.8rem; }
+      .app-icon { width: 56px; height: 56px; border-radius: 14px; }
+      .brand-logo { width: 48px; height: 48px; border-radius: 12px; }
+      .store-badge img { height: 40px; }
+      .store-badge--file img { height: 34px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .app, .store-badge { transition: none; }
+      .store-badge:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  {% set t = storeTranslations[locale] %}
+  {% set badgeLang = 'ru' if locale == 'ru' else 'en' %}
+  {% set appPage = '/frontend/app/serpmonn-app.html' if locale == 'ru' else '/frontend/en/app/serpmonn-app.html' %}
+  {% set messengerPage = '/frontend/messenger.html' if locale == 'ru' else '/frontend/en/messenger.html' %}
+  {% set neonPage = '/neon-runner' if locale == 'ru' else '/neon-runner/en' %}
+  {% set serpholdPage = '/serphold' if locale == 'ru' else '/serphold/en' %}
+  {% set animalsPage = '/animals' if locale == 'ru' else '/animals/en' %}
+  <nav id="menuContainer" aria-label="{{ t.menuLabel }}"></nav>
+  <main class="page">
+    <header class="hero" aria-labelledby="store-title">
+      <div class="brand-row">
+        <img class="brand-logo" src="/frontend/images/serpmonn-512.png?v=4" width="56" height="56" alt="" decoding="async">
+        <h1 id="store-title" class="brand">
+          {{ t.brandName }}
+          <span>{{ t.brandSub }}</span>
+        </h1>
+      </div>
+      <p class="lead">{{ t.lead }}</p>
+    </header>
+
+    <section class="catalog" aria-label="{{ t.catalogLabel }}">
+      <article class="app" id="serpmonn">
+        <img class="app-icon" src="/frontend/images/serpmonn-512.png?v=4" width="64" height="64" alt="" decoding="async">
+        <div class="app-body">
+          <div class="app-head">
+            <h2 class="app-name">{{ t.apps.serpmonn.name }}</h2>
+            <span class="app-meta">{{ t.apps.serpmonn.meta }}</span>
+          </div>
+          <p class="app-desc">{{ t.apps.serpmonn.desc }}</p>
+          <div class="app-actions">
+            <a class="store-badge store-badge--file" href="/out/store/serpmonn/apk" download="Serpmonn-latest.apk" aria-label="{{ t.apps.serpmonn.downloadAria }}">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+                <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ t.brandName }}">
+              </picture>
+            </a>
+            {% if locale == 'ru' %}
+            <a class="store-badge" href="/out/store/serpmonn/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+              <img src="/frontend/images/stores/badge-rustore-ru-light.svg?v=13" width="150" height="44" alt="RuStore">
+            </a>
+            <a class="store-badge" href="/out/store/serpmonn/play" target="_blank" rel="noopener" aria-label="Google Play">
+              <img src="/frontend/images/stores/badge-google-play-ru.svg?v=13" width="150" height="44" alt="Google Play">
+            </a>
+            {% else %}
+            <a class="store-badge" href="/out/store/serpmonn/play" target="_blank" rel="noopener" aria-label="Google Play">
+              <img src="/frontend/images/stores/badge-google-play-en.svg?v=13" width="150" height="44" alt="Google Play">
+            </a>
+            <a class="store-badge" href="/out/store/serpmonn/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+              <img src="/frontend/images/stores/badge-rustore-en-light.svg?v=13" width="150" height="44" alt="RuStore">
+            </a>
+            {% endif %}
+            <a class="btn-more" href="{{ appPage }}">{{ t.aboutApp }}</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="app" id="messenger">
+        <img class="app-icon" src="/frontend/images/serpmonn-512.png?v=4" width="64" height="64" alt="" decoding="async">
+        <div class="app-body">
+          <div class="app-head">
+            <h2 class="app-name">{{ t.apps.messenger.name }}</h2>
+            <span class="app-meta">{{ t.apps.messenger.meta }}</span>
+          </div>
+          <p class="app-desc">{{ t.apps.messenger.desc }}</p>
+          <div class="app-actions">
+            <a class="store-badge store-badge--file" href="/out/store/messenger/apk" download="Serpmonn Messenger.apk" aria-label="{{ t.apps.messenger.downloadAria }}">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+                <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ t.brandName }}">
+              </picture>
+            </a>
+            <a class="store-badge" href="/out/store/messenger/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+              <img src="/frontend/images/stores/badge-rustore-{{ badgeLang }}-light.svg?v=13" width="150" height="44" alt="RuStore">
+            </a>
+            <a class="btn-more" href="{{ messengerPage }}">{{ t.aboutApp }}</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="app" id="neon-runner">
+        <img class="app-icon" src="/frontend/downloads/neon-runner/icon-176.png" width="64" height="64" alt="" decoding="async">
+        <div class="app-body">
+          <div class="app-head">
+            <h2 class="app-name">{{ t.apps['neon-runner'].name }}</h2>
+            <span class="app-meta">{{ t.apps['neon-runner'].meta }}</span>
+          </div>
+          <p class="app-desc">{{ t.apps['neon-runner'].desc }}</p>
+          <div class="app-actions">
+            <a class="store-badge store-badge--file" href="/out/store/neon-runner/apk" download="Neon-Runner-latest.apk" aria-label="{{ t.apps['neon-runner'].downloadAria }}">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+                <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ t.brandName }}">
+              </picture>
+            </a>
+            <a class="store-badge" href="/out/store/neon-runner/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+              <img src="/frontend/images/stores/badge-rustore-{{ badgeLang }}-light.svg?v=13" width="150" height="44" alt="RuStore">
+            </a>
+            <a class="btn-more" href="{{ neonPage }}">{{ t.aboutGame }}</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="app" id="serphold">
+        <img class="app-icon" src="/frontend/downloads/serphold/icon-176.png" width="64" height="64" alt="" decoding="async">
+        <div class="app-body">
+          <div class="app-head">
+            <h2 class="app-name">{{ t.apps.serphold.name }}</h2>
+            <span class="app-meta">{{ t.apps.serphold.meta }}</span>
+          </div>
+          <p class="app-desc">{{ t.apps.serphold.desc }}</p>
+          <div class="app-actions">
+            <a class="store-badge store-badge--file" href="/out/store/serphold/apk" download="Serphold-latest.apk" aria-label="{{ t.apps.serphold.downloadAria }}">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+                <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ t.brandName }}">
+              </picture>
+            </a>
+            <a class="store-badge" href="/out/store/serphold/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+              <img src="/frontend/images/stores/badge-rustore-{{ badgeLang }}-light.svg?v=13" width="150" height="44" alt="RuStore">
+            </a>
+            <a class="btn-more" href="{{ serpholdPage }}">{{ t.aboutGame }}</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="app" id="animals">
+        <img class="app-icon" src="/frontend/downloads/animals/icon-176.png" width="64" height="64" alt="" decoding="async">
+        <div class="app-body">
+          <div class="app-head">
+            <h2 class="app-name">{{ t.apps.animals.name }}</h2>
+            <span class="app-meta">{{ t.apps.animals.meta }}</span>
+          </div>
+          <p class="app-desc">{{ t.apps.animals.desc }}</p>
+          <div class="app-actions">
+            <a class="store-badge store-badge--file" href="/out/store/animals/apk" download="Animals-Alpha-Win64.zip" aria-label="{{ t.apps.animals.downloadAria }}">
+              <picture>
+                <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+                <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ t.brandName }}">
+              </picture>
+            </a>
+            <a class="btn-more" href="{{ animalsPage }}">{{ t.aboutGame }}</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <p class="note">{{ t.note }}</p>
+  </main>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script>
+    (function () {
+      function activate() {
+        var id = (location.hash || '').replace(/^#/, '');
+        document.querySelectorAll('.app.is-target').forEach(function (el) {
+          el.classList.remove('is-target');
+        });
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('is-target');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      activate();
+      window.addEventListener('hashchange', activate);
+    })();
+  </script>
+</body>
+</html>
