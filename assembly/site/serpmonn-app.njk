@@ -642,9 +642,12 @@ eleventyComputed:
     {% set apkHref = serpmonnAppMeta.apkHref %}
     {% set apkVersion = serpmonnAppMeta.apkVersion %}
     {% set apkFileName = serpmonnAppMeta.apkFileName %}
+    {% set brandName = 'Серпмонн' if locale == 'ru' else 'Serpmonn' %}
+    {% set shotDir = 'rustore-screenshots' if locale == 'ru' else 'play-screenshots-en' %}
+    {% set shotV = '24' %}
     <section class="hero" aria-labelledby="app-title">
       <div class="hero-copy">
-        <h1 id="app-title" class="brand">Serpmonn</h1>
+        <h1 id="app-title" class="brand">{{ brandName }}</h1>
         <p class="lead">{{ serpmonnAppTranslations[locale].app.lead }}</p>
         <div class="cta-row">
           {% if primaryStore == 'rustore' %}
@@ -676,8 +679,8 @@ eleventyComputed:
           {% endif %}
           <a class="store-badge store-badge--apk" id="cta-apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
             <picture>
-              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=15">
-              <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=15" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+              <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
             </picture>
           </a>
         </div>
@@ -687,7 +690,7 @@ eleventyComputed:
       <div class="hero-stage" aria-hidden="true">
         <div class="hero-glow"></div>
         <div class="phone phone--sat phone--sat-left">
-          <img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=23" alt="" width="360" height="780" loading="eager">
+          <img src="/frontend/downloads/serpmonn/{{ shotDir }}/05-search.png?v={{ shotV }}" alt="" width="360" height="780" loading="eager">
         </div>
         <div class="phone phone--hero">
           {% set heroVideo = 'ru' if locale == 'ru' else 'en' %}
@@ -698,15 +701,15 @@ eleventyComputed:
             loop
             playsinline
             preload="metadata"
-            poster="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=23"
+            poster="/frontend/downloads/serpmonn/{{ shotDir }}/01-profile-feed.png?v={{ shotV }}"
             width="360"
             height="780"
           >
-            <source src="/frontend/images/stores/hero-preview-{{ heroVideo }}.mp4?v=23" type="video/mp4">
+            <source src="/frontend/images/stores/hero-preview-{{ heroVideo }}.mp4?v={{ shotV }}" type="video/mp4">
           </video>
           <img
             class="phone-media phone-media--still"
-            src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=23"
+            src="/frontend/downloads/serpmonn/{{ shotDir }}/01-profile-feed.png?v={{ shotV }}"
             alt=""
             width="360"
             height="780"
@@ -714,7 +717,7 @@ eleventyComputed:
           >
         </div>
         <div class="phone phone--sat phone--sat-right">
-          <img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=23" alt="" width="360" height="780" loading="eager">
+          <img src="/frontend/downloads/serpmonn/{{ shotDir }}/03-games.png?v={{ shotV }}" alt="" width="360" height="780" loading="eager">
         </div>
       </div>
     </section>
@@ -727,7 +730,7 @@ eleventyComputed:
         </div>
         <div class="scene-visual">
           <div class="phone">
-            <img src="/frontend/downloads/serpmonn/rustore-screenshots/05-search.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altSearch }}" width="360" height="780" loading="lazy">
+            <img src="/frontend/downloads/serpmonn/{{ shotDir }}/05-search.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altSearch }}" width="360" height="780" loading="lazy">
           </div>
         </div>
       </article>
@@ -739,7 +742,7 @@ eleventyComputed:
         </div>
         <div class="scene-visual">
           <div class="phone">
-            <img src="/frontend/downloads/serpmonn/rustore-screenshots/08-messages.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altMessages }}" width="360" height="780" loading="lazy">
+            <img src="/frontend/downloads/serpmonn/{{ shotDir }}/08-messages.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altMessages }}" width="360" height="780" loading="lazy">
           </div>
         </div>
       </article>
@@ -751,7 +754,7 @@ eleventyComputed:
         </div>
         <div class="scene-visual">
           <div class="phone">
-            <img src="/frontend/downloads/serpmonn/rustore-screenshots/03-games.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altGames }}" width="360" height="780" loading="lazy">
+            <img src="/frontend/downloads/serpmonn/{{ shotDir }}/03-games.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altGames }}" width="360" height="780" loading="lazy">
           </div>
         </div>
       </article>
@@ -764,19 +767,19 @@ eleventyComputed:
       </div>
       <div class="rail" aria-label="{{ serpmonnAppTranslations[locale].app.shotsAria }}">
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/01-profile-feed.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altFeed }}" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/{{ shotDir }}/01-profile-feed.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altFeed }}" width="360" height="780" loading="lazy"></div>
           <figcaption>{{ serpmonnAppTranslations[locale].app.capFeed }}</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/03-news.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altNews }}" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/{{ shotDir }}/03-news.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altNews }}" width="360" height="780" loading="lazy"></div>
           <figcaption>{{ serpmonnAppTranslations[locale].app.capNews }}</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/04-tools.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altTools }}" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/{{ shotDir }}/04-tools.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altTools }}" width="360" height="780" loading="lazy"></div>
           <figcaption>{{ serpmonnAppTranslations[locale].app.capTools }}</figcaption>
         </figure>
         <figure class="shot">
-          <div class="phone"><img src="/frontend/downloads/serpmonn/rustore-screenshots/06-profile.png?v=23" alt="{{ serpmonnAppTranslations[locale].app.altProfile }}" width="360" height="780" loading="lazy"></div>
+          <div class="phone"><img src="/frontend/downloads/serpmonn/{{ shotDir }}/06-profile.png?v={{ shotV }}" alt="{{ serpmonnAppTranslations[locale].app.altProfile }}" width="360" height="780" loading="lazy"></div>
           <figcaption>{{ serpmonnAppTranslations[locale].app.capProfile }}</figcaption>
         </figure>
       </div>
@@ -847,8 +850,8 @@ eleventyComputed:
         {% endif %}
         <a class="store-badge store-badge--apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
           <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=15">
-            <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=15" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+            <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
           </picture>
         </a>
       </div>
@@ -873,8 +876,8 @@ eleventyComputed:
     {% endif %}
     <a class="store-badge store-badge--apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=15">
-        <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=15" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
+        <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
+        <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
       </picture>
     </a>
   </div>
