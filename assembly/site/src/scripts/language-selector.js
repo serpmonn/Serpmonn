@@ -51,16 +51,62 @@
             || /^\/neon-runner(?:\/|$)/.test(pathname);
     }
 
+    function isSerpholdPath(pathname){
+        return /(?:^|\/)(?:frontend\/)?downloads\/serphold(?:\/|$)/.test(pathname)
+            || /^\/serphold(?:\/|$)/.test(pathname);
+    }
+
+    function isAnimalsPath(pathname){
+        return /(?:^|\/)(?:frontend\/)?downloads\/animals(?:\/|$)/.test(pathname)
+            || /^\/animals(?:\/|$)/.test(pathname);
+    }
+
+    function isApkLandingPath(pathname){
+        return isNeonRunnerPath(pathname) || isSerpholdPath(pathname) || isAnimalsPath(pathname);
+    }
+
     function neonRunnerLangFromPath(pathname){
         if (/neon-runner\/en(?:\/|$)/.test(pathname)) return 'en';
         if (isNeonRunnerPath(pathname)) return 'ru';
         return null;
     }
 
+    function serpholdLangFromPath(pathname){
+        if (/serphold\/en(?:\/|$)/.test(pathname)) return 'en';
+        if (isSerpholdPath(pathname)) return 'ru';
+        return null;
+    }
+
+    function animalsLangFromPath(pathname){
+        if (/animals\/en(?:\/|$)/.test(pathname)) return 'en';
+        if (isAnimalsPath(pathname)) return 'ru';
+        return null;
+    }
+
+    function apkLandingLangFromPath(pathname){
+        return neonRunnerLangFromPath(pathname)
+            || serpholdLangFromPath(pathname)
+            || animalsLangFromPath(pathname);
+    }
+
     function neonRunnerTarget(lang){
         const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
         if (safe === 'en') return '/frontend/downloads/neon-runner/en/';
         if (safe === 'ru') return '/frontend/downloads/neon-runner/';
+        return null;
+    }
+
+    function serpholdTarget(lang){
+        const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
+        if (safe === 'en') return '/frontend/downloads/serphold/en/';
+        if (safe === 'ru') return '/frontend/downloads/serphold/';
+        return null;
+    }
+
+    function animalsTarget(lang){
+        const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
+        if (safe === 'en') return '/frontend/downloads/animals/en/';
+        if (safe === 'ru') return '/frontend/downloads/animals/';
         return null;
     }
 
@@ -76,6 +122,12 @@
 
             if (isNeonRunnerPath(url.pathname)) {
                 return neonRunnerTarget(safe);
+            }
+            if (isSerpholdPath(url.pathname)) {
+                return serpholdTarget(safe);
+            }
+            if (isAnimalsPath(url.pathname)) {
+                return animalsTarget(safe);
             }
 
             if (idx === -1) {
@@ -161,7 +213,7 @@
     }
 
     function injectHreflang(list){
-        if (isNeonRunnerPath(location.pathname)) return;
+        if (isApkLandingPath(location.pathname)) return;
 
         Array.from(document.querySelectorAll('link[rel="alternate"][hreflang]')).forEach(n=>n.remove());
         const base = location.origin + '/frontend/';
@@ -224,7 +276,7 @@
                 return response.json();
             })
             .then((list) => {
-                const pathLang = neonRunnerLangFromPath(location.pathname);
+                const pathLang = apkLandingLangFromPath(location.pathname);
                 const allow = pageLangAllowlist() || langsFromHreflang();
                 let currentLang = pathLang || getCurrentLang();
                 if (pathLang) {

@@ -441,7 +441,9 @@ function generateSitemapForAppDownloads() {
     { loc: `${SITE_BASE}/neon-runner`, priority: '0.85' },
     { loc: `${SITE_BASE}/neon-runner/en`, priority: '0.85' },
     { loc: `${SITE_BASE}/serphold`, priority: '0.80' },
+    { loc: `${SITE_BASE}/serphold/en`, priority: '0.80' },
     { loc: `${SITE_BASE}/animals`, priority: '0.80' },
+    { loc: `${SITE_BASE}/animals/en`, priority: '0.80' },
     { loc: `${SITE_BASE}/frontend/app/serpmonn-app.html`, priority: '0.90' },
     { loc: `${SITE_BASE}/frontend/app/index.html`, priority: '0.80' },
   ];
@@ -459,6 +461,16 @@ function generateSitemapForAppDownloads() {
       parts.push(`    <xhtml:link rel="alternate" hreflang="ru" href="${SITE_BASE}/neon-runner"/>`);
       parts.push(`    <xhtml:link rel="alternate" hreflang="en" href="${SITE_BASE}/neon-runner/en"/>`);
       parts.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_BASE}/neon-runner"/>`);
+    }
+    if (e.loc.endsWith('/serphold') || e.loc.endsWith('/serphold/en')) {
+      parts.push(`    <xhtml:link rel="alternate" hreflang="ru" href="${SITE_BASE}/serphold"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="en" href="${SITE_BASE}/serphold/en"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_BASE}/serphold"/>`);
+    }
+    if (e.loc.endsWith('/animals') || e.loc.endsWith('/animals/en')) {
+      parts.push(`    <xhtml:link rel="alternate" hreflang="ru" href="${SITE_BASE}/animals"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="en" href="${SITE_BASE}/animals/en"/>`);
+      parts.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_BASE}/animals"/>`);
     }
     parts.push('  </url>');
   }
