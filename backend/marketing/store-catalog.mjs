@@ -1,4 +1,4 @@
-/** Каталог приложений и витрины магазинов (клики / будущие API). */
+/** Каталог приложений и URL кнопок магазинов на лендингах (только клики с сайта). */
 
 export const STORE_APPS = [
   {
@@ -7,6 +7,13 @@ export const STORE_APPS = [
     packageName: 'ru.serpmonn',
     rustore: 'https://www.rustore.ru/catalog/app/ru.serpmonn',
     play: 'https://play.google.com/store/apps/details?id=ru.serpmonn'
+  },
+  {
+    id: 'messenger',
+    label: 'Serpmonn Messenger',
+    packageName: 'ru.serpmonn.messenger',
+    rustore: 'https://www.rustore.ru/catalog/app/ru.serpmonn.messenger',
+    play: null
   },
   {
     id: 'serphold',
@@ -20,6 +27,13 @@ export const STORE_APPS = [
     label: 'Neon Runner',
     packageName: 'com.mobilearcade.neon_runner',
     rustore: 'https://www.rustore.ru/catalog/app/com.mobilearcade.neon_runner',
+    play: null
+  },
+  {
+    id: 'animals',
+    label: 'Animals',
+    packageName: null,
+    rustore: null,
     play: null
   }
 ];
