@@ -32,6 +32,14 @@ export const STORE_APPS = [
     rustore: 'https://www.rustore.ru/catalog/app/com.mobilearcade.neon_runner',
     play: null,
     apk: '/frontend/downloads/neon-runner/Neon-Runner-latest.apk'
+  },
+  {
+    id: 'animals',
+    label: 'Animals',
+    packageName: null,
+    rustore: null,
+    play: null,
+    apk: '/frontend/downloads/animals/Animals-Alpha-Win64.zip'
   }
 ];
 
