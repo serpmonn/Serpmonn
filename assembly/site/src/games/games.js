@@ -1,139 +1,190 @@
-// games.js - Функциональность страницы игр Serpmonn
+// games.js — витрина игр Serpmonn
 
 document.addEventListener('DOMContentLoaded', () => {
-    'use strict';
+  'use strict';
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const cards = document.querySelectorAll('.card');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // === 1. Анимация появления ===
-    cards.forEach((card, i) => {
-        if (reducedMotion) {
-            card.style.opacity = '1';
-            card.style.transform = 'none';
-            return;
-        }
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-            card.style.transition = 'opacity .5s ease, transform .5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, 100 + i * 50);
+  // Entrance reveals
+  const reveals = document.querySelectorAll('.reveal');
+  if (reducedMotion) {
+    reveals.forEach((el) => el.classList.add('is-in'));
+  } else if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+    );
+    reveals.forEach((el, i) => {
+      el.style.transitionDelay = `${Math.min(i * 40, 160)}ms`;
+      io.observe(el);
     });
+  } else {
+    reveals.forEach((el) => el.classList.add('is-in'));
+  }
 
-    // === 2. Клик по карточке (БЕЗ debounce) ===
-    const handleCardAction = (card) => {
-        const link = card.querySelector('a.btn');
-        if (link) {
-            window.open(link.href, '_blank', 'noopener');
-        }
-    };
+  const cards = document.querySelectorAll('.card:not(.card--soon)');
 
-    cards.forEach(card => {
-        card.setAttribute('tabindex', '0');
-
-        card.addEventListener('click', (e) => {
-            if (!e.target.closest('a.btn')) {
-                e.preventDefault();
-                handleCardAction(card);
-            }
-        });
-
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleCardAction(card);
-            }
-        });
-    });
-
-    // === 3. Стили фокуса ===
-    const style = document.createElement('style');
-    style.textContent = `
-        .card:focus-visible { outline: 2px solid #dc3545; outline-offset: 2px; }
-        .card a.btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-    `;
-    document.head.appendChild(style);
-
-    // === 4. ФИЛЬТР: источник (Serpmonn/партнёры) или платформа (веб/ПК/моб.) ===
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const groups = document.querySelectorAll('.games-group');
-    const GROUP_FILTERS = new Set(['serpmonn', 'partners']);
-    const PLATFORM_FILTERS = new Set(['web', 'pc', 'mobile']);
-
-    const applyFilter = (filter) => {
-        groups.forEach(section => {
-            const group = section.dataset.group;
-            const platforms = section.querySelectorAll('.platform-block');
-
-            if (filter === 'all') {
-                section.classList.remove('hidden');
-                platforms.forEach(p => p.classList.remove('hidden'));
-                return;
-            }
-
-            if (GROUP_FILTERS.has(filter)) {
-                section.classList.toggle('hidden', group !== filter);
-                platforms.forEach(p => p.classList.remove('hidden'));
-                return;
-            }
-
-            if (PLATFORM_FILTERS.has(filter)) {
-                let anyVisible = false;
-                platforms.forEach(p => {
-                    const match = p.dataset.platform === filter;
-                    p.classList.toggle('hidden', !match);
-                    if (match) anyVisible = true;
-                });
-                section.classList.toggle('hidden', !anyVisible);
-            }
-        });
-    };
-
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const filter = btn.dataset.filter;
-
-            filterButtons.forEach(b => {
-                b.classList.remove('active');
-                b.setAttribute('aria-selected', 'false');
-            });
-            btn.classList.add('active');
-            btn.setAttribute('aria-selected', 'true');
-            applyFilter(filter);
-        });
-    });
-
-    // === 5. Сворачивание фильтров на мобильных ===
-    const toggleFiltersBtn = document.getElementById('toggleFilters');
-    const filtersContent = document.getElementById('gamesFiltersContent');
-    if (toggleFiltersBtn && filtersContent) {
-        const labelShow = toggleFiltersBtn.dataset.labelShow || 'Фильтры';
-        const labelHide = toggleFiltersBtn.dataset.labelHide || 'Скрыть';
-        toggleFiltersBtn.addEventListener('click', () => {
-            const isOpen = filtersContent.classList.toggle('is-open');
-            toggleFiltersBtn.setAttribute('aria-expanded', String(isOpen));
-            toggleFiltersBtn.textContent = isOpen ? labelHide : labelShow;
-        });
+  const openGame = (link) => {
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    const external = link.target === '_blank' || (/^https?:\/\//i.test(href) && !href.includes(location.host));
+    if (external) {
+      window.open(link.href, '_blank', 'noopener');
+    } else {
+      location.assign(link.href);
     }
+  };
 
-    // === 6. Аналитика ===
-    document.querySelectorAll('.card a.btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const card = btn.closest('.card');
-            const nameEl = card.querySelector('h2 span[itemprop="name"], h2 span:last-child');
-            const gameName = nameEl ? nameEl.textContent.trim() : '';
-            const groupTitle = card.closest('.games-group')?.querySelector('.group-title')?.textContent.trim() || '';
-            const platformTitle = card.closest('.platform-block')?.querySelector('.platform-title')?.textContent.trim() || '';
-
-            if (window.ym) {
-                window.ym(98158791, 'reachGoal', 'game_click', {
-                    game_name: gameName,
-                    game_category: groupTitle,
-                    game_platform: platformTitle
-                });
-            }
-        });
+  cards.forEach((card) => {
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a.btn')) return;
+      e.preventDefault();
+      openGame(card.querySelector('a.btn'));
     });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openGame(card.querySelector('a.btn'));
+      }
+    });
+  });
+
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const lanes = document.querySelectorAll('.games-lane');
+
+  const applyFilter = (filter) => {
+    lanes.forEach((section) => {
+      const lane = section.dataset.lane;
+      if (filter === 'all') {
+        section.classList.remove('hidden');
+        return;
+      }
+      section.classList.toggle('hidden', lane !== filter);
+    });
+  };
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      applyFilter(btn.dataset.filter);
+    });
+  });
+
+  const toggleFiltersBtn = document.getElementById('toggleFilters');
+  const filtersContent = document.getElementById('gamesFiltersContent');
+  if (toggleFiltersBtn && filtersContent) {
+    const labelShow = toggleFiltersBtn.dataset.labelShow || 'Фильтры';
+    const labelHide = toggleFiltersBtn.dataset.labelHide || 'Скрыть';
+    toggleFiltersBtn.addEventListener('click', () => {
+      const isOpen = filtersContent.classList.toggle('is-open');
+      toggleFiltersBtn.setAttribute('aria-expanded', String(isOpen));
+      toggleFiltersBtn.textContent = isOpen ? labelHide : labelShow;
+    });
+  }
+
+  // Preview videos: lazy-load from data-src, play when visible / on hover
+  const armVideo = (wrap) => {
+    const video = wrap.querySelector('video.media-video[data-src]');
+    if (!video) return null;
+    const src = video.getAttribute('data-src');
+    if (!src) return null;
+    if (!video.src) {
+      video.src = src;
+      video.load();
+    }
+    return video;
+  };
+
+  const playWrap = (wrap) => {
+    const video = armVideo(wrap);
+    if (!video) return;
+    const go = () => {
+      wrap.classList.add('is-playing');
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    };
+    if (video.readyState >= 2) go();
+    else video.addEventListener('loadeddata', go, { once: true });
+  };
+
+  const pauseWrap = (wrap) => {
+    const video = wrap.querySelector('video.media-video');
+    if (!video) return;
+    video.pause();
+    wrap.classList.remove('is-playing');
+  };
+
+  document.querySelectorAll('.play-hero__media, .feature-card__media, .card-media').forEach((wrap) => {
+    if (!wrap.querySelector('video.media-video')) return;
+    wrap.addEventListener('mouseenter', () => playWrap(wrap));
+    wrap.addEventListener('mouseleave', () => pauseWrap(wrap));
+    wrap.addEventListener('focusin', () => playWrap(wrap));
+    wrap.addEventListener('focusout', () => pauseWrap(wrap));
+  });
+
+  if (!reducedMotion && 'IntersectionObserver' in window) {
+    const vio = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const wrap = entry.target;
+          if (entry.isIntersecting && entry.intersectionRatio > 0.45) {
+            if (wrap.classList.contains('play-hero__media')) playWrap(wrap);
+          } else {
+            pauseWrap(wrap);
+          }
+        });
+      },
+      { threshold: [0, 0.45, 0.7] }
+    );
+    document.querySelectorAll('.play-hero__media').forEach((wrap) => vio.observe(wrap));
+  } else if (!reducedMotion) {
+    const heroMedia = document.querySelector('.play-hero__media');
+    if (heroMedia) playWrap(heroMedia);
+  }
+
+  document.querySelectorAll('.card a.btn, .feature-card, .play-hero, .hero-actions .btn--primary').forEach((el) => {
+    el.addEventListener('click', () => {
+      if (!window.ym) return;
+      const card = el.closest('.card');
+      const feature = el.classList.contains('feature-card') ? el : null;
+      const playHero = el.classList.contains('play-hero') ? el : null;
+      let gameName = '';
+      let gameCategory = '';
+      let gamePlatform = '';
+
+      if (card) {
+        const nameEl = card.querySelector('.card-title span:last-child');
+        gameName = nameEl ? nameEl.textContent.trim() : '';
+        gameCategory = card.closest('.games-lane')?.querySelector('.group-title')?.textContent.trim() || '';
+        gamePlatform = card.closest('.platform-block')?.querySelector('.platform-title')?.textContent.trim() || '';
+      } else if (playHero) {
+        gameName = playHero.querySelector('.play-hero__name')?.textContent.trim() || '';
+        gameCategory = 'play_hero';
+      } else if (feature) {
+        gameName = feature.querySelector('.feature-card__name')?.textContent.trim() || '';
+        gameCategory = 'featured';
+      } else {
+        gameName = el.textContent.trim();
+        gameCategory = 'hero';
+      }
+
+      window.ym(98158791, 'reachGoal', 'game_click', {
+        game_name: gameName,
+        game_category: gameCategory,
+        game_platform: gamePlatform
+      });
+    });
+  });
 });

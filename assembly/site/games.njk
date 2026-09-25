@@ -1,6 +1,6 @@
 ---
 pagination:
-  data: locales
+  data: gamesLocales
   size: 1
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ locale }}/games/games.html{% endif %}"
@@ -9,216 +9,404 @@ eleventyComputed:
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/games.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/games.html{% endif %}"
 ---
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}" data-themes="light dark" data-langs="{% for loc in gamesLocales %}{{ loc }}{% if not loop.last %} {% endif %}{% endfor %}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ localesGames[locale].games.pageTitle }}</title>  <!-- ← меняем на locale -->
-    <meta name="description" content="{{ localesGames[locale].games.metaDescription }}">
-   
-    {% include "partials/metrika-main.njk" %}
-   
-    <!-- Open Graph -->
-    <meta property="og:title" content="{{ localesGames[locale].games.ogTitle }}">
-    <meta property="og:description" content="{{ localesGames[locale].games.ogDescription }}">
-    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="{{ canonical }}">
-    <meta property="og:type" content="website">
-    <!-- Каноническая ссылка -->
-    <link rel="canonical" href="{{ canonical }}" />
-        <!-- Structured Data: список игр -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "{{ localesGames[locale].games.schemaName | escape }}",
-      "numberOfItems": {{ localesGames[locale].games.totalGames | safe }},
-      "url": "{{ canonical }}"
-    }
-    </script>
-    {% set hreflangPath = "games/games.html" %}
-    {% include "partials/hreflang-locales.njk" %}
-    <!-- Подключение стилей -->
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/styles/base.css">
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/games/games.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ localesGames[locale].games.pageTitle }}</title>
+  <meta name="description" content="{{ localesGames[locale].games.metaDescription }}">
+  {% include "partials/metrika-main.njk" %}
+  <meta property="og:title" content="{{ localesGames[locale].games.ogTitle }}">
+  <meta property="og:description" content="{{ localesGames[locale].games.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="{{ canonical }}" />
+  {% for loc in gamesLocales %}
+    {% if loc == 'ru' %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/games/games.html" hreflang="{{ loc }}" />
+    {% else %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/games/games.html" hreflang="{{ loc }}" />
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/games/games.html" hreflang="x-default" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "{{ localesGames[locale].games.schemaName | escape }}",
+    "numberOfItems": {{ localesGames[locale].games.totalGames | safe }},
+    "url": "{{ canonical }}"
+  }
+  </script>
+  <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
+  <link rel="stylesheet" href="/frontend/fonts/manrope.css">
+  <link rel="stylesheet" href="/frontend/fonts/unbounded.css">
+  <link rel="stylesheet" href="/frontend/games/games.css?v=play14">
 </head>
 <body>
-    {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
-    <nav id="menuContainer" aria-label="{{ localesGames[locale].games.menuLabel }}"></nav>
-   
-    {# ItemList только в JSON-LD выше: microdata publisher/itemListElement давали ошибки GSC #}
-    <main class="page">
-        <h1>
-            <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
-            {{ localesGames[locale].games.mainTitle }}
-        </h1>
-        <!-- ФИЛЬТР: источник + платформа (на мобильных — сворачивается) -->
-        <div class="filters-toolbar">
-            <button id="toggleFilters"
-                    class="filter-toggle"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls="gamesFiltersContent"
-                    data-label-show="{{ localesGames[locale].games.filters.toggleFilters }}"
-                    data-label-hide="{{ localesGames[locale].games.filters.hideFilters }}">
-                {{ localesGames[locale].games.filters.toggleFilters }}
-            </button>
-        </div>
-        <div id="gamesFiltersContent" class="filters-content">
-            <div class="filter-buttons" role="tablist" aria-label="{{ localesGames[locale].games.filterLabel }}">
-                <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                    {{ localesGames[locale].games.filters.all }}
-                </button>
-                <button class="filter-btn" data-filter="serpmonn" role="tab">
-                    {{ localesGames[locale].games.filters.serpmonn }}
-                </button>
-                <button class="filter-btn" data-filter="partners" role="tab">
-                    {{ localesGames[locale].games.filters.partners }}
-                </button>
-                <span class="filter-sep" aria-hidden="true"></span>
-                <button class="filter-btn" data-filter="web" role="tab">
-                    {{ localesGames[locale].games.filters.web }}
-                </button>
-                <button class="filter-btn" data-filter="pc" role="tab">
-                    {{ localesGames[locale].games.filters.pc }}
-                </button>
-                <button class="filter-btn" data-filter="mobile" role="tab">
-                    {{ localesGames[locale].games.filters.mobile }}
-                </button>
-            </div>
-        </div>
-       
-        <!-- РЕКЛАМНЫЙ БАННЕР -->
-        <script>
-  (function () {
-    function loadMailAds() {
-      if (document.querySelector('script[src*="ads-async.js"]')) return;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://ad.mail.ru/static/ads-async.js';
-      document.head.appendChild(s);
-    }
-    function schedule() {
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(function () { setTimeout(loadMailAds, 2000); }, { timeout: 5000 });
-      } else {
-        setTimeout(loadMailAds, 2500);
-      }
-    }
-    if (document.readyState === 'complete') schedule();
-    else window.addEventListener('load', schedule);
-  })();
-</script>
-        <div class="ad-leaderboard">
-            <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
-        </div>
+  {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
+  {% set g = localesGames[locale].games %}
+  {% set brand = g.brandName or ( 'Серпмонн' if locale == 'ru' else 'Serpmonn' ) %}
+  <nav id="menuContainer" aria-label="{{ g.menuLabel }}"></nav>
 
-{% for group in localesGames[locale].games.groups %}
-        <section class="games-group" data-group="{{ group.key }}">
-            <h2 class="group-title">
-                {% if group.key == 'serpmonn' %}
-                <span class="section-logo-inline">{{ toolIcon('games', 'cat') }}</span>
-                {% else %}
-                <span class="section-logo-inline">{{ toolIcon('partners', 'cat') }}</span>
+  <main class="page">
+    {# Первый экран: бренд + один путь в игру (Обрыв) #}
+    <section class="stage reveal" aria-labelledby="games-title">
+      <header class="hero">
+        <div class="brand-row">
+          <img class="brand-logo" src="/frontend/images/serpmonn-512.png?v=4" width="56" height="56" alt="" decoding="async">
+          <h1 id="games-title" class="brand">
+            {{ brand }}
+            <span>{{ g.mainTitle }}</span>
+          </h1>
+        </div>
+        <p class="lead">{{ g.lead }}</p>
+        <div class="hero-actions">
+          <a class="btn btn--primary" href="{{ g.heroPlayLink }}">{{ g.heroCta }}</a>
+          <a class="btn btn--ghost" href="#catalog">{{ g.catalogGhost or g.catalogTitle }}</a>
+        </div>
+      </header>
+
+      {% for group in g.groups %}
+        {% if group.key == 'serpmonn' %}
+          {% for platform in group.platforms %}
+            {% if platform.key == 'web' %}
+              {% for game in platform.games %}
+                {% if game.featured == 1 %}
+      <a class="play-hero" href="{{ game.link }}">
+        <span class="play-hero__media">
+          {% if game.previewVideo %}
+          <video class="media-video"
+                 {% if game.preview %}poster="{{ game.preview }}"{% endif %}
+                 muted
+                 loop
+                 playsinline
+                 preload="metadata"
+                 data-src="{{ game.previewVideo }}"
+                 aria-hidden="true"></video>
+          {% endif %}
+          {% if game.preview %}
+          <img class="media-fallback" src="{{ game.preview }}" alt="" width="720" height="480" loading="eager" decoding="async" fetchpriority="high">
+          {% endif %}
+        </span>
+        <span class="play-hero__panel">
+          <span class="play-hero__badge">{{ g.instantBadge }}</span>
+          <span class="play-hero__name">{{ game.name }}</span>
+          <span class="play-hero__desc">{{ game.description }}</span>
+          <span class="play-hero__cta">{{ game.buttonText }}</span>
+        </span>
+      </a>
                 {% endif %}
-                {{ group.title }}
-            </h2>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </section>
 
+    {# Ещё быстрый старт — вторично #}
+    <section class="featured reveal" id="featured" aria-labelledby="featured-title">
+      <h2 id="featured-title" class="section-label">{{ g.featuredTitle }}</h2>
+      <div class="featured-grid">
+        {% for group in g.groups %}
+          {% if group.key == 'serpmonn' %}
             {% for platform in group.platforms %}
-            <div class="platform-block" data-platform="{{ platform.key }}">
-                <h3 class="platform-title">
-                    {% if platform.key == 'web' %}{{ toolIcon('web', 'cat') }}
-                    {% elif platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
-                    {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
-                    {{ platform.title }}
-                </h3>
-                <div class="grid" role="grid" aria-label="{{ platform.ariaLabel }}">
-                    {% if platform.games and platform.games | length %}
-                      {% for game in platform.games %}
-                    <div class="card{% if game.external %} card--partner{% endif %}" role="row">
-                        <div class="card-body">
-                            <h2>
-                                {% if platform.key == 'web' and not game.external %}
-                                <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
-                                {% elif game.image %}
-                                <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy">
-                                {% elif game.download %}
-                                <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('apk', 'cat') }}</span>
-                                {% else %}
-                                <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
-                                {% endif %}
-                                <span>{{ game.name }}</span>
-                            </h2>
-                            {% if game.description %}
-                            <p>{{ game.description }}</p>
-                            {% endif %}
-                        </div>
-
-                        <div class="card-footer">
-                            {% if game.external or game.badges %}
-                            <div class="platform-badges">
-                                {% if game.external %}
-                                <span class="badge partner">{{ localesGames[locale].games.partnerBadge | default('Партнёр') }}</span>
-                                {% endif %}
-                                {% if game.badges %}
-                                {% for badge in game.badges %}
-                                <span class="badge {{ badge.type }}">{{ badge.name }}</span>
-                                {% endfor %}
-                                {% endif %}
-                            </div>
-                            {% elif group.key == 'partners' %}
-                            <div class="platform-badges platform-badges--spacer" aria-hidden="true"></div>
-                            {% endif %}
-
-                            <a class="btn"
-                               href="{{ game.link }}"
-                               {% if game.download %}download{% if game.downloadName %}="{{ game.downloadName }}"{% endif %}{% endif %}
-                               {% if game.external %}target="_blank" rel="noopener"{% endif %}
-                               itemprop="url">
-                                {{ game.buttonText }}
-                            </a>
-
-                            {% if game.external and game.adLabel %}
-                            <p class="ad-label">{{ game.adLabel }}</p>
-                            {% elif game.external %}
-                            <p class="ad-label ad-label--spacer" aria-hidden="true">&nbsp;</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                      {% endfor %}
-                    {% endif %}
-                    {% if platform.placeholders and platform.placeholders | length %}
-                      {% for ph in platform.placeholders %}
-                    <div class="card card--soon" role="row">
-                        <h2>
-                            <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon(platform.key, 'cat') }}</span>
-                            <span>{{ ph.name }}</span>
-                        </h2>
-                        <p>{{ ph.description | default(localesGames[locale].games.soonLabel) }}</p>
-                    </div>
-                      {% endfor %}
-                    {% elif not (platform.games and platform.games | length) %}
-                    <p class="platform-empty">{{ localesGames[locale].games.emptyPlatform }}</p>
-                    {% endif %}
-                </div>
-            </div>
+              {% if platform.key == 'web' %}
+                {% for game in platform.games | selectattr('featured') | sort(false, false, 'featured') %}
+                  {% if game.featured != 1 %}
+                  <a class="feature-card" href="{{ game.link }}">
+                    <span class="feature-card__media">
+                      {% if game.previewVideo %}
+                      <video class="media-video"
+                             {% if game.preview %}poster="{{ game.preview }}"{% endif %}
+                             muted
+                             loop
+                             playsinline
+                             preload="none"
+                             data-src="{{ game.previewVideo }}"
+                             aria-hidden="true"></video>
+                      {% endif %}
+                      {% if game.preview %}
+                      <img class="media-fallback" src="{{ game.preview }}" alt="" width="720" height="480" loading="lazy" decoding="async">
+                      {% endif %}
+                    </span>
+                    <span class="feature-card__body">
+                      <span class="feature-card__badge">{{ g.instantBadge }}</span>
+                      <span class="feature-card__name">{{ game.name }}</span>
+                      <span class="feature-card__desc">{{ game.description }}</span>
+                      <span class="feature-card__cta">{{ game.buttonText }}</span>
+                    </span>
+                  </a>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             {% endfor %}
-        </section>
-{% endfor %}
-    </main>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
 
-    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
-    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+    <div class="catalog-head reveal" id="catalog">
+      <h2 class="section-label">{{ g.catalogTitle }}</h2>
+      <nav class="catalog-lanes" aria-label="{{ g.catalogTitle }}">
+        <a class="lane-link" href="#lane-web">{{ g.laneWeb }}</a>
+        <a class="lane-link" href="#lane-download">{{ g.laneDownload }}</a>
+        <a class="lane-link" href="#lane-partners">{{ g.lanePartners }}</a>
+      </nav>
+      <div class="filters-toolbar">
+        <button id="toggleFilters"
+                class="filter-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="gamesFiltersContent"
+                data-label-show="{{ g.filters.toggleFilters }}"
+                data-label-hide="{{ g.filters.hideFilters }}">
+          {{ g.filters.toggleFilters }}
+        </button>
+      </div>
+      <div id="gamesFiltersContent" class="filters-content">
+        <div class="filter-buttons" role="tablist" aria-label="{{ g.filterLabel }}">
+          <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">{{ g.filters.all }}</button>
+          <button class="filter-btn" data-filter="web" role="tab">{{ g.filters.web }}</button>
+          <button class="filter-btn" data-filter="download" role="tab">{{ g.laneDownload }}</button>
+          <button class="filter-btn" data-filter="partners" role="tab">{{ g.filters.partners }}</button>
+        </div>
+      </div>
+    </div>
 
-    <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/games/games.js" defer></script>
-    <script src="/frontend/scripts/interactive-bg.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-{% include "partials/ad-pool-init.njk" %}
+    <script>
+      (function () {
+        function loadMailAds() {
+          if (document.querySelector('script[src*="ads-async.js"]')) return;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://ad.mail.ru/static/ads-async.js';
+          document.head.appendChild(s);
+        }
+        function schedule() {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(function () { setTimeout(loadMailAds, 2000); }, { timeout: 5000 });
+          } else {
+            setTimeout(loadMailAds, 2500);
+          }
+        }
+        if (document.readyState === 'complete') schedule();
+        else window.addEventListener('load', schedule);
+      })();
+    </script>
+    <div class="ad-leaderboard">
+      <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    {# —— Lane: web now —— #}
+    {% for group in g.groups %}
+      {% if group.key == 'serpmonn' %}
+        {% for platform in group.platforms %}
+          {% if platform.key == 'web' %}
+    <section class="games-lane reveal" id="lane-web" data-lane="web" data-group="serpmonn">
+      <h2 class="group-title">
+        <span class="section-logo-inline">{{ toolIcon('web', 'cat') }}</span>
+        {{ g.laneWeb }}
+      </h2>
+      <div class="platform-block" data-platform="web">
+        <div class="grid" role="list" aria-label="{{ platform.ariaLabel }}">
+          {% for game in platform.games %}
+          <article class="card card--instant{% if game.catalogShot %} card--media{% endif %}" role="listitem">
+            {% if game.catalogShot or game.catalogVideo %}
+            <div class="card-media">
+              {% if game.catalogVideo %}
+              <video class="media-video"
+                     {% if game.catalogShot %}poster="{{ game.catalogShot }}"{% endif %}
+                     muted
+                     loop
+                     playsinline
+                     preload="none"
+                     data-src="{{ game.catalogVideo }}"
+                     aria-hidden="true"></video>
+              {% endif %}
+              {% if game.catalogShot %}
+              <img class="media-fallback" src="{{ game.catalogShot }}" alt="" width="720" height="405" loading="lazy" decoding="async">
+              {% endif %}
+            </div>
+            {% endif %}
+            <div class="card-body">
+              <h3 class="card-title">
+                {% if not game.catalogShot %}
+                <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
+                {% endif %}
+                <span>{{ game.name }}</span>
+              </h3>
+              <p class="card-chip">{{ g.instantBadge }}</p>
+              {% if game.description %}
+              <p>{{ game.description }}</p>
+              {% endif %}
+            </div>
+            <div class="card-footer">
+              <a class="btn btn--play" href="{{ game.link }}">{{ game.buttonText }}</a>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+
+    {# —— Lane: download / install —— #}
+    {% for group in g.groups %}
+      {% if group.key == 'serpmonn' %}
+    <section class="games-lane reveal" id="lane-download" data-lane="download" data-group="serpmonn">
+      <h2 class="group-title">
+        <span class="section-logo-inline">{{ toolIcon('apk', 'cat') }}</span>
+        {{ g.laneDownload }}
+      </h2>
+      <p class="lane-hint">{{ g.installHint }}</p>
+        {% for platform in group.platforms %}
+          {% if platform.key == 'pc' or platform.key == 'mobile' %}
+      <div class="platform-block" data-platform="{{ platform.key }}">
+        <h3 class="platform-title">
+          {% if platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
+          {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
+          {{ platform.title }}
+        </h3>
+        <div class="grid" role="list" aria-label="{{ platform.ariaLabel }}">
+          {% if platform.games and platform.games | length %}
+            {% for game in platform.games %}
+          <article class="card card--install" role="listitem">
+            <div class="card-body">
+              <h3 class="card-title">
+                {% if game.image %}
+                <img class="game-logo-inline" src="{{ game.image }}" alt="" loading="lazy">
+                {% else %}
+                <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('apk', 'cat') }}</span>
+                {% endif %}
+                <span>{{ game.name }}</span>
+              </h3>
+              <p class="card-chip card-chip--install">{{ g.installBadge }}</p>
+              {% if game.description %}
+              <p>{{ game.description }}</p>
+              {% endif %}
+            </div>
+            <div class="card-footer">
+              <a class="btn btn--install"
+                 href="{{ game.link }}"
+                 {% if game.download %}download{% if game.downloadName %}="{{ game.downloadName }}"{% endif %}{% endif %}>
+                {{ game.buttonText }}
+              </a>
+            </div>
+          </article>
+            {% endfor %}
+          {% else %}
+          <p class="platform-empty">{{ g.emptyPlatform }}</p>
+          {% endif %}
+          {% if platform.placeholders and platform.placeholders | length %}
+            {% for ph in platform.placeholders %}
+          <div class="card card--soon" role="listitem">
+            <h3 class="card-title">
+              <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon(platform.key, 'cat') }}</span>
+              <span>{{ ph.name }}</span>
+            </h3>
+            <p>{{ ph.description | default(g.soonLabel) }}</p>
+          </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+          {% endif %}
+        {% endfor %}
+    </section>
+      {% endif %}
+    {% endfor %}
+
+    {# —— Lane: partners —— #}
+    {% for group in g.groups %}
+      {% if group.key == 'partners' %}
+    <section class="games-lane reveal" id="lane-partners" data-lane="partners" data-group="partners">
+      <h2 class="group-title">
+        <span class="section-logo-inline">{{ toolIcon('partners', 'cat') }}</span>
+        {{ g.lanePartners }}
+      </h2>
+      {% for platform in group.platforms %}
+      <div class="platform-block" data-platform="{{ platform.key }}">
+        {% if platform.title %}
+        <h3 class="platform-title">
+          {% if platform.key == 'web' %}{{ toolIcon('web', 'cat') }}
+          {% elif platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
+          {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
+          {{ platform.title }}
+        </h3>
+        {% endif %}
+        <div class="grid" role="list" aria-label="{{ platform.ariaLabel }}">
+          {% if platform.games and platform.games | length %}
+            {% for game in platform.games %}
+          <article class="card card--partner{% if game.image %} card--media{% endif %}" role="listitem">
+            {% if game.image %}
+            <div class="card-media card-media--cover">
+              <img class="media-fallback" src="{{ game.image }}" alt="" loading="lazy" decoding="async">
+            </div>
+            {% endif %}
+            <div class="card-body">
+              <h3 class="card-title">
+                <span>{{ game.name }}</span>
+              </h3>
+              {% if game.description %}
+              <p>{{ game.description }}</p>
+              {% endif %}
+            </div>
+            <div class="card-footer">
+              <div class="platform-badges">
+                <span class="badge partner">{{ g.partnerBadge | default('Партнёр') }}</span>
+                {% if game.badges %}
+                {% for badge in game.badges %}
+                <span class="badge {{ badge.type }}">{{ badge.name }}</span>
+                {% endfor %}
+                {% endif %}
+              </div>
+              <a class="btn btn--partner"
+                 href="{{ game.link }}"
+                 {% if game.external %}target="_blank" rel="noopener"{% endif %}>
+                {{ game.buttonText }}
+              </a>
+              {% if game.external and game.adLabel %}
+              <p class="ad-label">{{ game.adLabel }}</p>
+              {% elif game.external %}
+              <p class="ad-label ad-label--spacer" aria-hidden="true">&nbsp;</p>
+              {% endif %}
+            </div>
+          </article>
+            {% endfor %}
+          {% elif not (platform.placeholders and platform.placeholders | length) %}
+          <p class="platform-empty">{{ g.emptyPlatform }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+      {% endif %}
+    {% endfor %}
+  </main>
+
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(mailAds.slots.anchor.id, g.adDetails, g.adHide) }}
+
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/games/games.js?v=play14" defer></script>
 </body>
 </html>
