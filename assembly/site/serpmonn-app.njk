@@ -642,6 +642,7 @@ eleventyComputed:
     {% set apkHref = serpmonnAppMeta.apkHref %}
     {% set apkVersion = serpmonnAppMeta.apkVersion %}
     {% set apkFileName = serpmonnAppMeta.apkFileName %}
+    {% set storeHref = '/store' if locale == 'ru' else '/store/en' %}
     {% set brandName = 'Серпмонн' if locale == 'ru' else 'Serpmonn' %}
     {% set shotDir = 'rustore-screenshots' if locale == 'ru' else 'play-screenshots-en' %}
     {% set shotV = '31' %}
@@ -677,7 +678,7 @@ eleventyComputed:
             </picture>
           </a>
           {% endif %}
-          <a class="store-badge store-badge--apk" id="cta-apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
+          <a class="store-badge store-badge--apk" id="cta-apk" href="{{ storeHref }}#serpmonn" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
             <picture>
               <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
               <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
@@ -848,7 +849,7 @@ eleventyComputed:
           </picture>
         </a>
         {% endif %}
-        <a class="store-badge store-badge--apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
+        <a class="store-badge store-badge--apk" href="{{ storeHref }}#serpmonn" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
           <picture>
             <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
             <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">
@@ -874,7 +875,7 @@ eleventyComputed:
       </picture>
     </a>
     {% endif %}
-    <a class="store-badge store-badge--apk" href="{{ apkHref }}" download="{{ apkFileName }}" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
+    <a class="store-badge store-badge--apk" href="{{ storeHref }}#serpmonn" aria-label="{{ serpmonnAppTranslations[locale].app.ctaApk }}">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}-light.svg?v=16">
         <img src="/frontend/images/stores/badge-serpmonn-{{ badgeLang }}.svg?v=16" width="140" height="38" alt="{{ serpmonnAppTranslations[locale].app.ctaApkName }}">

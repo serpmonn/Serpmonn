@@ -61,8 +61,16 @@
             || /^\/animals(?:\/|$)/.test(pathname);
     }
 
+    function isStorePath(pathname){
+        return /(?:^|\/)(?:frontend\/)?store(?:\/|$)/.test(pathname)
+            || /^\/store(?:\/|$)/.test(pathname);
+    }
+
     function isApkLandingPath(pathname){
-        return isNeonRunnerPath(pathname) || isSerpholdPath(pathname) || isAnimalsPath(pathname);
+        return isNeonRunnerPath(pathname)
+            || isSerpholdPath(pathname)
+            || isAnimalsPath(pathname)
+            || isStorePath(pathname);
     }
 
     function neonRunnerLangFromPath(pathname){
@@ -83,10 +91,17 @@
         return null;
     }
 
+    function storeLangFromPath(pathname){
+        if (/store\/en(?:\/|$)/.test(pathname)) return 'en';
+        if (isStorePath(pathname)) return 'ru';
+        return null;
+    }
+
     function apkLandingLangFromPath(pathname){
         return neonRunnerLangFromPath(pathname)
             || serpholdLangFromPath(pathname)
-            || animalsLangFromPath(pathname);
+            || animalsLangFromPath(pathname)
+            || storeLangFromPath(pathname);
     }
 
     function neonRunnerTarget(lang){
@@ -110,6 +125,13 @@
         return null;
     }
 
+    function storeTarget(lang){
+        const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
+        if (safe === 'en') return '/store/en';
+        if (safe === 'ru') return '/store';
+        return null;
+    }
+
     /** Путь страницы для языка (без навигации). null = для этого языка страницы нет. */
     function pathForLang(lang, list){
         try {
@@ -128,6 +150,9 @@
             }
             if (isAnimalsPath(url.pathname)) {
                 return animalsTarget(safe);
+            }
+            if (isStorePath(url.pathname)) {
+                return storeTarget(safe);
             }
 
             if (idx === -1) {
@@ -185,7 +210,13 @@
             const suffix = url.search + url.hash;
             if (target === RU_DEFAULT) {
                 location.assign(RU_DEFAULT + suffix);
-            } else if (/^\/frontend\/[a-zA-Z0-9./_-]+$/.test(target) || /^\/neon-runner/.test(target)) {
+            } else if (
+                /^\/frontend\/[a-zA-Z0-9./_-]+$/.test(target)
+                || /^\/neon-runner/.test(target)
+                || /^\/serphold/.test(target)
+                || /^\/animals/.test(target)
+                || /^\/store(?:\/|$)/.test(target)
+            ) {
                 location.assign(target + suffix);
             }
         } catch(_) {}

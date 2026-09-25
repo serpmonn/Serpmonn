@@ -34,14 +34,7 @@ echo "==> landing-only deploy → $TARGET ($DEST)"
 echo "    НЕ запускает полный deploy-locales / не трогает app|auth|profile|findings|snake|main"
 
 cd "$ROOT/assembly"
-# Собираем только serpmonn-app (pagination по локалям)
-npx eleventy --input=site/serpmonn-app.njk
-
 DIST="$ROOT/assembly/dist/frontend"
-if [[ ! -f "$DIST/app/serpmonn-app.html" ]]; then
-  echo "ERROR: нет $DIST/app/serpmonn-app.html после сборки"
-  exit 1
-fi
 
 copy_one() {
   local src="$1" dst="$2"
@@ -50,12 +43,29 @@ copy_one() {
   echo "  ✓ $(realpath --relative-to="$DEST" "$dst" 2>/dev/null || echo "$dst")"
 }
 
-# RU + все локали serpmonn-app.html
+# Лендинг приложения
+npx eleventy --input=site/serpmonn-app.njk
+if [[ ! -f "$DIST/app/serpmonn-app.html" ]]; then
+  echo "ERROR: нет $DIST/app/serpmonn-app.html после сборки"
+  exit 1
+fi
 copy_one "$DIST/app/serpmonn-app.html" "$DEST/app/serpmonn-app.html"
 shopt -s nullglob
 for src in "$DIST"/*/app/serpmonn-app.html; do
   loc="$(basename "$(dirname "$(dirname "$src")")")"
   copy_one "$src" "$DEST/$loc/app/serpmonn-app.html"
+done
+
+# Мини-магазин (отдельная сборка — не затирает уже скопированный app)
+npx eleventy --input=site/serpmonn-store.njk
+if [[ ! -f "$DIST/store/index.html" ]]; then
+  echo "ERROR: нет $DIST/store/index.html после сборки"
+  exit 1
+fi
+copy_one "$DIST/store/index.html" "$DEST/store/index.html"
+for src in "$DIST"/store/*/index.html; do
+  loc="$(basename "$(dirname "$src")")"
+  copy_one "$src" "$DEST/store/$loc/index.html"
 done
 
 # Ассеты лендинга (бейджи/видео/og) — только stores + screenshots игр/сообщений если есть

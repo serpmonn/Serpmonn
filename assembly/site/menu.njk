@@ -32,6 +32,7 @@ eleventyComputed:
   menu_android_apk_btn: "{{ menuTranslations[locale].android_apk_btn or menuTranslations['en'].android_apk_btn or 'Download APK' }}"
   menu_android_rustore_btn: "{{ menuTranslations[locale].android_rustore_btn or 'RuStore' }}"
   menu_messenger_app: "{{ menuTranslations[locale].messenger_app }}"
+  menu_store: "{{ menuTranslations[locale].store or menuTranslations['en'].store or 'Serpmonn Store' }}"
   menu_install_guide: "{{ menuTranslations[locale].install_guide }}"
   menu_mobile_apps: "{{ menuTranslations[locale].mobile_apps }}"
   menu_promo_codes: "{{ menuTranslations[locale].promo_codes }}"
@@ -248,11 +249,15 @@ eleventyComputed:
             {{ menu_mobile_apps }}
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
+            <a href="{% if locale == 'ru' %}/store{% else %}/store/en{% endif %}" class="menu-item">
+                {{ toolIcon('apk') }}
+                {{ menu_store }}
+            </a>
             <a href="{% if locale == 'ru' %}/frontend/app/serpmonn-app.html{% else %}/frontend/{{ locale }}/app/serpmonn-app.html{% endif %}" class="menu-item">
                 {{ toolIcon('apk') }}
                 {{ menu_android_apk }}
             </a>
-            <a href="https://serpmonn.ru/frontend/messenger.html" class="menu-item">
+            <a href="{% if locale == 'ru' %}/frontend/messenger.html{% else %}/frontend/en/messenger.html{% endif %}" class="menu-item">
                 {{ toolIcon('chat') }}
                 {{ menu_messenger_app }}
             </a>
