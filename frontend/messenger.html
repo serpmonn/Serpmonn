@@ -1,619 +1,795 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-themes="light dark" data-langs="ru en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serpmonn Messenger — децентрализованный мессенджер</title>
-<meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Никто не имеет доступа к вашим сообщениям. Доступен в RuStore.">
-<link rel="canonical" href="https://serpmonn.ru/frontend/messenger.html">
-<link rel="alternate" hreflang="ru" href="https://serpmonn.ru/frontend/messenger.html">
-<link rel="alternate" hreflang="en" href="https://serpmonn.ru/frontend/en/messenger.html">
-<link rel="alternate" hreflang="x-default" href="https://serpmonn.ru/frontend/messenger.html">
-<meta property="og:title" content="Serpmonn Messenger">
-<meta property="og:description" content="Децентрализованный P2P-мессенджер с E2E-шифрованием. Доступен в RuStore.">
-<meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-<meta property="og:url" content="https://serpmonn.ru/frontend/messenger.html">
-<link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
-<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=6">
-<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=6">
-<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=4">
-<link rel="stylesheet" href="/frontend/styles/menu.css?v=messenger1">
-<link rel="stylesheet" href="/frontend/styles/accessibility.css">
-<link rel="stylesheet" href="/frontend/fonts/messenger.css?v=1">
-<style>
-/* ── TOKENS ──────────────────────────────────────────────────── */
-:root, [data-theme="light"] {
-  --color-bg:       #f5f5f5;
-  --color-surface:  #ebebeb;
-  --color-surface-2:#e2e2e2;
-  --color-surface-offset:#d8d8d8;
-  --color-divider:  #cccccc;
-  --color-text:     #111111;
-  --color-text-muted:#555555;
-  --color-text-faint:#999999;
-  --color-primary:  #e03030;
-  --color-primary-hover:#c42020;
-  --color-primary-active:#a01818;
-  --color-warning:  #b45309;
-  --shadow-sm:      0 1px 3px rgba(0,0,0,.10);
-  --shadow-md:      0 4px 14px rgba(0,0,0,.12);
-  --shadow-lg:      0 12px 32px rgba(0,0,0,.15);
-}
-[data-theme="dark"] {
-  --color-bg:       #0e0e0e;
-  --color-surface:  #161616;
-  --color-surface-2:#1e1e1e;
-  --color-surface-offset:#242424;
-  --color-divider:  #2a2a2a;
-  --color-text:     #e8e8e8;
-  --color-text-muted:#888888;
-  --color-text-faint:#555555;
-  --color-primary:  #ff4d4d;
-  --color-primary-hover:#e03030;
-  --color-primary-active:#c42020;
-  --color-warning:  #f59e0b;
-  --shadow-sm:      0 1px 3px rgba(0,0,0,.40);
-  --shadow-md:      0 4px 14px rgba(0,0,0,.50);
-  --shadow-lg:      0 12px 32px rgba(0,0,0,.60);
-}
-@media(prefers-color-scheme:dark){:root:not([data-theme]){
-  --color-bg:#0e0e0e;--color-surface:#161616;--color-surface-2:#1e1e1e;
-  --color-surface-offset:#242424;--color-divider:#2a2a2a;
-  --color-text:#e8e8e8;--color-text-muted:#888888;--color-text-faint:#555555;
-  --color-primary:#ff4d4d;--color-primary-hover:#e03030;--color-primary-active:#c42020;
-  --color-warning:#f59e0b;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.40);--shadow-md:0 4px 14px rgba(0,0,0,.50);--shadow-lg:0 12px 32px rgba(0,0,0,.60);
-}}
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn Messenger — P2P-мессенджер с E2E | Serpmonn</title>
+  <meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Доступ к переписке закрыт. Доступен в RuStore.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://serpmonn.ru/frontend/messenger.html">
+  <link rel="alternate" hreflang="ru" href="https://serpmonn.ru/frontend/messenger.html">
+  <link rel="alternate" hreflang="en" href="https://serpmonn.ru/frontend/en/messenger.html">
+  <link rel="alternate" hreflang="x-default" href="https://serpmonn.ru/frontend/messenger.html">
+  <meta property="og:title" content="Serpmonn Messenger">
+  <meta property="og:description" content="P2P-мессенджер с E2E-шифрованием. Сообщения напрямую между устройствами. Доступен в RuStore.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/serpmonn-512.png?v=4">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/messenger.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Serpmonn Messenger">
+  <meta name="twitter:description" content="P2P-мессенджер с E2E-шифрованием. Доступен в RuStore.">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/serpmonn-512.png?v=4">
+  <link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=6">
+  <link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=4">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
+  <link rel="stylesheet" href="/frontend/fonts/messenger.css?v=2">
+  <style>
+    :root {
+      --bg: #f4f4f5;
+      --text: #121214;
+      --muted: #5c5c66;
+      --accent: #e03030;
+      --accent-soft: #ff4d4d;
+      --line: rgba(18, 18, 20, 0.1);
+      --font: "Manrope", system-ui, sans-serif;
+      --display: "JetBrains Mono", "Courier New", monospace;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --page-bg:
+        radial-gradient(1000px 620px at 6% -16%, rgba(224, 48, 48, 0.16), transparent 58%),
+        radial-gradient(820px 520px at 96% 4%, rgba(18, 18, 20, 0.06), transparent 55%),
+        linear-gradient(180deg, #fbfbfc 0%, var(--bg) 42%, #ececee 100%);
+      --sticky-bg: rgba(251, 251, 252, 0.94);
+      --sticky-border: rgba(18, 18, 20, 0.08);
+      --ghost-bg: rgba(255, 255, 255, 0.55);
+      --ghost-border: rgba(18, 18, 20, 0.14);
+      --hero-glow: rgba(224, 48, 48, 0.28);
+      --mark-shell: linear-gradient(160deg, #2a2a30 0%, #121214 100%);
+      --phone-ring: rgba(224, 48, 48, 0.28);
+      --phone-bg: #121214;
+      --warn: #b45309;
+    }
+    html[data-theme="dark"] {
+      --bg: #0e0e10;
+      --text: #eeeef0;
+      --muted: #9a9aa6;
+      --accent: #ff4d4d;
+      --accent-soft: #e03030;
+      --line: rgba(238, 238, 240, 0.1);
+      --page-bg:
+        radial-gradient(1000px 620px at 6% -16%, rgba(224, 48, 48, 0.22), transparent 58%),
+        radial-gradient(820px 520px at 96% 4%, rgba(255, 255, 255, 0.04), transparent 55%),
+        linear-gradient(180deg, #0a0a0c 0%, var(--bg) 42%, #08080a 100%);
+      --sticky-bg: rgba(10, 10, 12, 0.94);
+      --sticky-border: rgba(238, 238, 240, 0.1);
+      --ghost-bg: rgba(255, 255, 255, 0.06);
+      --ghost-border: rgba(238, 238, 240, 0.18);
+      --hero-glow: rgba(255, 77, 77, 0.32);
+      --mark-shell: linear-gradient(160deg, #3a3a42 0%, #1a1a1e 100%);
+      --phone-ring: rgba(255, 77, 77, 0.32);
+      --phone-bg: #0a0a0c;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; color-scheme: light dark; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      background: var(--page-bg);
+      background-attachment: fixed;
+    }
+    a { color: inherit; }
+    .page {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 4.5rem 0 5.5rem;
+    }
+    .page--sticky-pad { padding-bottom: 6.5rem; }
 
-/* ── MISC TOKENS ─────────────────────────────────────────────── */
-:root {
-  --text-xs:   clamp(0.75rem,  .7rem  + .25vw, .875rem);
-  --text-sm:   clamp(0.875rem, .8rem  + .35vw, 1rem);
-  --text-base: clamp(1rem,     .95rem + .25vw, 1.125rem);
-  --text-lg:   clamp(1.125rem, 1rem   + .75vw, 1.5rem);
-  --text-xl:   clamp(1.5rem,   1.2rem + 1.25vw,2.25rem);
-  --text-2xl:  clamp(2rem,     1.2rem + 2.5vw, 3.5rem);
-  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
-  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
-  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
-  --transition:180ms cubic-bezier(.16,1,.3,1);
-  --content-default:900px;
-  --font-display:'JetBrains Mono','Courier New',monospace;
-  --font-body:'Inter','Helvetica Neue',sans-serif;
-}
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: clamp(1.5rem, 4vw, 3.25rem);
+      align-items: center;
+      min-height: calc(100svh - 5.5rem);
+      margin-bottom: clamp(3.5rem, 9vw, 6rem);
+    }
+    .hero-copy {
+      display: grid;
+      gap: 1.1rem;
+      max-width: 34rem;
+    }
+    .hero-copy > * {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise 0.9s var(--ease) forwards;
+    }
+    .hero-copy > *:nth-child(1) { animation-delay: 0.08s; }
+    .hero-copy > *:nth-child(2) { animation-delay: 0.2s; }
+    .hero-copy > *:nth-child(3) { animation-delay: 0.34s; }
+    .hero-copy > *:nth-child(4) { animation-delay: 0.46s; }
+    .hero-copy > *:nth-child(5) { animation-delay: 0.56s; }
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .status {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--warn);
+    }
+    .brand {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(2.4rem, 6.5vw, 3.85rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+    .brand .accent { color: var(--accent); }
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2.2vw, 1.22rem);
+      max-width: 28rem;
+      font-weight: 500;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+      margin-top: 0.1rem;
+    }
+    .trust {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
 
-/* ── BASE ────────────────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;scroll-padding-top:4rem;-webkit-font-smoothing:antialiased;}
-body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
-  color:var(--color-text);background:var(--color-bg);line-height:1.6;}
-img,svg{display:block;max-width:100%;}
-a{color:inherit;text-decoration:none;}
-a,button{transition:color var(--transition),background var(--transition),
-  border-color var(--transition),box-shadow var(--transition);}
-button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
-:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+    .store-badge {
+      display: inline-block;
+      line-height: 0;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 0.28s var(--ease), filter 0.28s ease;
+      filter: drop-shadow(0 10px 22px rgba(18, 18, 20, 0.16));
+      -webkit-tap-highlight-color: transparent;
+    }
+    .store-badge img {
+      display: block;
+      height: 52px;
+      width: auto;
+      border-radius: 10px;
+    }
+    .store-badge--primary img { height: 58px; }
+    .store-badge--apk {
+      filter: drop-shadow(0 4px 10px rgba(18, 18, 20, 0.08));
+      opacity: 0.82;
+    }
+    .store-badge--apk img { height: 38px; }
+    .store-badge picture { display: block; line-height: 0; }
+    .store-badge:hover {
+      transform: translateY(-3px) scale(1.03);
+      filter: drop-shadow(0 16px 30px rgba(18, 18, 20, 0.22));
+      opacity: 1;
+    }
+    .store-badge:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .store-badge:active { transform: translateY(-1px) scale(0.99); }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: transform 0.28s var(--ease), border-color 0.2s ease, box-shadow 0.28s var(--ease);
+      border: 1px solid var(--ghost-border);
+      background: var(--ghost-bg);
+      color: var(--text);
+      height: auto;
+      padding: 0.7rem 1.1rem;
+    }
+    .btn-ghost:hover { border-color: var(--accent); }
+    .btn-ghost .size {
+      font-weight: 600;
+      opacity: 0.72;
+      font-size: 0.84em;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.9rem 1.35rem;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(224, 48, 48, 0.28);
+      transition: transform 0.2s var(--ease);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
 
-/* ── NAV ─────────────────────────────────────────────────────── */
-nav{
-  position:sticky;top:0;z-index:100;
-  background:color-mix(in srgb,var(--color-bg) 88%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--color-divider);
-  padding:var(--space-4) 0;
-}
-.nav-inner{
-  max-width:var(--content-default);margin:0 auto;
-  padding:0 5.5rem 0 var(--space-6);display:flex;align-items:center;justify-content:space-between;
-}
-.nav-logo{
-  display:flex;align-items:center;gap:var(--space-3);
-  font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;letter-spacing:-.01em;
-}
-.nav-logo img{width:28px;height:28px;border-radius:var(--radius-sm);object-fit:contain;background:transparent;}
-.nav-logo span{
-  background:linear-gradient(90deg,var(--color-primary) 0%,#ff8080 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.nav-right{display:flex;align-items:center;gap:var(--space-4);}
-.theme-toggle{
-  width:36px;height:36px;border-radius:var(--radius-full);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--color-text-muted);
-  border:1px solid var(--color-divider);
-}
-.theme-toggle:hover{color:var(--color-primary);border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 8%,transparent);}
+    .hero-stage {
+      position: relative;
+      min-height: 420px;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateY(24px) scale(0.98);
+      animation: rise 1s var(--ease) 0.18s forwards;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: 8% 10% 10%;
+      background: radial-gradient(circle at 50% 45%, var(--hero-glow), transparent 64%);
+      filter: blur(12px);
+      pointer-events: none;
+      animation: pulse 5.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.85; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+    .phone {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 280px);
+      margin-inline: auto;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px var(--phone-ring),
+        0 28px 60px rgba(18, 18, 20, 0.35);
+      background: var(--phone-bg);
+      animation: float 6s ease-in-out infinite;
+    }
+    .phone img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 9 / 20;
+      object-fit: cover;
+      object-position: top center;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(160px, 22vw);
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 0.35rem 0 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--accent) 35%, transparent) transparent;
+    }
+    .rail figure { margin: 0; scroll-snap-align: start; }
+    .rail .phone { width: 100%; animation: none; }
+    .rail figcaption {
+      margin-top: 0.55rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    [data-reveal].is-in .phone { transform: translateY(-6px); }
+    .section { margin-top: 4.25rem; }
+    .section-head {
+      margin-bottom: 1.6rem;
+      max-width: 34rem;
+    }
+    .section-title {
+      margin: 0 0 0.4rem;
+      font-family: var(--display);
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      letter-spacing: -0.03em;
+    }
+    .section-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
 
-/* ── BADGE ───────────────────────────────────────────────────── */
-.badge{
-  display:inline-flex;align-items:center;gap:var(--space-2);
-  font-size:var(--text-xs);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
-  padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);
-  border:1px solid color-mix(in srgb,var(--color-warning) 60%,transparent);
-  color:var(--color-warning);
-  background:color-mix(in srgb,var(--color-warning) 8%,transparent);
-}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--color-warning);animation:pulse-dot 2s ease-in-out infinite;}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+    .scene {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1.4rem, 4vw, 3.2rem);
+      align-items: center;
+      margin-top: 2.75rem;
+    }
+    .scene:first-of-type { margin-top: 0; }
+    .scene--flip .scene-copy { order: 2; }
+    .scene--flip .scene-visual { order: 1; }
+    .scene-copy h3 {
+      margin: 0 0 0.5rem;
+      font-family: var(--display);
+      font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+      letter-spacing: -0.03em;
+      color: var(--accent);
+    }
+    .scene-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 28rem;
+    }
+    .scene-visual {
+      display: grid;
+      place-items: center;
+    }
+    .glyph {
+      width: min(100%, 180px);
+      aspect-ratio: 1;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      color: var(--accent);
+      transition: transform 0.55s var(--ease);
+    }
+    .glyph svg { width: 56px; height: 56px; }
 
-/* ── HERO ────────────────────────────────────────────────────── */
-.hero{
-  max-width:var(--content-default);margin:0 auto;
-  padding:clamp(4rem,10vw,6rem) var(--space-6) clamp(3rem,7vw,5rem);
-}
-.hero-eyebrow{margin-bottom:var(--space-6);}
-.hero-title{
-  font-family:var(--font-display);font-size:var(--text-2xl);
-  font-weight:700;line-height:1.05;letter-spacing:-.03em;
-  margin-bottom:var(--space-6);
-}
-.hero-title .accent{
-  color:var(--color-primary);
-  text-shadow:0 0 40px color-mix(in srgb,var(--color-primary) 35%,transparent);
-}
-.hero-desc{font-size:var(--text-lg);color:var(--color-text-muted);max-width:58ch;margin-bottom:var(--space-8);line-height:1.6;}
+    .notice {
+      margin-top: 2.5rem;
+      padding: 1rem 1.15rem;
+      border-left: 3px solid var(--warn);
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 40rem;
+      background: color-mix(in srgb, var(--warn) 7%, transparent);
+    }
+    .notice strong { color: var(--warn); }
 
-/* ── DOWNLOAD BLOCK ──────────────────────────────────────────── */
-.download-block{
-  display:flex;flex-direction:column;gap:var(--space-4);
-  margin-bottom:var(--space-6);
-}
-.download-cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
-  gap:var(--space-4);
-  max-width:880px;
-}
-.download-card{
-  display:flex;flex-direction:column;
-  background:var(--color-surface);
-  border:1px solid var(--color-divider);
-  border-radius:var(--radius-xl);
-  padding:var(--space-4) var(--space-5);
-  transition:border-color var(--transition),box-shadow var(--transition),transform var(--transition);
-}
-.download-card:hover{
-  border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);
-  box-shadow:var(--shadow-md);
-  transform:translateY(-1px);
-}
-.download-card.recommended{
-  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
-  background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface));
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--color-primary) 15%,transparent);
-}
-.download-card-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:var(--space-2);
-}
-.download-card-title{
-  font-size:var(--text-sm);font-weight:700;
-  display:flex;align-items:center;gap:var(--space-2);
-}
-.download-card-title svg{color:var(--color-primary);flex-shrink:0;}
-.download-tag{
-  font-size:var(--text-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-  padding:2px var(--space-2);border-radius:var(--radius-full);
-  background:color-mix(in srgb,var(--color-primary) 12%,transparent);
-  color:var(--color-primary);
-}
-.download-tag.muted{
-  background:color-mix(in srgb,var(--color-text-faint) 15%,transparent);
-  color:var(--color-text-faint);
-}
-.download-card-desc{
-  font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.55;
-  margin-bottom:var(--space-4);flex:1;
-}
-.download-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
-  font-size:var(--text-xs);font-weight:600;
-  padding:var(--space-2) var(--space-4);
-  border-radius:var(--radius-lg);
-  align-self:flex-start;
-  width:fit-content;
-  max-width:100%;
-  flex:0 0 auto;
-  box-sizing:border-box;
-}
-.download-btn.primary{
-  background:linear-gradient(135deg,var(--color-primary),#c42020);
-  color:#fff;
-  box-shadow:0 3px 12px color-mix(in srgb,var(--color-primary) 35%,transparent);
-}
-.download-btn.primary:hover{
-  background:linear-gradient(135deg,var(--color-primary-hover),#a01818);
-  box-shadow:0 5px 18px color-mix(in srgb,var(--color-primary) 50%,transparent);
-  transform:translateY(-1px);
-}
-.download-btn.secondary{
-  color:var(--color-text-muted);
-  border:1px solid var(--color-divider);
-}
-.download-btn.secondary:hover{
-  color:var(--color-text);
-  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
-  background:color-mix(in srgb,var(--color-primary) 6%,transparent);
-}
-.download-btn + .download-btn{margin-top:var(--space-2);}
-.download-version{
-  margin-top:var(--space-2);
-  font-size:var(--text-xs);color:var(--color-text-faint);line-height:1.4;
-}
-.download-hint{
-  font-size:var(--text-xs);color:var(--color-text-faint);line-height:1.5;
-}
+    .roadmap {
+      display: grid;
+      gap: 0.65rem;
+      max-width: 40rem;
+    }
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.85rem;
+      align-items: baseline;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .roadmap-num {
+      font-family: var(--display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .roadmap-item.is-now .roadmap-num { color: var(--accent); }
+    .roadmap-title { font-weight: 700; margin: 0 0 0.2rem; }
+    .roadmap-desc { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .roadmap-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .roadmap-item.is-now .roadmap-tag { color: var(--accent); }
+    .more-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      font-family: var(--display);
+      font-size: 0.92rem;
+    }
+    .more-link:hover { text-decoration: underline; }
 
-/* ── ROADMAP ANCHOR BTN ──────────────────────────────────────── */
-.btn-secondary{
-  display:inline-flex;align-items:center;gap:var(--space-2);
-  font-size:var(--text-sm);font-weight:500;
-  padding:var(--space-3) var(--space-5);
-  color:var(--color-text-muted);
-  border:1px solid var(--color-divider);
-  border-radius:var(--radius-lg);
-}
-.btn-secondary:hover{color:var(--color-text);border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 6%,transparent);}
+    .faq-list { display: grid; gap: 0.55rem; max-width: 40rem; }
+    .faq-item {
+      border-bottom: 1px solid var(--line);
+      padding: 0.25rem 0;
+    }
+    .faq-item summary {
+      cursor: pointer;
+      font-weight: 700;
+      padding: 0.75rem 0;
+      list-style: none;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: "+";
+      float: right;
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .faq-item[open] summary::after { content: "–"; }
+    .faq-item p {
+      margin: 0 0 0.95rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+    .build {
+      margin: 1.2rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      opacity: 0.85;
+    }
 
-/* ── DISCLAIMER ──────────────────────────────────────────────── */
-.disclaimer{max-width:var(--content-default);margin:0 auto var(--space-12);padding:0 var(--space-6);}
-.disclaimer-inner{
-  background:color-mix(in srgb,var(--color-warning) 7%,var(--color-surface));
-  border:1px solid color-mix(in srgb,var(--color-warning) 30%,transparent);
-  border-radius:var(--radius-xl);
-  padding:var(--space-5) var(--space-6);
-  display:flex;gap:var(--space-4);align-items:flex-start;
-}
-.disclaimer-icon{flex-shrink:0;color:var(--color-warning);margin-top:2px;}
-.disclaimer-text{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.7;}
-.disclaimer-text strong{color:var(--color-warning);font-weight:600;}
+    .footer-cta {
+      margin-top: 4.5rem;
+      padding-top: 2.25rem;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 0.85rem;
+      max-width: 34rem;
+    }
+    .site-foot {
+      margin-top: 3rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .site-foot a { text-decoration: none; }
+    .site-foot a:hover { color: var(--accent); }
 
-/* ── SECTIONS ────────────────────────────────────────────────── */
-.section-divider{max-width:var(--content-default);margin:0 auto;padding:0 var(--space-6);border:none;border-top:1px solid var(--color-divider);}
-.section-wrap{max-width:var(--content-default);margin:0 auto;padding:clamp(3rem,8vw,5rem) var(--space-6);}
-.section-label{
-  font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--color-primary);margin-bottom:var(--space-4);
-}
-.section-title{
-  font-family:var(--font-display);font-size:var(--text-xl);
-  font-weight:700;letter-spacing:-.02em;margin-bottom:var(--space-10);line-height:1.2;
-}
+    .sticky-dl { display: none; }
+    @media (max-width: 720px) {
+      body { padding-bottom: 4.75rem; }
+      .page--sticky-pad { padding-bottom: 7rem; }
+      .sticky-dl {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        gap: 0.65rem;
+        align-items: center;
+        padding: 0.7rem 0.9rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
+        background: var(--sticky-bg);
+        border-top: 1px solid var(--sticky-border);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: translateY(110%);
+        transition: transform 0.35s var(--ease);
+      }
+      .sticky-dl.is-on { transform: translateY(0); }
+      .sticky-dl .store-badge--primary img { height: 46px; }
+      .sticky-dl .store-badge--apk img { height: 38px; }
+    }
 
-/* ── FEATURE CARDS ───────────────────────────────────────────── */
-.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:var(--space-4);}
-.feature-card{
-  background:var(--color-surface);
-  border:1px solid var(--color-divider);
-  border-radius:var(--radius-xl);
-  padding:var(--space-6);
-  position:relative;overflow:hidden;
-  transition:box-shadow var(--transition),border-color var(--transition),transform var(--transition);
-}
-.feature-card::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,color-mix(in srgb,var(--color-primary) 6%,transparent),transparent 60%);
-  opacity:0;transition:opacity var(--transition);
-}
-.feature-card:hover{box-shadow:var(--shadow-md);border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);transform:translateY(-2px);}
-.feature-card:hover::before{opacity:1;}
-.feature-icon{
-  width:36px;height:36px;margin-bottom:var(--space-4);
-  color:var(--color-primary);
-  filter:drop-shadow(0 0 8px color-mix(in srgb,var(--color-primary) 50%,transparent));
-}
-.feature-title{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
-.feature-desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+    }
+    [data-reveal].is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    [data-reveal].is-in .glyph { transform: translateY(-6px); }
 
-/* ── ROADMAP ─────────────────────────────────────────────────── */
-.roadmap-list{display:flex;flex-direction:column;gap:var(--space-2);}
-.roadmap-item{
-  display:flex;align-items:flex-start;gap:var(--space-4);
-  padding:var(--space-4) var(--space-5);
-  border-radius:var(--radius-lg);
-  background:var(--color-surface);
-  border:1px solid var(--color-divider);
-  transition:border-color var(--transition);
-}
-.roadmap-item.done{opacity:.45;}
-.roadmap-item.current{
-  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
-  background:color-mix(in srgb,var(--color-primary) 6%,var(--color-surface));
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--color-primary) 20%,transparent);
-}
-.roadmap-num{font-family:var(--font-display);font-size:var(--text-xs);font-weight:700;color:var(--color-text-faint);flex-shrink:0;width:28px;padding-top:2px;}
-.roadmap-item.current .roadmap-num{color:var(--color-primary);}
-.roadmap-body{flex:1;}
-.roadmap-title{font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-1);}
-.roadmap-desc{font-size:var(--text-xs);color:var(--color-text-muted);}
-.roadmap-status{font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;padding-top:3px;flex-shrink:0;}
-.status-done{color:var(--color-text-faint);}
-.status-current{color:var(--color-primary);}
-.status-future{color:var(--color-text-faint);}
-
-/* ── FEEDBACK ────────────────────────────────────────────────── */
-.feedback-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:var(--space-4);}
-.feedback-card{
-  background:var(--color-surface);
-  border:1px solid var(--color-divider);
-  border-radius:var(--radius-xl);
-  padding:var(--space-6);
-  transition:border-color var(--transition);
-}
-.feedback-card:hover{border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);}
-.feedback-type{font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-3);}
-.feedback-card h3{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
-.feedback-card p{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);line-height:1.6;}
-.feedback-link{
-  display:inline-flex;align-items:center;gap:var(--space-2);
-  font-size:var(--text-sm);font-weight:600;
-  font-family:var(--font-display);
-  color:var(--color-primary);
-}
-.feedback-link:hover{color:var(--color-primary-hover);}
-
-/* ── FOOTER ──────────────────────────────────────────────────── */
-footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
-.footer-inner{
-  max-width:var(--content-default);margin:0 auto;
-  padding:0 var(--space-6);display:flex;align-items:center;
-  justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);
-}
-.footer-copy{font-size:var(--text-xs);color:var(--color-text-faint);}
-.footer-links{display:flex;gap:var(--space-6);}
-.footer-links a{font-size:var(--text-xs);color:var(--color-text-faint);}
-.footer-links a:hover{color:var(--color-primary);}
-
-/* ── MOBILE ──────────────────────────────────────────────────── */
-@media(max-width:600px){
-  .hero-desc{font-size:var(--text-base);}
-  .nav-logo span{display:none;}
-  .footer-inner{flex-direction:column;text-align:center;}
-}
-</style>
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding-top: 1rem;
+      }
+      .hero-stage { min-height: 300px; order: -1; }
+      .hero-stage .phone { width: min(56vw, 220px); }
+      .rail { grid-auto-columns: minmax(148px, 42vw); }
+      .scene,
+      .scene--flip { grid-template-columns: 1fr; }
+      .scene--flip .scene-copy,
+      .scene--flip .scene-visual { order: unset; }
+      .scene-visual { order: -1; }
+    }
+    @media (max-width: 640px) {
+      .brand { font-size: clamp(2.1rem, 10vw, 2.8rem); }
+      .cta-row .store-badge--primary { width: 100%; }
+      .cta-row .store-badge--primary img { height: 52px; }
+      .store-badge--apk img { height: 34px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-copy > *,
+      .hero-stage,
+      [data-reveal],
+      .sticky-dl,
+      .phone,
+      .hero-glow,
+      .glyph {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<a href="#main" style="position:absolute;left:-9999px">Перейти к содержимому</a>
+  <a href="#main" style="position:absolute;left:-9999px">Перейти к содержимому</a>
+  <nav id="menuContainer" aria-label="Меню"></nav>
 
-<nav>
-  <div class="nav-inner">
-    <a href="/" class="nav-logo">
-      <img src="/frontend/images/serpmonn-192.png?v=4" alt="Serpmonn" width="28" height="28">
-      <span>Serpmonn Messenger</span>
+  <main id="main" class="page page--sticky-pad">
+    <header class="hero" aria-labelledby="messenger-title">
+      <div class="hero-copy">
+        <p class="status">Версия 0.2.1 · RuStore</p>
+        <h1 id="messenger-title" class="brand">Serpmonn<br><span class="accent">Messenger</span></h1>
+        <p class="lead">P2P и end-to-end: сообщения идут напрямую между устройствами — без доступа серверов к переписке.</p>
+        <div class="cta-row">
+          <a class="store-badge store-badge--primary" href="/out/store/messenger/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-ru-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-ru.svg?v=13" width="200" height="58" alt="RuStore">
+            </picture>
+          </a>
+          <a class="store-badge store-badge--apk" href="/frontend/downloads/messenger/Serpmonn%20Messenger.apk" download="Serpmonn Messenger.apk" aria-label="Скачать APK">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=13" width="140" height="38" alt="Serpmonn">
+            </picture>
+          </a>
+        </div>
+        <p class="trust">Android 8.0+ · бесплатно</p>
+      </div>
+      <div class="hero-stage">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="phone">
+          <img src="/frontend/downloads/messenger/shots/contacts.png?v=1" alt="Список чатов Serpmonn Messenger" width="1220" height="2712" decoding="async" fetchpriority="high">
+        </div>
+      </div>
+    </header>
+
+    <p class="notice" data-reveal>
+      <strong>Ранний публичный релиз.</strong> Возможны сбои и изменения. Для критически важных данных пока лучше иметь запасной канал связи.
+    </p>
+
+    <section class="section" id="shots" aria-labelledby="shots-title">
+      <div class="section-head" data-reveal>
+        <h2 id="shots-title" class="section-title">Экраны</h2>
+        <p class="section-note">Список чатов, блокировка, обмен контактом по QR и настройки на устройстве.</p>
+      </div>
+      <div class="rail" data-reveal>
+        <figure>
+          <div class="phone"><img src="/frontend/downloads/messenger/shots/contacts.png?v=1" alt="Список контактов и чатов" width="1220" height="2712" loading="lazy"></div>
+          <figcaption>Чаты и контакты</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="/frontend/downloads/messenger/shots/login.png?v=1" alt="Экран блокировки PIN и отпечатка" width="1220" height="2712" loading="lazy"></div>
+          <figcaption>Блокировка приложения</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="/frontend/downloads/messenger/shots/qr.png?v=1" alt="QR-код для добавления контакта" width="1220" height="2712" loading="lazy"></div>
+          <figcaption>Контакт по QR</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="/frontend/downloads/messenger/shots/settings.png?v=1" alt="Настройки темы и блокировки" width="1220" height="2712" loading="lazy"></div>
+          <figcaption>Настройки</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="how-title">
+      <div class="section-head" data-reveal>
+        <h2 id="how-title" class="section-title">Как это устроено</h2>
+        <p class="section-note">Шифрование на устройстве. Прямое соединение. Локальная история.</p>
+      </div>
+
+      <article class="scene" data-reveal>
+        <div class="scene-copy">
+          <h3>End-to-end</h3>
+          <p>Сообщения шифруются на устройстве и расшифровываются только на стороне получателя. Ни серверы, ни Serpmonn содержимое не видят.</p>
+        </div>
+        <div class="scene-visual">
+          <div class="glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <article class="scene scene--flip" data-reveal>
+        <div class="scene-copy">
+          <h3>Прямое P2P</h3>
+          <p>Устройства соединяются напрямую. Если сеть мешает — включается резервный зашифрованный маршрут, E2E сохраняется.</p>
+        </div>
+        <div class="scene-visual">
+          <div class="glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><path d="M7 12h5m2-5-5 5m5 5-5-5"/></svg>
+          </div>
+        </div>
+      </article>
+
+      <article class="scene" data-reveal>
+        <div class="scene-copy">
+          <h3>Офлайн и группы</h3>
+          <p>Bluetooth и локальный Wi‑Fi без интернета. Личные и групповые чаты, обмен контактами по QR, история на устройстве.</p>
+        </div>
+        <div class="scene-visual">
+          <div class="glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="download" aria-labelledby="download-title">
+      <div class="section-head" data-reveal>
+        <h2 id="download-title" class="section-title">Скачать</h2>
+        <p class="section-note">RuStore — с обновлениями. APK — прямая загрузка. Windows EXE — ранняя альфа.</p>
+        <div class="cta-row" style="margin-top:1.1rem">
+          <a class="store-badge store-badge--primary" href="/out/store/messenger/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-ru-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-rustore-ru.svg?v=13" width="200" height="58" alt="RuStore">
+            </picture>
+          </a>
+          <a class="store-badge store-badge--apk" href="/frontend/downloads/messenger/Serpmonn%20Messenger.apk" download="Serpmonn Messenger.apk" aria-label="Скачать APK">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=13">
+              <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=13" width="140" height="38" alt="Serpmonn">
+            </picture>
+          </a>
+          <a class="btn-ghost" href="/frontend/downloads/messenger/Serpmonn%20Messenger.exe" download>Windows EXE <span class="size">· ~40 МБ</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-head" data-reveal>
+        <h2 id="roadmap-title" class="section-title">Дорожная карта</h2>
+        <p class="section-note">Публикация в RuStore пройдена. Сейчас — отзывы и правки.</p>
+      </div>
+      <div class="roadmap" data-reveal>
+        <div class="roadmap-item is-now">
+          <span class="roadmap-num">09</span>
+          <div>
+            <p class="roadmap-title">Сбор отзывов после релиза</p>
+            <p class="roadmap-desc">Отзывы пользователей RuStore, правки по обратной связи.</p>
+          </div>
+          <span class="roadmap-tag">Сейчас</span>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-num">10</span>
+          <div>
+            <p class="roadmap-title">Google Play</p>
+            <p class="roadmap-desc">Публикация Serpmonn Messenger в Google Play.</p>
+          </div>
+          <span class="roadmap-tag">Далее</span>
+        </div>
+      </div>
+      <a class="more-link" data-reveal href="/frontend/messenger-roadmap.html">Подробная дорожная карта →</a>
+    </section>
+
+    <section class="section" aria-labelledby="install-title">
+      <div class="section-head" data-reveal>
+        <h2 id="install-title" class="section-title">Установка</h2>
+        <p class="section-note">Версия 0.2.1 — сборка в RuStore.</p>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq-item">
+          <summary>Как установить из RuStore?</summary>
+          <p>Открывается страница приложения в RuStore → «Установить». Обновления приходят через магазин.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Windows EXE?</summary>
+          <p>Ранняя альфа для Windows 10/11, установщик не нужен. Если SmartScreen предупреждает — «Подробнее» → «Выполнить в любом случае».</p>
+        </details>
+        <details class="faq-item">
+          <summary>Куда писать о багах?</summary>
+          <p><a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a> — баги; <a href="mailto:improve@serpmonn.ru">improve@serpmonn.ru</a> — идеи.</p>
+        </details>
+      </div>
+      <p class="build" data-reveal>Serpmonn Messenger 0.2.1</p>
+    </section>
+
+    <div class="footer-cta" data-reveal>
+      <p class="lead">Прямая переписка без чужих глаз.</p>
+      <div class="cta-row">
+        <a class="store-badge store-badge--primary" href="/out/store/messenger/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-ru-light.svg?v=13">
+            <img src="/frontend/images/stores/badge-rustore-ru.svg?v=13" width="200" height="58" alt="RuStore">
+          </picture>
+        </a>
+        <a class="store-badge store-badge--apk" href="/frontend/downloads/messenger/Serpmonn%20Messenger.apk" download="Serpmonn Messenger.apk" aria-label="Скачать APK">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=13">
+            <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=13" width="140" height="38" alt="Serpmonn">
+          </picture>
+        </a>
+      </div>
+    </div>
+
+    <footer class="site-foot">
+      <p>© 2024–2026 Serpmonn</p>
+      <nav>
+        <a href="/">serpmonn.ru</a>
+        ·
+        <a href="mailto:support@serpmonn.ru">Поддержка</a>
+      </nav>
+    </footer>
+  </main>
+
+  <div class="sticky-dl" id="sticky-dl" role="region" aria-label="Скачать Messenger">
+    <a class="store-badge store-badge--primary" href="/out/store/messenger/rustore" target="_blank" rel="noopener" aria-label="RuStore">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-rustore-ru-light.svg?v=13">
+        <img src="/frontend/images/stores/badge-rustore-ru.svg?v=13" width="160" height="46" alt="RuStore">
+      </picture>
     </a>
-    <div class="nav-right">
-      <button class="theme-toggle" data-theme-toggle aria-label="Сменить тему">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<main id="main">
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow">
-    <span class="badge"><span class="badge-dot"></span>Доступно в RuStore</span>
-  </div>
-  <h1 class="hero-title"><span class="accent">Децентрализованный</span><br>мессенджер</h1>
-  <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android и Windows. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни Serpmonn — не имеет доступа к вашей переписке.</p>
-
-  <!-- DOWNLOAD -->
-  <div class="download-block">
-    <div class="download-cards">
-      <div class="download-card recommended">
-        <div class="download-card-header">
-          <span class="download-card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
-            Android · APK
-          </span>
-          <span class="download-tag">Релиз</span>
-        </div>
-        <p class="download-card-desc">Один файл для <strong>смартфонов</strong> (современных и старых Android) и <strong>64‑битных эмуляторов</strong>.</p>
-        <a href="/frontend/downloads/messenger/Serpmonn%20Messenger.apk" class="download-btn primary" download="Serpmonn Messenger.apk">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Скачать APK · ~89 МБ
-        </a>
-        <a href="/out/store/messenger/rustore" class="download-btn secondary" target="_blank" rel="noopener">
-          Также в RuStore
-        </a>
-        <p class="download-version">Версия <strong>0.2.1</strong></p>
-      </div>
-      <div class="download-card">
-        <div class="download-card-header">
-          <span class="download-card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Windows · EXE
-          </span>
-          <span class="download-tag muted">Альфа</span>
-        </div>
-        <p class="download-card-desc">Настольная версия для <strong>Windows 10/11</strong>. Установщик не требуется — запускайте файл после скачивания. Ранняя альфа.</p>
-        <a href="/frontend/downloads/messenger/Serpmonn%20Messenger.exe" class="download-btn primary" download>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Скачать EXE · ~40 МБ
-        </a>
-      </div>
-    </div>
-    <p class="download-hint">Android: удобнее ставить из <a href="/out/store/messenger/rustore" target="_blank" rel="noopener">RuStore</a>; при установке APK разрешите неизвестные источники (Android 8.0+). Windows EXE — ранняя альфа; при предупреждении SmartScreen нажмите «Подробнее» → «Выполнить в любом случае».</p>
+    <a class="store-badge store-badge--apk" href="/frontend/downloads/messenger/Serpmonn%20Messenger.apk" download="Serpmonn Messenger.apk" aria-label="Скачать APK">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=13">
+        <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=13" width="140" height="38" alt="Serpmonn">
+      </picture>
+    </a>
   </div>
 
-  <a href="#roadmap" class="btn-secondary" style="align-self:flex-start">
-    Дорожная карта
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </a>
-</section>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script>
+    (function () {
+      var nodes = document.querySelectorAll("[data-reveal]");
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-in");
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.18, rootMargin: "0px 0px -6% 0px" });
+        nodes.forEach(function (n) { io.observe(n); });
+      } else {
+        nodes.forEach(function (n) { n.classList.add("is-in"); });
+      }
 
-<!-- DISCLAIMER -->
-<div class="disclaimer">
-  <div class="disclaimer-inner">
-    <svg class="disclaimer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    <p class="disclaimer-text"><strong>Ранний публичный релиз.</strong> Продукт развивается: возможны сбои и изменения. Требуется Android 8.0+. Для критически важных данных пока лучше иметь запасной канал связи.</p>
-  </div>
-</div>
-
-<hr class="section-divider">
-
-<!-- FEATURES -->
-<section class="section-wrap">
-  <p class="section-label">Возможности</p>
-  <h2 class="section-title">Как это работает</h2>
-  <div class="features-grid">
-
-    <article class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <rect x="3" y="11" width="18" height="11" rx="2"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-      </svg>
-      <h3 class="feature-title">Абсолютное шифрование</h3>
-      <p class="feature-desc">Сообщения шифруются на вашем устройстве и расшифровываются только у собеседника. Никто — ни серверы, ни Serpmonn — не имеет доступа к содержимому.</p>
-    </article>
-
-    <article class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/>
-        <path d="M7 12h5m2-5-5 5m5 5-5-5"/>
-      </svg>
-      <h3 class="feature-title">Прямое P2P-соединение</h3>
-      <p class="feature-desc">Устройства соединяются напрямую, без промежуточных серверов. Сообщения не проходят через инфраструктуру Serpmonn.</p>
-    </article>
-
-    <article class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <rect x="5" y="2" width="14" height="20" rx="2"/>
-        <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
-      <h3 class="feature-title">Мобильное приложение</h3>
-      <p class="feature-desc">Нативное приложение для Android: личные и групповые чаты, обмен контактами по QR, локальная история на устройстве.</p>
-    </article>
-
-    <article class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-      <h3 class="feature-title">Резервный канал связи</h3>
-      <p class="feature-desc">Если прямое соединение невозможно из-за сетевых ограничений, используется резервный зашифрованный маршрут — E2E-шифрование сохраняется.</p>
-    </article>
-
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ROADMAP -->
-<section class="section-wrap" id="roadmap">
-  <p class="section-label">Дорожная карта</p>
-  <h2 class="section-title">Этапы разработки</h2>
-  <ol class="roadmap-list">
-    <li class="roadmap-item done">
-      <span class="roadmap-num">01</span>
-      <div class="roadmap-body"><div class="roadmap-title">Прототип протокола</div><div class="roadmap-desc">Проверка идеи децентрализованного обмена сообщениями.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">02</span>
-      <div class="roadmap-body"><div class="roadmap-title">Ядро безопасности</div><div class="roadmap-desc">Ключи, шифрование, структура чатов, локальное хранилище.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">03</span>
-      <div class="roadmap-body"><div class="roadmap-title">Сетевой слой</div><div class="roadmap-desc">Прямые соединения между устройствами и резервные маршруты при ограничениях сети.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">04</span>
-      <div class="roadmap-body"><div class="roadmap-title">Android-приложение</div><div class="roadmap-desc">Регистрация, чаты, контакты, QR, резервные копии, привязка компьютера.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">05</span>
-      <div class="roadmap-body"><div class="roadmap-title">Офлайн-режим</div><div class="roadmap-desc">Общение без интернета — по Bluetooth и в локальной Wi‑Fi сети.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">06</span>
-      <div class="roadmap-body"><div class="roadmap-title">Группы и усиленная защита</div><div class="roadmap-desc">Групповые беседы и повышенная защита личных переписок.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">07</span>
-      <div class="roadmap-body"><div class="roadmap-title">Тестирование в поле</div><div class="roadmap-desc">Проверка на реальных устройствах и сетях перед публичным релизом.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item done">
-      <span class="roadmap-num">08</span>
-      <div class="roadmap-body"><div class="roadmap-title">Публикация</div><div class="roadmap-desc">Подписанная сборка опубликована в RuStore.</div></div>
-      <span class="roadmap-status status-done">✓</span>
-    </li>
-    <li class="roadmap-item current">
-      <span class="roadmap-num">09</span>
-      <div class="roadmap-body"><div class="roadmap-title">Сбор отзывов после релиза</div><div class="roadmap-desc">Слушаем пользователей RuStore и APK, правим по обратной связи.</div></div>
-      <span class="roadmap-status status-current">→ Сейчас</span>
-    </li>
-    <li class="roadmap-item">
-      <span class="roadmap-num">10</span>
-      <div class="roadmap-body"><div class="roadmap-title">Google Play</div><div class="roadmap-desc">Публикация Serpmonn Messenger в Google Play.</div></div>
-      <span class="roadmap-status status-future">Далее</span>
-    </li>
-  </ol>
-  <p style="margin-top:var(--space-6);font-size:var(--text-xs);color:var(--color-text-faint);">
-    <a href="/frontend/messenger-roadmap.html" style="color:var(--color-primary);">Подробная дорожная карта →</a>
-  </p>
-</section>
-
-<hr class="section-divider">
-
-<!-- FEEDBACK -->
-<section class="section-wrap">
-  <p class="section-label">Обратная связь</p>
-  <h2 class="section-title">Помогите сделать лучше</h2>
-  <div class="feedback-grid">
-    <div class="feedback-card">
-      <p class="feedback-type">Баги и проблемы</p>
-      <h3>Нашли ошибку?</h3>
-      <p>Расскажите что пошло не так: версия Android, шаги для воспроизведения, что ожидали и что получили.</p>
-      <a href="mailto:support@serpmonn.ru" class="feedback-link">support@serpmonn.ru
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
-    <div class="feedback-card">
-      <p class="feedback-type">Идеи и предложения</p>
-      <h3>Есть идея?</h3>
-      <p>Нужна функция, которой нет, или есть мысли по UX — можно написать. Всё читается.</p>
-      <a href="mailto:improve@serpmonn.ru" class="feedback-link">improve@serpmonn.ru
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="footer-inner">
-    <p class="footer-copy">© 2024–2026 Serpmonn.</p>
-    <nav class="footer-links">
-      <a href="/">serpmonn.ru</a>
-      <a href="mailto:support@serpmonn.ru">Поддержка</a>
-    </nav>
-  </div>
-</footer>
-
-<script>
-(function(){
-  var t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
-  var d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  r.setAttribute('data-theme',d);
-  function si(m){
-    if(!t)return;
-    t.innerHTML=m==='dark'
-      ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-      :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-  }
-  si(d);
-  if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);si(d);});
-})();
-</script>
-<script type="module" src="/frontend/scripts/menu-loader.js"></script>
+      var sticky = document.getElementById("sticky-dl");
+      var hero = document.querySelector(".hero");
+      if (sticky && hero && "IntersectionObserver" in window) {
+        var sio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            sticky.classList.toggle("is-on", !entry.isIntersecting);
+          });
+        }, { threshold: 0.12 });
+        sio.observe(hero);
+      } else if (sticky) {
+        sticky.classList.add("is-on");
+      }
+    })();
+  </script>
 </body>
 </html>

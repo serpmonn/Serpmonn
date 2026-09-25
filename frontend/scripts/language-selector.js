@@ -56,8 +56,13 @@
             || /^\/serphold(?:\/|$)/.test(pathname);
     }
 
+    function isAnimalsPath(pathname){
+        return /(?:^|\/)(?:frontend\/)?downloads\/animals(?:\/|$)/.test(pathname)
+            || /^\/animals(?:\/|$)/.test(pathname);
+    }
+
     function isApkLandingPath(pathname){
-        return isNeonRunnerPath(pathname) || isSerpholdPath(pathname);
+        return isNeonRunnerPath(pathname) || isSerpholdPath(pathname) || isAnimalsPath(pathname);
     }
 
     function neonRunnerLangFromPath(pathname){
@@ -72,8 +77,16 @@
         return null;
     }
 
+    function animalsLangFromPath(pathname){
+        if (/animals\/en(?:\/|$)/.test(pathname)) return 'en';
+        if (isAnimalsPath(pathname)) return 'ru';
+        return null;
+    }
+
     function apkLandingLangFromPath(pathname){
-        return neonRunnerLangFromPath(pathname) || serpholdLangFromPath(pathname);
+        return neonRunnerLangFromPath(pathname)
+            || serpholdLangFromPath(pathname)
+            || animalsLangFromPath(pathname);
     }
 
     function neonRunnerTarget(lang){
@@ -87,6 +100,13 @@
         const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
         if (safe === 'en') return '/frontend/downloads/serphold/en/';
         if (safe === 'ru') return '/frontend/downloads/serphold/';
+        return null;
+    }
+
+    function animalsTarget(lang){
+        const safe = String(lang || '').replace(/[^a-z0-9-]/g, '');
+        if (safe === 'en') return '/frontend/downloads/animals/en/';
+        if (safe === 'ru') return '/frontend/downloads/animals/';
         return null;
     }
 
@@ -105,6 +125,9 @@
             }
             if (isSerpholdPath(url.pathname)) {
                 return serpholdTarget(safe);
+            }
+            if (isAnimalsPath(url.pathname)) {
+                return animalsTarget(safe);
             }
 
             if (idx === -1) {
