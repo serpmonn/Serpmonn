@@ -35,7 +35,7 @@ const ADMITAD_API = 'https://api.admitad.com';
 
 const CPA_HOSTS = new Set([
   'rzekl.com', 'ficca2021.com', 'codeaven.com', 'xmknb.com', 'zmgig.com', 'xcdus.com',
-  'twnfz.com', 'dhwnh.com', 'dorinebeaumont.com', 'tywhh.com', 'zallj.com', 'xnmik.com',
+  'twnfz.com', 'dhwnh.com', 'dorinebeaumont.com', 'tywhh.com', 'zallj.com', 'vxrlm.com', 'xnmik.com',
   'lsuix.com', 'aflink.ru', 'ewwhk.com', 'dbnua.com', 'rcpsj.com', 'ypetp.com', 'yjfca.com',
   'qbzdl.com', 'yynbx.com', 'admitad.com',
 ]);
