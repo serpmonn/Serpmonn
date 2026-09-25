@@ -66,7 +66,11 @@ export async function getStoreClickStats({ days = 30 } = {}) {
   const products = STORE_APPS.map((app) => {
     const stores = {};
     for (const sid of STORE_IDS) {
-      const hasLink = sid === 'rustore' ? Boolean(app.rustore) : Boolean(app.play);
+      const hasLink =
+        sid === 'rustore' ? Boolean(app.rustore)
+          : sid === 'play' ? Boolean(app.play)
+            : sid === 'apk' ? Boolean(app.apk)
+              : false;
       const stats = byKey.get(`${app.id}:${sid}`) || { hits: 0, uniqIp: 0 };
       stores[sid] = {
         hasLink,
@@ -85,6 +89,6 @@ export async function getStoreClickStats({ days = 30 } = {}) {
   return {
     days: d,
     products,
-    note: 'Клики по кнопкам на лендинге (/out/store/…), не статистика магазинов'
+    note: 'Клики по кнопкам на лендинге (/out/store/…/rustore|play|apk), не статистика магазинов'
   };
 }
