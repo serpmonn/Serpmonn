@@ -223,6 +223,38 @@
       font-size: 0.88em;
     }
 
+    .store-badge {
+      display: inline-block;
+      line-height: 0;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 0.28s var(--ease), filter 0.28s ease, opacity 0.2s ease;
+      filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.22));
+      -webkit-tap-highlight-color: transparent;
+    }
+    .store-badge img {
+      display: block;
+      height: 52px;
+      width: auto;
+      border-radius: 10px;
+    }
+    .store-badge--primary img { height: 58px; }
+    .store-badge--apk {
+      opacity: 0.95;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+    }
+    .store-badge--apk img { height: 44px; }
+    .store-badge:hover {
+      transform: translateY(-3px) scale(1.03);
+      opacity: 1;
+      filter: drop-shadow(0 16px 30px color-mix(in srgb, var(--leaf) 28%, transparent));
+    }
+    .store-badge:focus-visible {
+      outline: 2px solid var(--leaf);
+      outline-offset: 3px;
+    }
+    .sticky-dl .store-badge--apk img { height: 36px; }
+
     .hero-copy > * {
       opacity: 0;
       transform: translateY(18px);
@@ -440,9 +472,12 @@
       </h1>
       <p class="lead">Лесное выживание: голод, день и ночь — и волк после заката.</p>
       <div class="cta-row">
-        <a class="btn btn-primary"
-           href="/frontend/downloads/animals/Animals-Alpha-Win64.zip"
-           download="Animals-Alpha-Win64.zip">Скачать ZIP <span class="size">· ~678 МБ</span></a>
+        <a class="store-badge store-badge--apk" href="/out/store/animals/apk" download="Animals-Alpha-Win64.zip" aria-label="Скачать Animals">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=16">
+            <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=16" width="140" height="38" alt="Серпмонн">
+          </picture>
+        </a>
         <a class="btn btn-ghost" href="#scenes">Об игре</a>
       </div>
       <p class="trust">Windows 64-bit · RU / EN · Alpha</p>
@@ -498,9 +533,12 @@
         <h2 id="download-title" class="section-title">Скачать</h2>
         <p class="section-note">ZIP для Windows: распаковка и запуск Animals.exe.</p>
         <div class="cta-row" style="margin-top:1.1rem">
-          <a class="btn btn-primary"
-             href="/frontend/downloads/animals/Animals-Alpha-Win64.zip"
-             download="Animals-Alpha-Win64.zip">Скачать ZIP <span class="size">· ~678 МБ</span></a>
+          <a class="store-badge store-badge--apk" href="/out/store/animals/apk" download="Animals-Alpha-Win64.zip" aria-label="Скачать Animals">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=16">
+            <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=16" width="140" height="38" alt="Серпмонн">
+          </picture>
+        </a>
         </div>
       </div>
     </section>
@@ -530,17 +568,23 @@
     <div class="footer-cta" data-reveal>
       <p class="lead">Выживание в лесу.</p>
       <div class="cta-row">
-        <a class="btn btn-primary"
-           href="/frontend/downloads/animals/Animals-Alpha-Win64.zip"
-           download="Animals-Alpha-Win64.zip">Скачать Animals (Windows)</a>
+        <a class="store-badge store-badge--apk" href="/out/store/animals/apk" download="Animals-Alpha-Win64.zip" aria-label="Скачать Animals">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=16">
+            <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=16" width="140" height="38" alt="Серпмонн">
+          </picture>
+        </a>
       </div>
     </div>
   </main>
 
   <div class="sticky-dl" id="sticky-dl" role="region" aria-label="Скачать Animals">
-    <a class="btn btn-primary"
-       href="/frontend/downloads/animals/Animals-Alpha-Win64.zip"
-       download="Animals-Alpha-Win64.zip">Скачать ZIP</a>
+    <a class="store-badge store-badge--apk" href="/out/store/animals/apk" download="Animals-Alpha-Win64.zip" aria-label="Скачать Animals">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="/frontend/images/stores/badge-serpmonn-ru-light.svg?v=16">
+            <img src="/frontend/images/stores/badge-serpmonn-ru.svg?v=16" width="140" height="38" alt="Серпмонн">
+          </picture>
+        </a>
   </div>
 
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
