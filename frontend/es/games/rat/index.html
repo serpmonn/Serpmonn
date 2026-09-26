@@ -1,9 +1,9 @@
 
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="es" dir="ltr" data-themes="light dark" data-langs="ru ar az be bg bn cs da de el en es es-419 fa fi fil fr he hi hu hy id it ja ka kk ko ms nb nl pl pt-br pt-pt ro sr sv th tr ur uz vi zh-cn ps sd ug dv ks ku-arab yi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Rata Gorda — Serpmonn Games</title>
   
   
@@ -207,6 +207,18 @@
 <link rel="alternate" href="https://serpmonn.ru/frontend/games/rat/index.html" hreflang="x-default" />
 
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
@@ -236,6 +248,13 @@
   <link rel="stylesheet" href="/frontend/fonts/rat-typing.css?v=1">
   <style>
     .rat-game {
+      width: 100%;
+      max-width: 420px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
       color: var(--text);
       font-family: var(--font-body);
       --bg: #0e0f11;
@@ -246,29 +265,70 @@
       --muted: #7b7e8a;
       --primary: #f0c040;
       --primary-dim: #b89020;
-      --wall: #2a2d36;
-      --wall-lit: #3a3f4d;
+      --wall: #23262f;
+      --wall-edge: rgba(255,255,255,0.04);
       --food-color: #ff6b35;
       --bonus-color: #a78bfa;
       --rat-base: #c8a882;
+      --canvas-bg: #0e0f11;
+      --overlay-bg: rgba(14,15,17,0.9);
+      --btn-ink: #0e0f11;
       --font-mono: 'Share Tech Mono', monospace;
       --font-body: 'Inter', sans-serif;
+      --wrap-shadow: 0 0 40px rgba(240,192,64,0.06), 0 8px 32px rgba(0,0,0,0.6);
+    }
+    html[data-theme="light"] .rat-game {
+      --bg: #f4f2ec;
+      --surface: #ffffff;
+      --surface2: #efece4;
+      --border: #d8d2c6;
+      --text: #1c1a16;
+      --muted: #6b655c;
+      --primary: #c48912;
+      --primary-dim: #9a6c0e;
+      --wall: #3a3630;
+      --wall-edge: rgba(255,255,255,0.12);
+      --food-color: #ff6b35;
+      --bonus-color: #7c5cbf;
+      --rat-base: #c8a882;
+      --canvas-bg: #ebe6dc;
+      --overlay-bg: rgba(244,242,236,0.92);
+      --btn-ink: #1c1a16;
+      --wrap-shadow: 0 0 28px rgba(196,137,18,0.12), 0 8px 24px rgba(28,26,22,0.12);
     }
     .rat-game *, .rat-game *::before, .rat-game *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-font-smoothing: antialiased; }
+    html {
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
     body.rat-page {
       min-height: 100dvh;
-      background: #0e0f11;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      background: var(--bg, #0e0f11);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
-      gap: 1rem;
+      padding: 0.75rem;
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      gap: 0.75rem;
     }
-    .header {
-      display: flex; align-items: center; gap: 0.75rem;
+    html[data-theme="dark"] body.rat-page {
+      background:
+        radial-gradient(900px 480px at 12% -10%, rgba(240,192,64,0.08), transparent 55%),
+        #0e0f11;
     }
+    html[data-theme="light"] body.rat-page {
+      background:
+        radial-gradient(900px 480px at 12% -10%, rgba(196,137,18,0.12), transparent 55%),
+        #f4f2ec;
+    }
+    .header { display: flex; align-items: center; gap: 0.75rem; }
     .header h1 {
       font-family: var(--font-mono);
       font-size: 1.3rem;
@@ -276,74 +336,214 @@
       letter-spacing: 0.06em;
     }
     .header h1 span { color: var(--muted); font-size: 0.8rem; }
+    .header-icon-bg { fill: var(--surface); }
 
     .scoreboard {
-      display: flex; gap: 1rem;
+      display: flex;
+      gap: 0.45rem;
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      min-width: 0;
     }
     .score-item {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 0.75rem;
-      padding: 0.4rem 1rem;
+      padding: 0.4rem 0.45rem;
       text-align: center;
-      min-width: 80px;
+      flex: 1 1 0;
+      min-width: 0;
     }
     .score-label {
-      font-size: 0.6rem; font-family: var(--font-mono);
-      color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+      font-size: 0.58rem; font-family: var(--font-mono);
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .score-value {
       font-family: var(--font-mono); font-size: 1.35rem;
       color: var(--primary); line-height: 1.2;
     }
+    .score-value.combo-flash {
+      animation: comboPop 0.45s ease;
+      color: #ff6b35;
+    }
+    @keyframes comboPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.28); }
+      100% { transform: scale(1); }
+    }
+    .combo-badge {
+      position: absolute;
+      right: 0;
+      top: -0.65rem;
+      max-width: 46%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #0e0f11;
+      background: linear-gradient(90deg, #f0c040, #ff6b35);
+      border-radius: 999px;
+      padding: 0.15rem 0.55rem;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .combo-badge.on { opacity: 1; transform: translateY(0); }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 0.45rem;
+      width: 420px; max-width: 100%;
+      justify-content: center;
+    }
+    .toolbar .btn {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.75rem;
+    }
+    .btn.ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+    .btn.ghost:hover { border-color: var(--primary); filter: none; }
+
+    .nickname-panel {
+      width: 420px; max-width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+    .nickname-panel[hidden] { display: none !important; }
+    .nickname-panel label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+    .nickname-panel input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--text);
+      padding: 0.5rem 0.65rem;
+      font-family: var(--font-mono);
+    }
+    .nick-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 
     .canvas-wrap {
       position: relative;
+      width: 100%;
+      max-width: 420px;
       border-radius: 1rem;
       overflow: hidden;
       border: 1px solid var(--border);
-      box-shadow: 0 0 40px rgba(240,192,64,0.06), 0 8px 32px rgba(0,0,0,0.6);
+      box-shadow: var(--wrap-shadow);
       cursor: pointer;
+      transition: transform 0.08s linear;
+      min-width: 0;
     }
-    canvas { display: block; }
+    .canvas-wrap.shake { animation: ratShake 0.28s ease; }
+    .canvas-wrap.near-flash::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,107,53,0.14);
+      pointer-events: none;
+      animation: nearFlash 0.28s ease;
+    }
+    @keyframes ratShake {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-3px, 1px); }
+      50% { transform: translate(3px, -2px); }
+      75% { transform: translate(-2px, 1px); }
+    }
+    @keyframes nearFlash { 0% { opacity: 1; } 100% { opacity: 0; } }
+    canvas#c {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 1rem;
+      transform: translateX(-50%) translateY(8px);
+      background: rgba(0,0,0,0.78);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 3;
+      white-space: nowrap;
+      max-width: calc(100% - 1rem);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+    }
+    html[data-theme="light"] .toast { background: rgba(28,26,22,0.88); }
+    .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     .overlay {
       position: absolute; inset: 0;
-      background: rgba(14,15,17,0.9);
+      background: var(--overlay-bg);
       backdrop-filter: blur(6px);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 0.85rem;
       border-radius: 1rem;
       transition: opacity 0.2s;
+      padding: 1rem;
     }
     .overlay.hidden { opacity: 0; pointer-events: none; }
     .overlay-title {
-      font-family: var(--font-mono); font-size: 1.6rem;
+      font-family: var(--font-mono); font-size: 1.45rem;
       color: var(--primary); letter-spacing: 0.06em;
+      text-align: center;
     }
     .overlay-sub {
       color: var(--muted); font-size: 0.82rem;
-      text-align: center; line-height: 1.7; max-width: 260px;
+      text-align: center; line-height: 1.7; max-width: 280px;
     }
-    .overlay-score {
-      font-family: var(--font-mono); font-size: 0.95rem; color: var(--text);
-    }
+    .overlay-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
     .btn {
-      background: var(--primary); color: #0e0f11;
+      background: var(--primary); color: var(--btn-ink);
       font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700;
       letter-spacing: 0.08em; border: none; border-radius: 0.5rem;
       padding: 0.6rem 1.75rem; cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.1s, filter 0.15s;
     }
-    .btn:hover { background: #ffe066; }
+    .btn:hover { filter: brightness(1.08); }
     .btn:active { transform: scale(0.97); }
 
     .hint {
       font-size: 0.7rem; color: var(--muted);
       font-family: var(--font-mono); letter-spacing: 0.04em;
+      text-align: center;
     }
 
+    .fat-meta {
+      width: 420px; max-width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.25rem;
+    }
+    .fat-stage {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
     .fat-bar-wrap {
       width: 420px; max-width: 100%;
       background: var(--surface);
@@ -372,7 +572,7 @@
 
 <div class="header">
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-    <rect width="30" height="30" rx="7" fill="#16181c"/>
+    <rect class="header-icon-bg" width="30" height="30" rx="7"/>
     <ellipse cx="15" cy="17" rx="7" ry="5" fill="#c8a882"/>
     <ellipse cx="21" cy="13" rx="4" ry="3.5" fill="#c8a882"/>
     <ellipse cx="20" cy="10" rx="2" ry="1.5" fill="#e8c0a0"/>
@@ -380,7 +580,7 @@
     <path d="M8 18 Q4 16 3 20" stroke="#a07050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
     <circle cx="25" cy="7" r="2.5" fill="#ff6b35"/>
   </svg>
-  <h1>FAT RAT <span>// serpmonn.ru</span></h1>
+  <h1>FAT RAT</h1>
 </div>
 
 <div class="scoreboard">
@@ -396,403 +596,84 @@
     <div class="score-label">Récord</div>
     <div class="score-value" id="best">0</div>
   </div>
+  <div class="combo-badge" id="comboBadge" aria-hidden="true"></div>
 </div>
 
+<div class="fat-meta">
+  <span class="fat-stage" id="fatStage">Slim</span>
+  <span class="fat-stage" id="nickValue" style="color:var(--muted)">—</span>
+</div>
 <div class="fat-bar-wrap"><div class="fat-bar" id="fatBar"></div></div>
+
+<form id="nicknameForm" class="nickname-panel" hidden>
+  <label for="nickname">Nickname for leaderboard (optional)</label>
+  <input type="text" id="nickname" maxlength="24" placeholder="Your nick" autocomplete="nickname">
+  <div class="nick-row">
+    <button type="submit" class="btn">Save</button>
+    <button type="button" class="btn ghost" id="btnSkipNick">Skip</button>
+  </div>
+</form>
+
+<div class="toolbar">
+  <button class="btn ghost" id="btnPause" type="button" hidden>Pause</button>
+  <button class="btn ghost" id="btnSound" type="button" aria-pressed="true">Sound: on</button>
+  <button class="btn ghost" id="btnChangeNick" type="button">Set nick</button>
+  <button class="btn ghost" id="btnLeaderboard" type="button">Leaderboard</button>
+</div>
 
 <div class="canvas-wrap" id="canvasWrap">
   <canvas id="c" width="420" height="420"></canvas>
+  <div class="toast" id="toast" aria-live="polite"></div>
   <div class="overlay" id="overlay">
-    <div class="overlay-title">🐀 FAT RAT</div>
-    <div class="overlay-sub">
+    <div class="overlay-title">FAT RAT</div>
+    <div class="overlay-sub" id="overlaySub">
       Haz clic en el laberinto — la rata corre hacia la comida.<br>
       Cuanto más gorda la rata — más lento se mueve.<br>
-      <span style="color:#a78bfa">Comida morada</span> — súper impulso ×3!<br>
+      <span style="color:var(--bonus-color)">Comida morada</span> — súper impulso ×3!<br>
       Objetivo: ¡engordar la rata al máximo!
     </div>
-    <button class="btn" id="startBtn">EMPEZAR</button>
+    <div class="overlay-actions">
+      <button class="btn" id="startBtn">EMPEZAR</button>
+      <button class="btn ghost" id="shareBtn" type="button" hidden>Share</button>
+    </div>
   </div>
 </div>
 
-<div class="hint">[clic / toque] — señala la comida a la rata</div>
+<div class="hint" id="hint">[clic / toque] — señala la comida a la rata</div>
 
 <script type="module" src="/frontend/games/rat/rat-ads.js?v=1" defer></script>
 <script>
 window.i18n = {
-  gameOverTitle: "🏆 ¡GRASA MÁX!"
+  gameOverTitle: "🏆 ¡GRASA MÁX!",
+  tooFatTitle: "TOO FAT",
+  catCaughtTitle: "CAUGHT BY CAT",
+  stageSlim: "Slim",
+  stageChonk: "Chonk",
+  stageStuck: "Stuck",
+  comboLabel: "Combo",
+  weightLabel: "Peso kg",
+  soundOn: "Sound: on",
+  soundOff: "Sound: off",
+  pauseBtn: "Pause",
+  resumeBtn: "Resume",
+  shareBtn: "Share",
+  shareCopied: "Copied",
+  shareText: "Fat Rat on Serpmonn: {weight} kg, eaten {eaten}. Try: {url}",
+  changeNick: "Change nick",
+  setNick: "Set nick",
+  bannedNicknameAlert: "This nickname is not allowed",
+  fleeHint: "Food is fleeing — catch it!",
+  pausedHint: "Paused",
+  scoreTableUrl: "/frontend/games/redsquare2/score_table.html#rat",
+  overlayLine1: "Haz clic en el laberinto — la rata corre hacia la comida.",
+  overlayLine2: "Cuanto más gorda la rata — más lento se mueve.",
+  bonusFoodLabel: "Comida morada",
+  overlayLine3: " — súper impulso ×3!",
+  overlayGoal: "Objetivo: ¡engordar la rata al máximo!",
+  hintDefault: "[clic / toque] — señala la comida a la rata"
 };
 </script>
-<script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const overlay = document.getElementById('overlay');
-const fatBar = document.getElementById('fatBar');
-
-const W = canvas.width, H = canvas.height;
-const CELL = 28;
-const COLS = Math.floor(W / CELL);
-const ROWS = Math.floor(H / CELL);
-const MAX_FAT = 60;
-
-let rat, food, bonusFood, walls, eaten, weight, best, gameRunning, animFrame;
-let ratAdShownThisRound = false;
-best = 0;
-
-function generateMaze() {
-  const mc = Math.floor(COLS / 2);
-  const mr = Math.floor(ROWS / 2);
-  const visited = Array.from({length: mr}, () => new Array(mc).fill(false));
-  const wallGrid = Array.from({length: mr}, () =>
-    Array.from({length: mc}, () => ({N:true, E:true, S:true, W:true}))
-  );
-
-  function carve(cx, cy) {
-    visited[cy][cx] = true;
-    const dirs = [{dx:1,dy:0,d:'E',od:'W'},{dx:-1,dy:0,d:'W',od:'E'},
-                  {dx:0,dy:1,d:'S',od:'N'},{dx:0,dy:-1,d:'N',od:'S'}]
-      .sort(() => Math.random() - 0.5);
-    for (const {dx, dy, d, od} of dirs) {
-      const nx = cx + dx, ny = cy + dy;
-      if (nx >= 0 && nx < mc && ny >= 0 && ny < mr && !visited[ny][nx]) {
-        wallGrid[cy][cx][d] = false;
-        wallGrid[ny][nx][od] = false;
-        carve(nx, ny);
-      }
-    }
-  }
-  carve(0, 0);
-
-  const ws = new Set();
-  for (let row = 0; row < mr; row++) {
-    for (let col = 0; col < mc; col++) {
-      const px = col * 2, py = row * 2;
-      if (wallGrid[row][col].E && col < mc-1) ws.add(`${px+1},${py}`);
-      if (wallGrid[row][col].S && row < mr-1) ws.add(`${px},${py+1}`);
-    }
-  }
-  const wallSet = new Set();
-  for (let c = 0; c < COLS; c++) { wallSet.add(`${c},0`); wallSet.add(`${c},${ROWS-1}`); }
-  for (let r = 0; r < ROWS; r++) { wallSet.add(`0,${r}`); wallSet.add(`${COLS-1},${r}`); }
-  for (const key of ws) {
-    const [x, y] = key.split(',').map(Number);
-    wallSet.add(`${x+1},${y+1}`);
-  }
-  return wallSet;
-}
-
-function isWall(x, y) {
-  return walls.has(`${x},${y}`);
-}
-
-function freeCells() {
-  const free = [];
-  for (let x = 1; x < COLS-1; x++)
-    for (let y = 1; y < ROWS-1; y++)
-      if (!isWall(x,y) && !(rat && rat.x===x && rat.y===y))
-        free.push({x,y});
-  return free;
-}
-
-function randomFree() {
-  const f = freeCells();
-  return f[Math.floor(Math.random() * f.length)];
-}
-
-function bfs(start, target) {
-  const queue = [start];
-  const visited = new Map();
-  visited.set(`${start.x},${start.y}`, null);
-  const dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
-  while (queue.length) {
-    const cur = queue.shift();
-    if (cur.x === target.x && cur.y === target.y) {
-      const path = [];
-      let node = `${target.x},${target.y}`;
-      while (visited.get(node)) {
-        path.unshift(node);
-        node = visited.get(node);
-      }
-      return path.map(k => { const [x,y]=k.split(',').map(Number); return {x,y}; });
-    }
-    for (const d of dirs) {
-      const nx = cur.x + d.x, ny = cur.y + d.y;
-      const key = `${nx},${ny}`;
-      if (!isWall(nx,ny) && !visited.has(key)) {
-        visited.set(key, `${cur.x},${cur.y}`);
-        queue.push({x:nx,y:ny});
-      }
-    }
-  }
-  return [];
-}
-
-function drawWalls() {
-  ctx.fillStyle = '#23262f';
-  for (let x = 0; x < COLS; x++)
-    for (let y = 0; y < ROWS; y++)
-      if (isWall(x,y)) {
-        ctx.fillRect(x*CELL, y*CELL, CELL, CELL);
-        ctx.fillStyle = 'rgba(255,255,255,0.04)';
-        ctx.fillRect(x*CELL, y*CELL, CELL, 2);
-        ctx.fillStyle = '#23262f';
-      }
-}
-
-function drawFood(f, isBonus) {
-  if (!f) return;
-  const cx = f.x * CELL + CELL/2, cy = f.y * CELL + CELL/2;
-  const r = isBonus ? CELL/2 - 4 : CELL/2 - 5;
-  ctx.shadowColor = isBonus ? '#a78bfa' : '#ff6b35';
-  ctx.shadowBlur = isBonus ? 14 : 10;
-  ctx.fillStyle = isBonus ? '#a78bfa' : '#ff6b35';
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.beginPath(); ctx.arc(cx-r*0.3, cy-r*0.3, r*0.3, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 0;
-}
-
-function drawRat() {
-  if (!rat) return;
-  const fatT = Math.min(weight / MAX_FAT, 1);
-  const baseR = CELL/2 - 3;
-  const bodyR = baseR + fatT * baseR * 1.8;
-  const cx = rat.drawX + CELL/2, cy = rat.drawY + CELL/2;
-
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  ctx.beginPath(); ctx.ellipse(cx, cy+bodyR*0.5+3, bodyR*0.9, bodyR*0.25, 0, 0, Math.PI*2); ctx.fill();
-
-  const fatColor = fatT < 0.5
-    ? lerpColor('#c8a882','#e8a050', fatT*2)
-    : lerpColor('#e8a050','#ff7030', (fatT-0.5)*2);
-  ctx.shadowColor = fatT > 0.7 ? '#ff6020' : 'transparent';
-  ctx.shadowBlur = fatT > 0.7 ? 18 : 0;
-  ctx.fillStyle = fatColor;
-  ctx.beginPath(); ctx.ellipse(cx, cy, bodyR, bodyR*0.85, 0, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 0;
-
-  const headR = baseR * 0.65 + fatT * baseR * 0.4;
-  const headOff = bodyR * 0.7;
-  const hx = cx + (rat.dirX || 1) * headOff;
-  const hy = cy + (rat.dirY || 0) * headOff * 0.7;
-  ctx.fillStyle = fatColor;
-  ctx.beginPath(); ctx.ellipse(hx, hy, headR, headR*0.9, 0, 0, Math.PI*2); ctx.fill();
-
-  ctx.fillStyle = '#e8c0a0';
-  ctx.beginPath(); ctx.ellipse(hx - (rat.dirX||1)*headR*0.3, hy - headR*0.7, headR*0.4, headR*0.3, 0, 0, Math.PI*2); ctx.fill();
-
-  ctx.fillStyle = '#1a0505';
-  ctx.beginPath(); ctx.arc(hx + (rat.dirX||1)*headR*0.2, hy - headR*0.15, Math.max(1.5, headR*0.2), 0, Math.PI*2); ctx.fill();
-
-  const tx = cx - (rat.dirX||1) * bodyR;
-  ctx.strokeStyle = '#a07050';
-  ctx.lineWidth = Math.max(1, 2 - fatT);
-  ctx.beginPath();
-  ctx.moveTo(tx, cy);
-  ctx.quadraticCurveTo(tx - (rat.dirX||1)*12, cy + 10, tx - (rat.dirX||1)*20, cy + 5);
-  ctx.stroke();
-
-  if (fatT > 0.5) {
-    const rings = Math.floor(fatT * 3);
-    ctx.strokeStyle = `rgba(255,160,60,${0.15 + fatT*0.2})`;
-    ctx.lineWidth = 1.5;
-    for (let i = 1; i <= rings; i++) {
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, bodyR * (0.5 + i*0.2), bodyR * (0.4 + i*0.15), 0, 0, Math.PI*2);
-      ctx.stroke();
-    }
-  }
-}
-
-function lerpColor(a, b, t) {
-  const ah = parseInt(a.slice(1),16), bh = parseInt(b.slice(1),16);
-  const ar = (ah>>16)&0xff, ag=(ah>>8)&0xff, ab=ah&0xff;
-  const br = (bh>>16)&0xff, bg=(bh>>8)&0xff, bb=bh&0xff;
-  const r = Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl2=Math.round(ab+(bb-ab)*t);
-  return `rgb(${r},${g},${bl2})`;
-}
-
-function render() {
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = '#0e0f11';
-  ctx.fillRect(0,0,W,H);
-  drawWalls();
-  drawFood(food, false);
-  drawFood(bonusFood, true);
-  drawRat();
-}
-
-let clickTarget = null;
-
-canvas.addEventListener('click', e => {
-  if (!gameRunning) return;
-  const rect = canvas.getBoundingClientRect();
-  const mx = Math.floor((e.clientX - rect.left) / CELL);
-  const my = Math.floor((e.clientY - rect.top) / CELL);
-  if (!isWall(mx, my)) clickTarget = {x:mx, y:my};
-});
-canvas.addEventListener('touchend', e => {
-  if (!gameRunning) return;
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.changedTouches[0];
-  const mx = Math.floor((touch.clientX - rect.left) / CELL);
-  const my = Math.floor((touch.clientY - rect.top) / CELL);
-  if (!isWall(mx, my)) clickTarget = {x:mx, y:my};
-}, {passive:false});
-
-let path = [];
-let stepTimer = 0;
-let bonusTimer = 0;
-let bonusSpawnTimer = 0;
-let lastTime = 0;
-
-function getSpeed() {
-  const fatT = Math.min(weight / MAX_FAT, 1);
-  return Math.max(1.2, 6 - fatT * 4.8);
-}
-
-function gameLoop(ts) {
-  const dt = Math.min((ts - lastTime) / 1000, 0.1);
-  lastTime = ts;
-
-  if (!gameRunning) return;
-
-  const targetX = rat.x * CELL, targetY = rat.y * CELL;
-  rat.drawX += (targetX - rat.drawX) * Math.min(1, dt * 14);
-  rat.drawY += (targetY - rat.drawY) * Math.min(1, dt * 14);
-
-  stepTimer += dt;
-  const stepInterval = 1 / getSpeed();
-
-  if (stepTimer >= stepInterval) {
-    stepTimer -= stepInterval;
-
-    const target = clickTarget || food;
-    if (!path.length || (clickTarget && (path[path.length-1].x !== clickTarget.x || path[path.length-1].y !== clickTarget.y))) {
-      path = bfs({x:rat.x, y:rat.y}, target);
-    }
-
-    if (path.length) {
-      const next = path.shift();
-      rat.dirX = next.x - rat.x;
-      rat.dirY = next.y - rat.y;
-      rat.x = next.x;
-      rat.y = next.y;
-    }
-
-    if (rat.x === food.x && rat.y === food.y) {
-      eaten++;
-      weight = Math.round((weight + 0.3 + Math.random()*0.2) * 10) / 10;
-      if (weight > best) best = weight;
-      food = randomFree();
-      path = [];
-      clickTarget = null;
-      spawnBonusChance();
-      updateUI();
-      if (weight >= MAX_FAT) {
-        endGame();
-        return;
-      }
-    }
-    if (bonusFood && rat.x === bonusFood.x && rat.y === bonusFood.y) {
-      eaten += 3;
-      weight = Math.round((weight + 1.2 + Math.random()*0.5) * 10) / 10;
-      if (weight > best) best = weight;
-      bonusFood = null;
-      bonusTimer = 0;
-      path = [];
-      clickTarget = null;
-      updateUI();
-      if (weight >= MAX_FAT) {
-        endGame();
-        return;
-      }
-    }
-  }
-
-  if (bonusFood) {
-    bonusTimer += dt;
-    if (bonusTimer > 8) { bonusFood = null; bonusTimer = 0; }
-  }
-  bonusSpawnTimer += dt;
-  if (bonusSpawnTimer > 15) {
-    bonusSpawnTimer = 0;
-    spawnBonus();
-  }
-
-  render();
-  animFrame = requestAnimationFrame(gameLoop);
-}
-
-function spawnBonusChance() {
-  if (!bonusFood && Math.random() < 0.18) spawnBonus();
-}
-function spawnBonus() {
-  bonusFood = randomFree();
-  bonusTimer = 0;
-}
-
-function updateUI() {
-  document.getElementById('eaten').textContent = eaten;
-  document.getElementById('weight').textContent = weight.toFixed(1);
-  document.getElementById('best').textContent = best.toFixed(1);
-  const fatT = Math.min(weight / MAX_FAT, 1) * 100;
-  fatBar.style.width = fatT + '%';
-}
-
-function init() {
-  walls = generateMaze();
-  rat = { x: Math.floor(COLS/2), y: Math.floor(ROWS/2), drawX:0, drawY:0, dirX:1, dirY:0 };
-  if (isWall(rat.x, rat.y)) {
-    const f = freeCells();
-    const c = f[Math.floor(f.length/2)];
-    rat.x = c.x; rat.y = c.y;
-  }
-  rat.drawX = rat.x * CELL; rat.drawY = rat.y * CELL;
-  food = randomFree();
-  bonusFood = null;
-  bonusTimer = 0;
-  bonusSpawnTimer = 0;
-  eaten = 0;
-  weight = 0.1;
-  path = [];
-  clickTarget = null;
-  stepTimer = 0;
-  updateUI();
-}
-
-function endGame() {
-  gameRunning = false;
-  cancelAnimationFrame(animFrame);
-  overlay.querySelector('.overlay-title').textContent = window.i18n?.gameOverTitle || '🏆 MAX FAT!';
-  overlay.querySelector('.overlay-sub').innerHTML =
-    eaten + ' · ' + weight.toFixed(1) + ' Peso kg';
-  overlay.classList.remove('hidden');
-  if (!ratAdShownThisRound && window.showFullScreenAd) {
-    ratAdShownThisRound = true;
-    setTimeout(() => {
-      try {
-        window.showFullScreenAd();
-      } catch (_) {}
-    }, 1000);
-  }
-}
-
-function startGame() {
-  init();
-  overlay.classList.add('hidden');
-  ratAdShownThisRound = false;
-  gameRunning = true;
-  lastTime = performance.now();
-  cancelAnimationFrame(animFrame);
-  animFrame = requestAnimationFrame(gameLoop);
-}
-
-document.getElementById('startBtn').addEventListener('click', startGame);
-
-init();
-render();
-</script>
+<script src="/frontend/games/rat/rat-game.js?v=5" defer></script>
 </div>
   
   

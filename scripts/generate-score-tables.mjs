@@ -80,7 +80,7 @@ function buildPage(locale, data) {
   window.lbI18n = ${JSON.stringify({ loadFail: data.loadFail, empty: data.empty })};
   </script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=5" defer></script>
+  <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js?v=6" defer></script>
   <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body class="leaderboard-page">
@@ -133,6 +133,20 @@ function buildPage(locale, data) {
                 <tbody id="leaderboardBodySnake"></tbody>
             </table>
         </section>
+
+        <section class="leaderboard-board" id="rat-board">
+            <h2>${escapeHtml(data.ratName)}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>${escapeHtml(data.rank)}</th>
+                        <th>${escapeHtml(data.nick)}</th>
+                        <th>${escapeHtml(data.weight)}</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBodyRat"></tbody>
+            </table>
+        </section>
     </div>
 
     <div class="ad-container" style="margin: 20px 0; text-align: center;">
@@ -165,9 +179,11 @@ function collectLocaleData(locale) {
     canonical: canonicalUrl(locale),
     rs2Name: locale === 'ru' ? 'Падающие фигуры' : rs2Name,
     snakeName: locale === 'ru' ? 'Змейка' : 'Snake',
+    ratName: locale === 'ru' ? 'Толстая крыса' : 'Fat Rat',
     rank: headers[0],
     nick: headers[1],
     score: headers[2],
+    weight: locale === 'ru' ? 'Вес кг' : 'Weight kg',
     time: pick(TIME_LABEL, locale),
   };
 }

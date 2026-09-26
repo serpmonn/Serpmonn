@@ -18,7 +18,18 @@ const BOARDS = [
     bodyId: 'leaderboardBodySnake',
     formatScore: (score) => String(score ?? ''),
   },
+  {
+    gameId: 'rat',
+    bodyId: 'leaderboardBodyRat',
+    formatScore: formatRatWeight,
+  },
 ];
+
+function formatRatWeight(score) {
+  const n = Number(score);
+  if (!Number.isFinite(n)) return '';
+  return `${(n / 10).toFixed(1)} kg`;
+}
 
 function formatPlayTime(seconds) {
   const total = Math.max(0, Math.floor(Number(seconds) || 0));
