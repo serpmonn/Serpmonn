@@ -12,7 +12,7 @@ eleventyComputed:
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}" data-themes="light dark">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="{{ locale }}">
@@ -38,11 +38,23 @@ eleventyComputed:
   {% include "partials/hreflang-locales.njk" %}
   <link rel="icon" href="/frontend/images/fifteen.png" type="image/x-icon">
 
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
-  <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css?v=2">
+  <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css?v=4">
 
   <script>
   (function () {
@@ -73,7 +85,18 @@ eleventyComputed:
     window.i18n = {
       continueAd: {{ gameFifteenTranslations[locale].gameFifteen.continueAd | dump | safe }},
       instructionsDesktop: {{ gameFifteenTranslations[locale].gameFifteen.instructionsDesktop | dump | safe }},
-      instructionsMobile: {{ gameFifteenTranslations[locale].gameFifteen.instructionsMobile | dump | safe }}
+      instructionsMobile: {{ gameFifteenTranslations[locale].gameFifteen.instructionsMobile | dump | safe }},
+      changeNick: {{ gameFifteenTranslations[locale].gameFifteen.changeNick | dump | safe }},
+      setNick: {{ gameFifteenTranslations[locale].gameFifteen.setNick | dump | safe }},
+      bannedNicknameAlert: {{ gameFifteenTranslations[locale].gameFifteen.bannedNicknameAlert | dump | safe }},
+      scoreTableUrl: {{ gameFifteenTranslations[locale].gameFifteen.scoreTableUrl | dump | safe }},
+      soundOn: {{ gameFifteenTranslations[locale].gameFifteen.soundOn | dump | safe }},
+      soundOff: {{ gameFifteenTranslations[locale].gameFifteen.soundOff | dump | safe }},
+      modeEasy: {{ gameFifteenTranslations[locale].gameFifteen.modeEasy | dump | safe }},
+      modeHard: {{ gameFifteenTranslations[locale].gameFifteen.modeHard | dump | safe }},
+      modeEasyLabel: {{ gameFifteenTranslations[locale].gameFifteen.modeEasyLabel | dump | safe }},
+      modeHardLabel: {{ gameFifteenTranslations[locale].gameFifteen.modeHardLabel | dump | safe }},
+      dailyLabel: {{ gameFifteenTranslations[locale].gameFifteen.dailyLabel | dump | safe }}
     };
   </script>
   <script type="module" src="/frontend/games/fifteen/fifteen-ads.js?v=3" defer></script>
@@ -143,9 +166,29 @@ eleventyComputed:
           <div class="stat">{{ gameFifteenTranslations[locale].gameFifteen.bestLabel }}<br><b id="best">0</b></div>
         </div>
 
+        <div class="nick-line">
+          <span>{{ gameFifteenTranslations[locale].gameFifteen.nickLabel }}: <strong id="nickValue">—</strong></span>
+          <span id="modeLabel" class="mode-label"></span>
+        </div>
+
+        <form id="nicknameForm" class="nickname-panel" hidden>
+          <label for="nickname">{{ gameFifteenTranslations[locale].gameFifteen.nickFormLabel }}</label>
+          <input type="text" id="nickname" maxlength="24" placeholder="{{ gameFifteenTranslations[locale].gameFifteen.nickPlaceholder }}" autocomplete="nickname">
+          <div class="nick-row">
+            <button type="submit" class="btn">{{ gameFifteenTranslations[locale].gameFifteen.nickSave }}</button>
+            <button type="button" class="btn ghost" id="btnSkipNick">{{ gameFifteenTranslations[locale].gameFifteen.nickSkip }}</button>
+          </div>
+        </form>
+
         <div class="controls">
           <button class="btn primary" id="btnNewGame">{{ gameFifteenTranslations[locale].gameFifteen.btnNewGame }}</button>
           <button class="btn" id="btnReset">{{ gameFifteenTranslations[locale].gameFifteen.btnReset }}</button>
+          <button class="btn" id="btnUndo" type="button">{{ gameFifteenTranslations[locale].gameFifteen.btnUndo }}</button>
+          <button class="btn" id="btnDaily" type="button">{{ gameFifteenTranslations[locale].gameFifteen.btnDaily }}</button>
+          <button class="btn" id="btnMode" type="button">{{ gameFifteenTranslations[locale].gameFifteen.modeEasy }}</button>
+          <button class="btn ghost" id="btnSound" type="button" aria-pressed="false">{{ gameFifteenTranslations[locale].gameFifteen.soundOff }}</button>
+          <button class="btn ghost" id="btnChangeNick" type="button">{{ gameFifteenTranslations[locale].gameFifteen.setNick }}</button>
+          <button class="btn ghost" id="btnLeaderboard" type="button">{{ gameFifteenTranslations[locale].gameFifteen.btnLeaderboard }}</button>
         </div>
 
         <div class="solved-message" id="solvedMessage" style="display:none;">
@@ -156,7 +199,7 @@ eleventyComputed:
     </div>
   </div>
 
-  <script src="/frontend/games/fifteen/fifteen.js?v=2" defer></script>
+  <script src="/frontend/games/fifteen/fifteen.js?v=4" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
   {{ mobileAnchor(localesNews[locale].news.closeAd) }}

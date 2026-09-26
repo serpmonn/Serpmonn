@@ -11,6 +11,17 @@ window.SERPMONN_LOCALES = {
     hint: 'Стрелки / WASD / свайп — ход · клик по плитке · R — заново',
     winMessage: 'Собрано!',
     timeSuffix: 'с',
+    themeLight: 'Светлая',
+    themeDark: 'Тёмная',
+    undo: 'Отмена',
+    daily: 'День',
+    modeEasy: '3×3',
+    modeHard: '4×4',
+    modeEasyLabel: 'Лёгкий 3×3',
+    modeHardLabel: 'Классика 4×4',
+    dailyLabel: 'День',
+    soundOn: 'Звук: вкл',
+    soundOff: 'Звук: выкл',
   },
   en: {
     htmlLang: 'en',
@@ -24,6 +35,17 @@ window.SERPMONN_LOCALES = {
     hint: 'Arrows / WASD / swipe — move · tap a tile · R — restart',
     winMessage: 'Solved!',
     timeSuffix: 's',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    undo: 'Undo',
+    daily: 'Daily',
+    modeEasy: '3×3',
+    modeHard: '4×4',
+    modeEasyLabel: 'Easy 3×3',
+    modeHardLabel: 'Classic 4×4',
+    dailyLabel: 'Daily',
+    soundOn: 'Sound: on',
+    soundOff: 'Sound: off',
   },
 };
 
@@ -50,6 +72,10 @@ window.applySerpmonnLocale = function (loc) {
   set('[data-i18n="hint"]', loc.hint);
   set('[data-i18n="newGame"]', loc.newGame);
   set('[data-i18n="reset"]', loc.reset);
+  set('[data-i18n="undo"]', loc.undo);
+  set('[data-i18n="daily"]', loc.daily);
+  set('[data-i18n="modeEasy"]', loc.modeEasy);
+  set('[data-i18n="soundOff"]', loc.soundOff);
   function relabel(sel, label, id) {
     const wrap = document.querySelector(sel);
     if (!wrap) return;
@@ -62,5 +88,19 @@ window.applySerpmonnLocale = function (loc) {
   window.i18n = {
     winMessage: loc.winMessage,
     timeSuffix: loc.timeSuffix,
+    themeLight: loc.themeLight,
+    themeDark: loc.themeDark,
+    soundOn: loc.soundOn,
+    soundOff: loc.soundOff,
+    modeEasy: loc.modeEasy,
+    modeHard: loc.modeHard,
+    modeEasyLabel: loc.modeEasyLabel,
+    modeHardLabel: loc.modeHardLabel,
+    dailyLabel: loc.dailyLabel,
   };
+  const themeBtn = document.getElementById('btnTheme');
+  if (themeBtn) {
+    const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    themeBtn.textContent = theme === 'light' ? loc.themeDark : loc.themeLight;
+  }
 };

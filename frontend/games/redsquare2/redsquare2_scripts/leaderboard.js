@@ -23,6 +23,16 @@ const BOARDS = [
     bodyId: 'leaderboardBodyRat',
     formatScore: formatRatWeight,
   },
+  {
+    gameId: 'fifteen',
+    bodyId: 'leaderboardBodyFifteen',
+    formatScore: (score) => String(score ?? ''),
+  },
+  {
+    gameId: 'fifteen3',
+    bodyId: 'leaderboardBodyFifteen3',
+    formatScore: (score) => String(score ?? ''),
+  },
 ];
 
 function formatRatWeight(score) {

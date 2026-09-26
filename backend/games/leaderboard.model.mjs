@@ -3,7 +3,8 @@ import { query } from '../database/config.mjs';
 let tablesReady = false;
 
 const MAX_SCORES_PER_GAME = 5000;
-const TIME_ASC_GAMES = new Set(['neli']);
+/** Games where lower score ranks higher (neli=seconds, fifteen*=moves). */
+const TIME_ASC_GAMES = new Set(['neli', 'fifteen', 'fifteen3']);
 
 function leaderboardOrderClause(gid) {
   return TIME_ASC_GAMES.has(gid) ? 'score ASC, id ASC' : 'score DESC, id DESC';

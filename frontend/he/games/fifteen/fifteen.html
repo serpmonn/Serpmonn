@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-themes="light dark">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="he">
@@ -225,11 +225,23 @@
 
   <link rel="icon" href="/frontend/images/fifteen.png" type="image/x-icon">
 
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('spn_theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
-  <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css?v=2">
+  <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css?v=4">
 
   <script>
   (function () {
@@ -260,7 +272,18 @@
     window.i18n = {
       continueAd: "متابعة",
       instructionsDesktop: "• الأسهم أو WASD — تحريك البلاطات\n• الهدف: ترتيب الأرقام من 1 إلى 15\n• الخلية الفارغة في الزاوية اليمنى السفلية\n• كلما قلّت الحركات والوقت كان أفضل!",
-      instructionsMobile: "• السحب — تحريك البلاطات\n• الهدف: ترتيب الأرقام من 1 إلى 15\n• الخلية الفارغة في الزاوية اليمنى السفلية"
+      instructionsMobile: "• السحب — تحريك البلاطات\n• الهدف: ترتيب الأرقام من 1 إلى 15\n• الخلية الفارغة في الزاوية اليمنى السفلية",
+      changeNick: "Change nick",
+      setNick: "Set nick",
+      bannedNicknameAlert: "This nickname is not allowed. Choose another.",
+      scoreTableUrl: "/frontend/games/redsquare2/score_table.html#fifteen",
+      soundOn: "Sound: on",
+      soundOff: "Sound: off",
+      modeEasy: "3×3",
+      modeHard: "4×4",
+      modeEasyLabel: "Easy 3×3",
+      modeHardLabel: "Classic 4×4",
+      dailyLabel: "Daily"
     };
   </script>
   <script type="module" src="/frontend/games/fifteen/fifteen-ads.js?v=3" defer></script>
@@ -330,9 +353,29 @@
           <div class="stat">الأفضل<br><b id="best">0</b></div>
         </div>
 
+        <div class="nick-line">
+          <span>Nick: <strong id="nickValue">—</strong></span>
+          <span id="modeLabel" class="mode-label"></span>
+        </div>
+
+        <form id="nicknameForm" class="nickname-panel" hidden>
+          <label for="nickname">Nickname for the leaderboard (optional)</label>
+          <input type="text" id="nickname" maxlength="24" placeholder="Your nick" autocomplete="nickname">
+          <div class="nick-row">
+            <button type="submit" class="btn">Save</button>
+            <button type="button" class="btn ghost" id="btnSkipNick">Skip</button>
+          </div>
+        </form>
+
         <div class="controls">
           <button class="btn primary" id="btnNewGame">لعبة جديدة</button>
           <button class="btn" id="btnReset">إعادة</button>
+          <button class="btn" id="btnUndo" type="button">Undo</button>
+          <button class="btn" id="btnDaily" type="button">Daily</button>
+          <button class="btn" id="btnMode" type="button">3×3</button>
+          <button class="btn ghost" id="btnSound" type="button" aria-pressed="false">Sound: off</button>
+          <button class="btn ghost" id="btnChangeNick" type="button">Set nick</button>
+          <button class="btn ghost" id="btnLeaderboard" type="button">Leaderboard</button>
         </div>
 
         <div class="solved-message" id="solvedMessage" style="display:none;">
@@ -343,7 +386,7 @@
     </div>
   </div>
 
-  <script src="/frontend/games/fifteen/fifteen.js?v=2" defer></script>
+  <script src="/frontend/games/fifteen/fifteen.js?v=4" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   
