@@ -724,7 +724,7 @@ fetch(primaryMenuPath)
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
     // Shared script lives only under /frontend/scripts (locale copies are cleaned on deploy)
     const script = document.createElement('script');
-    script.src = '/frontend/scripts/language-selector.js?v=8';
+    script.src = '/frontend/scripts/language-selector.js?v=6';
     script.onerror = (e) => {
       console.error('❌ Ошибка загрузки скрипта селектора:', e);
     };

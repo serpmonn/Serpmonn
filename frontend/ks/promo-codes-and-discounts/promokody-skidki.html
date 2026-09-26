@@ -1,8 +1,20 @@
 
 
 <!DOCTYPE html>
-<html lang="ks" dir="rtl">
+<html lang="ks" dir="rtl" data-themes="light dark" data-langs="ru en ar az be bg bn cs da de el es es-419 fa fi fil fr he hi hu hy id it ja ka kk ko ms nb nl pl pt-br pt-pt ro sr sv th tr ur uz vi zh-cn ps sd ug dv ks ku-arab yi">
 <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('spn_theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.colorScheme = t;
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ks">
     <meta charset="UTF-8">
@@ -15,7 +27,7 @@
     <!-- Open Graph -->
     <meta property="og:title" content="پْرومو کوڈَس تہ ڈِسکاؤنٹَس — Serpmonn">
     <meta property="og:description" content="گیمس، گیجٹس، سَرْوِسَس، ریسٹورینٹس تہ بییہ چیزیہ سَتھِہ پَرْٹنَرَس پْتَہ حالیہ پْرومو کوڈَس تہ ڈِسکاؤنٹَس.">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/og-promocodes.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/ks/promo-codes-and-discounts/promokody-skidki.html">
     <meta property="og:type" content="website">
 
@@ -23,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="پْرومو کوڈَس تہ ڈِسکاؤنٹَس — Serpmonn">
     <meta name="twitter:description" content="تصدیق شُدَہ کُپنَس تہ پروموشنَس بَچَتھ خَاطِر.">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/og-promocodes.png">
 
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ks/promo-codes-and-discounts/promokody-skidki.html" />
@@ -236,10 +248,46 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
 
     <!-- Стили -->
-    <link rel="preload" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=48" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=48"></noscript>
-    <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/frontend/styles/accessibility.css"></noscript>
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
+    <link rel="stylesheet" href="/frontend/fonts/manrope.css?v=1">
+    <link rel="stylesheet" href="/frontend/fonts/source-serif-4.css?v=1">
+    <link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=82">
+    <style id="promo-theme-bg">
+      /* Фон как на лендинге Serpmonn App — инлайн, чтобы не перебивался styles.css / кэшем */
+      :root {
+        --bg: #eef1f5;
+        --text: #141820;
+        --muted: #5a6472;
+        --accent: #d92c2c;
+        --font: "Manrope", system-ui, sans-serif;
+        --display: "Source Serif 4", Georgia, serif;
+        --page-bg:
+          radial-gradient(1100px 640px at 8% -14%, rgba(217, 44, 44, 0.18), transparent 58%),
+          radial-gradient(900px 560px at 92% 0%, rgba(32, 112, 240, 0.12), transparent 55%),
+          radial-gradient(700px 480px at 60% 100%, rgba(217, 44, 44, 0.06), transparent 62%),
+          linear-gradient(180deg, #fbfcfd 0%, var(--bg) 38%, #e8ecf2 100%);
+      }
+      html[data-theme="dark"] {
+        --bg: #12161e;
+        --text: #d5dae3;
+        --muted: #8b93a3;
+        --accent: #e35d5d;
+        --page-bg:
+          radial-gradient(900px 520px at 10% -10%, rgba(227, 93, 93, 0.14), transparent 55%),
+          radial-gradient(800px 480px at 90% 0%, rgba(63, 173, 120, 0.07), transparent 52%),
+          linear-gradient(180deg, #0e1218 0%, var(--bg) 45%, #0c1016 100%);
+      }
+      html, body {
+        background: var(--page-bg) !important;
+        background-attachment: fixed !important;
+        color: var(--text);
+        font-family: var(--font);
+      }
+      @media (max-width: 768px) {
+        html, body { background-attachment: scroll !important; }
+      }
+    </style>
 
     <!-- Скрипты -->
     <script>
@@ -346,7 +394,7 @@
     <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
     <!-- /Top.Mail.Ru counter -->
     
-    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=58" defer></script>
+    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=63" defer></script>
     <script>
   (function () {
     function loadMailAds() {
@@ -374,29 +422,36 @@
         <nav id="main-nav" aria-label="مُکھ نیویگیشن"></nav>
     </header>
     
+    
+    
+    
+    
     <main class="container">
         <section class="stats-controls" aria-labelledby="overview-title">
-            <div class="stats-head">
+            <div class="stats-bar">
+                <img class="brand-logo" src="/frontend/images/serpmonn-512.png?v=4" width="28" height="28" alt="" decoding="async">
+                <span class="brand-name">Serpmonn</span>
+                <span class="meta-sep" aria-hidden="true">·</span>
                 <h1 id="overview-title">پْرومو کوڈَس تہ ڈِسکاؤنٹَس</h1>
-                <div class="stats-summary" aria-live="polite">
-                    <span class="stat-chip">
-                        <span class="stat-number" id="activePromos">64</span>
-                        <span class="stat-label">اَکٹِو</span>
-                    </span>
-                    <span class="stat-chip stat-chip--total" id="totalStatChip">
-                        <span class="stat-number" id="totalPromos">64</span>
-                        <span class="stat-label">کُل</span>
-                    </span>
-                    <span class="stats-updated">
-                        اپڈیٹڈ:
-                        <span id="lastUpdate">25.09.2026, 02:37:56</span>
-                    </span>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <span
+                    id="codesMetaText"
+                    data-codes-template="{count} codes"
+                    data-codes-active-total-template="{active} active · {total} total"
+                >65 codes</span>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <span class="stats-updated">
+                    اپڈیٹڈ:
+                    <span id="lastUpdate">26.09.2026, 04:49:37</span>
+                </span>
+                <span id="activePromos" hidden>65</span>
+                <span id="totalPromos" hidden>65</span>
+                <span id="totalStatChip" hidden></span>
+                <div class="controls toolbar-actions">
+                    <button id="toggleFilters" class="submit-btn toolbar-mobile-only" type="button" aria-expanded="false" aria-controls="filtersContent" aria-label="فِلٹَرَس">فِلٹَرَس</button>
+                    <button id="sortByExpiryBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="خَتْم تَہ وَتھ سارٹ ↑↓">خَتْم تَہ وَتھ سارٹ ↑↓</button>
+                    <button id="resetFiltersBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="ری سَیٹ">ری سَیٹ</button>
                 </div>
-            </div>
-            <div class="controls toolbar-actions">
-                <button id="toggleFilters" class="submit-btn toolbar-mobile-only" type="button" aria-expanded="false" aria-controls="filtersContent" aria-label="فِلٹَرَس">فِلٹَرَس</button>
-                <button id="sortByExpiryBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="خَتْم تَہ وَتھ سارٹ ↑↓">خَتْم تَہ وَتھ سارٹ ↑↓</button>
-                <button id="resetFiltersBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="ری سَیٹ">ری سَیٹ</button>
             </div>
         </section>
 
@@ -454,6 +509,18 @@
                 </div>
             </div>
         </section>
+
+        <div id="promoStickyBar" class="promo-sticky-bar" hidden>
+            <input
+                type="search"
+                id="stickySearchInput"
+                class="promo-sticky-search"
+                placeholder="سیٖرچ (کَمپَنی، پراڈَکٹ...)"
+                aria-label="سیٖرچ (کَمپَنی، پراڈَکٹ...)"
+                enterkeyhint="search"
+            >
+            <button id="stickyToggleFilters" class="submit-btn" type="button" aria-expanded="false" aria-controls="filtersContent">فِلٹَرَس</button>
+        </div>
 
         <section class="bonus" aria-labelledby="bonus-title">
             <div class="bonus-inner">
@@ -1253,6 +1320,65 @@
         
         
         <p class="ad">اشتہار. Яндекс Лавка Казахстан</p>
+        
+    </div>
+</div>
+
+            
+            
+
+
+<div class="promo-card top-offer clickable-card"
+     data-ssr="1"
+     data-promo-id="22855236"
+     data-category="другие"
+     data-expiry="2026-09-30T23:59:59"
+     data-country="Россия"
+     data-landing-url="https://plus-gift.prfl.me/sites/q52b71?source=json"
+     data-top-badge="⭐ ٹاپ"
+     >
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="https://s3sc.perfluence.net/logos/17035055247727.png"
+                 alt="Яндекс Плюс"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="Яндекс Плюс">Яндекс Плюс</h3>
+        </div>
+        
+        <p class="code">LT24ARX5PX
+            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی LT24ARX5PX">کاپی</button>
+        </p>
+        
+        <p class="bonus-info">
+            
+                Розыгрыш денежных призов и сертификатов за оформление Яндекс Плюса: 45 дней бесплатно новым пользователям или 30 дней за 1 ₽ без активной мультиподписки
+            
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-22855236" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">تفصیل</span>
+        </button>
+        <div class="details-content" id="details-22855236" style="display: none;">
+            <p class="details-description">Розыгрыш денежных призов и сертификатов за оформление Яндекс Плюса: 45 дней бесплатно новым пользователям или 30 дней за 1 ₽ без активной мультиподписки</p>
+            
+            <p class="country">ملک: روس</p>
+            <p class="expiry">
+                قابل قبول: ۰۹/۳۰/۲۰۲۶
+                
+            </p>
+        </div>
+    </div>
+    <div class="promo-card-footer">
+        
+        <div class="promo-footer-actions">
+            <a href="https://plus-gift.prfl.me/sites/q52b71?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
+            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        
+        
+        <p class="ad">اشتہار. ООО «ЯНДЕКС», ИНН 7736207543</p>
         
     </div>
 </div>
@@ -2581,242 +2707,6 @@
 
 <div class="promo-card clickable-card"
      data-ssr="1"
-     data-promo-id="21948013"
-     data-category="еда"
-     data-expiry="2026-09-30T23:59:59"
-     data-country="Россия"
-     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
-     
-     >
-    <div class="promo-card-content">
-        <div class="promo-header">
-            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
-                 alt="FARFOR"
-                 width="80" height="80" loading="lazy" decoding="async">
-            <h3 title="FARFOR">FARFOR</h3>
-        </div>
-        
-        <p class="code">LTP56114
-            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی LTP56114">کاپی</button>
-        </p>
-        
-        <p class="bonus-info">
-            
-                Скидка 15% на первый заказ от 1500 ₽
-            
-        </p>
-        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21948013" tabindex="0">
-            <span class="details-icon">▼</span>
-            <span class="details-text">تفصیل</span>
-        </button>
-        <div class="details-content" id="details-21948013" style="display: none;">
-            <p class="details-description">Скидка 15% на первый заказ от 1500 ₽</p>
-            
-            <p class="country">ملک: روس</p>
-            <p class="expiry">
-                قابل قبول: ۰۹/۳۰/۲۰۲۶
-                
-            </p>
-        </div>
-    </div>
-    <div class="promo-card-footer">
-        
-        <div class="promo-footer-actions">
-            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
-            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
-                <span class="promo-share-icon">⤴</span>
-            </button>
-        </div>
-        
-        
-        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
-        
-    </div>
-</div>
-
-            
-            
-
-
-<div class="promo-card clickable-card"
-     data-ssr="1"
-     data-promo-id="21949014"
-     data-category="еда"
-     data-expiry="2026-09-30T23:59:59"
-     data-country="Россия"
-     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
-     
-     >
-    <div class="promo-card-content">
-        <div class="promo-header">
-            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
-                 alt="FARFOR"
-                 width="80" height="80" loading="lazy" decoding="async">
-            <h3 title="FARFOR">FARFOR</h3>
-        </div>
-        
-        <p class="code">MMM98151
-            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی MMM98151">کاپی</button>
-        </p>
-        
-        <p class="bonus-info">
-            
-                Ролл Столичный в подарок на один любой заказ от 1490 ₽
-            
-        </p>
-        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21949014" tabindex="0">
-            <span class="details-icon">▼</span>
-            <span class="details-text">تفصیل</span>
-        </button>
-        <div class="details-content" id="details-21949014" style="display: none;">
-            <p class="details-description">Ролл Столичный в подарок на один любой заказ от 1490 ₽</p>
-            
-            <p class="country">ملک: روس</p>
-            <p class="expiry">
-                قابل قبول: ۰۹/۳۰/۲۰۲۶
-                
-            </p>
-        </div>
-    </div>
-    <div class="promo-card-footer">
-        
-        <div class="promo-footer-actions">
-            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
-            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
-                <span class="promo-share-icon">⤴</span>
-            </button>
-        </div>
-        
-        
-        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
-        
-    </div>
-</div>
-
-            
-            
-
-
-<div class="promo-card clickable-card"
-     data-ssr="1"
-     data-promo-id="21966360"
-     data-category="еда"
-     data-expiry="2026-09-30T23:59:59"
-     data-country="Россия"
-     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
-     
-     >
-    <div class="promo-card-content">
-        <div class="promo-header">
-            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
-                 alt="FARFOR"
-                 width="80" height="80" loading="lazy" decoding="async">
-            <h3 title="FARFOR">FARFOR</h3>
-        </div>
-        
-        <p class="code">NTX68969
-            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی NTX68969">کاپی</button>
-        </p>
-        
-        <p class="bonus-info">
-            
-                Скидка 600 ₽ на первый заказ от 1990 ₽
-            
-        </p>
-        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21966360" tabindex="0">
-            <span class="details-icon">▼</span>
-            <span class="details-text">تفصیل</span>
-        </button>
-        <div class="details-content" id="details-21966360" style="display: none;">
-            <p class="details-description">Скидка 600 ₽ на первый заказ от 1990 ₽</p>
-            
-            <p class="country">ملک: روس</p>
-            <p class="expiry">
-                قابل قبول: ۰۹/۳۰/۲۰۲۶
-                
-            </p>
-        </div>
-    </div>
-    <div class="promo-card-footer">
-        
-        <div class="promo-footer-actions">
-            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
-            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
-                <span class="promo-share-icon">⤴</span>
-            </button>
-        </div>
-        
-        
-        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
-        
-    </div>
-</div>
-
-            
-            
-
-
-<div class="promo-card clickable-card"
-     data-ssr="1"
-     data-promo-id="21953017"
-     data-category="еда"
-     data-expiry="2026-09-30T23:59:59"
-     data-country="Россия"
-     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
-     
-     >
-    <div class="promo-card-content">
-        <div class="promo-header">
-            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
-                 alt="FARFOR"
-                 width="80" height="80" loading="lazy" decoding="async">
-            <h3 title="FARFOR">FARFOR</h3>
-        </div>
-        
-        <p class="code">ZKB26743
-            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی ZKB26743">کاپی</button>
-        </p>
-        
-        <p class="bonus-info">
-            
-                Скидка 15% на один любой заказ от 2290 ₽
-            
-        </p>
-        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21953017" tabindex="0">
-            <span class="details-icon">▼</span>
-            <span class="details-text">تفصیل</span>
-        </button>
-        <div class="details-content" id="details-21953017" style="display: none;">
-            <p class="details-description">Скидка 15% на один любой заказ от 2290 ₽</p>
-            
-            <p class="country">ملک: روس</p>
-            <p class="expiry">
-                قابل قبول: ۰۹/۳۰/۲۰۲۶
-                
-            </p>
-        </div>
-    </div>
-    <div class="promo-card-footer">
-        
-        <div class="promo-footer-actions">
-            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
-            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
-                <span class="promo-share-icon">⤴</span>
-            </button>
-        </div>
-        
-        
-        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
-        
-    </div>
-</div>
-
-            
-            
-
-
-<div class="promo-card clickable-card"
-     data-ssr="1"
      data-promo-id="19066610"
      data-category="еда"
      data-expiry="2026-09-30T23:59:59"
@@ -3281,6 +3171,242 @@
         
         
         <p class="ad">اشتہار. ПАО &quot;Каршеринг Руссия&quot; 107023, г. Москва, ул. Электрозаводская, дом 27, строение 1А. ИНН 9718236471 ОГРН 1237700701534</p>
+        
+    </div>
+</div>
+
+            
+            
+
+
+<div class="promo-card clickable-card"
+     data-ssr="1"
+     data-promo-id="21948013"
+     data-category="еда"
+     data-expiry="2026-09-30T23:59:59"
+     data-country="Россия"
+     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
+     
+     >
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
+                 alt="FARFOR"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="FARFOR">FARFOR</h3>
+        </div>
+        
+        <p class="code">LTP56114
+            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی LTP56114">کاپی</button>
+        </p>
+        
+        <p class="bonus-info">
+            
+                Скидка 15% на первый заказ от 1500 ₽
+            
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21948013" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">تفصیل</span>
+        </button>
+        <div class="details-content" id="details-21948013" style="display: none;">
+            <p class="details-description">Скидка 15% на первый заказ от 1500 ₽</p>
+            
+            <p class="country">ملک: روس</p>
+            <p class="expiry">
+                قابل قبول: ۰۹/۳۰/۲۰۲۶
+                
+            </p>
+        </div>
+    </div>
+    <div class="promo-card-footer">
+        
+        <div class="promo-footer-actions">
+            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
+            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        
+        
+        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
+        
+    </div>
+</div>
+
+            
+            
+
+
+<div class="promo-card clickable-card"
+     data-ssr="1"
+     data-promo-id="21949014"
+     data-category="еда"
+     data-expiry="2026-09-30T23:59:59"
+     data-country="Россия"
+     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
+     
+     >
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
+                 alt="FARFOR"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="FARFOR">FARFOR</h3>
+        </div>
+        
+        <p class="code">MMM98151
+            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی MMM98151">کاپی</button>
+        </p>
+        
+        <p class="bonus-info">
+            
+                Ролл Столичный в подарок на один любой заказ от 1490 ₽
+            
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21949014" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">تفصیل</span>
+        </button>
+        <div class="details-content" id="details-21949014" style="display: none;">
+            <p class="details-description">Ролл Столичный в подарок на один любой заказ от 1490 ₽</p>
+            
+            <p class="country">ملک: روس</p>
+            <p class="expiry">
+                قابل قبول: ۰۹/۳۰/۲۰۲۶
+                
+            </p>
+        </div>
+    </div>
+    <div class="promo-card-footer">
+        
+        <div class="promo-footer-actions">
+            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
+            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        
+        
+        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
+        
+    </div>
+</div>
+
+            
+            
+
+
+<div class="promo-card clickable-card"
+     data-ssr="1"
+     data-promo-id="21966360"
+     data-category="еда"
+     data-expiry="2026-09-30T23:59:59"
+     data-country="Россия"
+     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
+     
+     >
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
+                 alt="FARFOR"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="FARFOR">FARFOR</h3>
+        </div>
+        
+        <p class="code">NTX68969
+            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی NTX68969">کاپی</button>
+        </p>
+        
+        <p class="bonus-info">
+            
+                Скидка 600 ₽ на первый заказ от 1990 ₽
+            
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21966360" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">تفصیل</span>
+        </button>
+        <div class="details-content" id="details-21966360" style="display: none;">
+            <p class="details-description">Скидка 600 ₽ на первый заказ от 1990 ₽</p>
+            
+            <p class="country">ملک: روس</p>
+            <p class="expiry">
+                قابل قبول: ۰۹/۳۰/۲۰۲۶
+                
+            </p>
+        </div>
+    </div>
+    <div class="promo-card-footer">
+        
+        <div class="promo-footer-actions">
+            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
+            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        
+        
+        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
+        
+    </div>
+</div>
+
+            
+            
+
+
+<div class="promo-card clickable-card"
+     data-ssr="1"
+     data-promo-id="21953017"
+     data-category="еда"
+     data-expiry="2026-09-30T23:59:59"
+     data-country="Россия"
+     data-landing-url="https://farfor2.prfl.me/sites/iv59c1?source=json"
+     
+     >
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg"
+                 alt="FARFOR"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="FARFOR">FARFOR</h3>
+        </div>
+        
+        <p class="code">ZKB26743
+            <button class="submit-btn copy-btn" type="button" aria-label="پرومو کوڈ کاپی ZKB26743">کاپی</button>
+        </p>
+        
+        <p class="bonus-info">
+            
+                Скидка 15% на один любой заказ от 2290 ₽
+            
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="details-21953017" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">تفصیل</span>
+        </button>
+        <div class="details-content" id="details-21953017" style="display: none;">
+            <p class="details-description">Скидка 15% на один любой заказ от 2290 ₽</p>
+            
+            <p class="country">ملک: روس</p>
+            <p class="expiry">
+                قابل قبول: ۰۹/۳۰/۲۰۲۶
+                
+            </p>
+        </div>
+    </div>
+    <div class="promo-card-footer">
+        
+        <div class="promo-footer-actions">
+            <a href="https://farfor2.prfl.me/sites/iv59c1?source=json" target="_blank" rel="noopener noreferrer" class="register-link use-btn">استعمال</a>
+            <button type="button" class="promo-share-button" aria-label="یہ پرومو کوڈ شیئر">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        
+        
+        <p class="ad">اشتہار. ООО &quot;Фарфор Франчайзинг&quot;, ИНН 0276147339.</p>
         
     </div>
 </div>
@@ -4303,6 +4429,30 @@
                 <summary lang="ks">کیازِہ کوڈ کَم نہ کَران؟</summary>
                 <p>ختم ہونے والی تاریخ یا شرائط چیک کریں۔ اگر مسئلہ برقرار رہے تو <a href="mailto:support@serpmonn.ru?subject=پرومو کوڈ دا مسئلہ&body=اپنا مسئلہ یہاں بیان کریں:">support@serpmonn.ru</a> تے لکھیں۔</p>
             </details>
+            
+            <details>
+                <summary lang="ks">Where do the promo codes come from?</summary>
+                <p>Offers from Serpmonn partners (ad networks and direct placements). The advertiser is listed on each card.</p>
+            </details>
+            
+            
+            <details>
+                <summary lang="ks">Which countries are supported?</summary>
+                <p>Mostly Russia; some offers also cover Kazakhstan, Uzbekistan, and Georgia. Use the country filter above the catalog.</p>
+            </details>
+            
+            
+            <details>
+                <summary lang="ks">Do I need an account?</summary>
+                <p>No. You can copy a code without signing in. Email subscription is optional for new deals.</p>
+            </details>
+            
+            
+            <details>
+                <summary lang="ks">How do I share a promo code?</summary>
+                <p>Tap Share on the card to get a link to that code.</p>
+            </details>
+            
         </section>
     </main>
     
@@ -4342,16 +4492,81 @@
     }
     </script>
 
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "پْرومو کوڈ کیازِہ اِستِمال کَرُن؟",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "1. کوڈ کاپی کَرِو.2. پَرْٹنَر وِب سایٹ پَتہ وَٹِو.3. کوڈ کارٹ مَنٛز دَخَل کَرِو."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "کیازِہ کوڈ کَم نہ کَران؟",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "ختم ہونے والی تاریخ یا شرائط چیک کریں۔ اگر مسئلہ برقرار رہے تو support@serpmonn.ru تے لکھیں۔"
+                }
+            }
+            ,
+            {
+                "@type": "Question",
+                "name": "Where do the promo codes come from?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Offers from Serpmonn partners (ad networks and direct placements). The advertiser is listed on each card."
+                }
+            }
+            
+            ,
+            {
+                "@type": "Question",
+                "name": "Which countries are supported?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mostly Russia; some offers also cover Kazakhstan, Uzbekistan, and Georgia. Use the country filter above the catalog."
+                }
+            }
+            
+            ,
+            {
+                "@type": "Question",
+                "name": "Do I need an account?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "No. You can copy a code without signing in. Email subscription is optional for new deals."
+                }
+            }
+            
+            ,
+            {
+                "@type": "Question",
+                "name": "How do I share a promo code?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tap Share on the card to get a link to that code."
+                }
+            }
+            
+        ]
+    }
+    </script>
+
     
     <script type="application/ld+json" id="promo-offers-schema">
     {
         "@context": "https://schema.org",
-        "@graph": [{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 10% на первую и все повторные покупки от 3 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"10%","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"VD399967","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 750 ₽ от 5 000 ₽ для новых пользователей в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"750 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"FL044282","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 100% на сервисный сбор на первую и все повторные покупки билетов от 3 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"100%","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"ND164996","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 400 ₽ на первую покупку билетов от 3000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"400 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"KD904683","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 300 ₽ на первую покупку билетов от 2 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"FA900953","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 25% (не более 3 000 ₽) на бронирование отелей и иного жилья в эмирате Шарджа для всех пользователей в приложении и на сайте","url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","category":"другие","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"SHARJAH26","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 1 000 ₽ от 10 000 ₽ для всех пользователей в приложении и на сайте","url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","category":"другие","priceCurrency":"RUB","discount":"1000 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"PF-ALLIOOO-OQKHU","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 2 500 ₽ от 25 000 ₽ на одно бронирование из подборки для всех пользователей в приложении и на сайте","url":"https://yandextravel.prfl.me/sites/ua00gq?source=json","category":"другие","priceCurrency":"RUB","discount":"2500 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"PF-PREMIUMPRO-EC42T","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 55% от 800 ₽ на первый заказ, максимальная скидка 600 ₽, действует в Новосибирске и Ростове-на-Дону","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"55%","validThrough":"2026-10-15T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"55REG673","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 300 ₽ от 600 ₽ на первый заказ","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-10-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"300DS354","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 50% от 800 ₽ на первый заказ, максимальная скидка 600 ₽","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"50%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"50LUT268","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 40% от 800 ₽ на один заказ для тех, кто не пользовался сервисом более года, максимальная скидка 600 ₽","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"40%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"40ASD268","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка Казахстан","description":"Скидка 35% на первый заказ, но не более 2500 ₸","url":"https://lavkakzx.prfl.me/sites/q1yljc?source=json","category":"продукты","discount":"35%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Лавка Казахстан"},"image":"https://s3sc.perfluence.net/logos/e/2/5/e25bd065-43e7-403c-9480-644e0020eafa.png","availability":"https://schema.org/InStock","couponCode":"otum9553858","areaServed":"Казахстан"},{"@type":"Offer","name":"Яндекс Плюс BY","description":"90 дней доступа к Яндекс Плюс бесплатно для новых пользователей и 60 дней бесплатного доступа для тех, у кого мультиподписка закончилась более месяца назад","url":"https://plus90.prfl.me/sites/sm1fjx?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс BY"},"image":"https://s3sc.perfluence.net/logos/6/5/d/65d37d06-c17c-4ad3-8f9d-6d312ebe80ae.png","availability":"https://schema.org/InStock","couponCode":"39SXJSRUL9","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Плюс KZ","description":"45 дней бесплатного доступа к Яндекс Музыке для новых пользователей","url":"https://yndxmusic2.prfl.me/sites/8zwb6g?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс KZ"},"image":"https://s3sc.perfluence.net/logos/9/f/e/9fecf87a-2930-49c9-869e-9e527bf56b3a.jpg","availability":"https://schema.org/InStock","couponCode":"49Z55UZAN9","areaServed":"Казахстан"},{"@type":"Offer","name":"Яндекс Плюс UZ","description":"30 дней бесплатного доступа к Кинопоиску для новых пользователей","url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс UZ"},"image":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","availability":"https://schema.org/InStock","couponCode":"27BHB4FGJY","areaServed":"Узбекистан"},{"@type":"Offer","name":"Яндекс Плюс UZ","description":"Подписка Плюс на 30 дней для новых пользователей","url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс UZ"},"image":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","availability":"https://schema.org/InStock","couponCode":"8RDDDKLPWY","areaServed":"Узбекистан"},{"@type":"Offer","name":"PREMIER","description":"45 дней доступа к сервисам RUTUBE + PREMIER за 1 ₽ для пользователей без активной подписки более полугода или подписка на один месяц за 99 ₽ для неактивных пользователей менее полугода, далее 399 ₽","url":"https://premier.prfl.me/sites/b0khal?source=json","category":"развлечения","priceCurrency":"RUB","discount":"99 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО \"ПРЕМЬЕР\" 16+ ИНН 9702011190"},"image":"https://s3sc.perfluence.net/logos/17103376638461.png","availability":"https://schema.org/InStock","couponCode":"zsq3jh9a","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Музыка","description":"45 дней доступа к Яндекс Музыке бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","url":"https://yamuz45.prfl.me/sites/e4sy6n?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «ЯНДЕКС», ИНН 7736207543"},"image":"https://s3sc.perfluence.net/logos/17035837474639.png","availability":"https://schema.org/InStock","couponCode":"FKK9LRD6RB","areaServed":"Узбекистан"},{"@type":"Offer","name":"Кинопоиск","description":"45 дней доступа к Кинопоиску бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","url":"https://kp45.prfl.me/sites/mf78q8?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «ЯНДЕКС», ИНН 7736207543"},"image":"https://s3sc.perfluence.net/logos/17035055659741.png","availability":"https://schema.org/InStock","couponCode":"AFG95YEHQ9","areaServed":"Россия"},{"@type":"Offer","name":"Кинопоиск KZ","description":"30 дней бесплатного доступа к Кинопоиску по промокоду для новых пользователей + бесплатная доставка из раздела Еда в Яндекс Go.","url":"https://kinipoisc.prfl.me/sites/8yo0ke?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Кинопоиск KZ"},"image":"https://s3sc.perfluence.net/logos/f/1/e/f1e8fccf-6311-43f7-9418-67321db61ecb.png","availability":"https://schema.org/InStock","couponCode":"SA3NFHWSCK","areaServed":"Казахстан"},{"@type":"Offer","name":"Freedom Афиша","description":"Скидка 1000 ₸ на билеты на мероприятия для новых пользователей","url":"https://freedombank.prfl.me/sites/yh1nbm?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Freedom Афиша"},"image":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","availability":"https://schema.org/InStock","couponCode":"PERF-A56J","areaServed":"Казахстан"},{"@type":"Offer","name":"Freedom Афиша","description":"Скидка 500 ₸ на билеты в кино для новых пользователей","url":"https://freedombank.prfl.me/sites/9mhdx8?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Freedom Афиша"},"image":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","availability":"https://schema.org/InStock","couponCode":"PERF-Z59E","areaServed":"Казахстан"},{"@type":"Offer","name":"Elementaree","description":"Скидка 33% на первый заказ от 3000 ₽ или 12% на все повторные заказы от 3000 ₽","url":"https://elementareenw.prfl.me/sites/u6i8gk?source=json","category":"продукты","priceCurrency":"RUB","discount":"33%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ОЛИМП\", ИНН 7724417578."},"image":"https://s3sc.perfluence.net/logos/16451119437056.jpg","availability":"https://schema.org/InStock","couponCode":"eeweb21","areaServed":"Россия"},{"@type":"Offer","name":"Rutube","description":"2 месяца доступа к сервисам RUTUBE + PREMIER по цене одного - за 399 ₽ для всех пользователей без активной подписки более полугода, далее 399 ₽ в месяц","url":"https://rutube.prfl.me/sites/2umgzm?source=json","category":"услуги","priceCurrency":"RUB","discount":"399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО \"Руформ\" 16+ ИНН 7714886605"},"image":"https://s3sc.perfluence.net/logos/3/8/d/38dc11ee-7a6d-4395-93bb-00cf46b18629.png","availability":"https://schema.org/InStock","couponCode":"j74r4287","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 25% при заказе от 1800 ₽ на первые два заказа в приложении Перекрёсток Доставка","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"151978QZE","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 30% на первый заказ от 2400 ₽ в приложении Перекрёсток Доставка","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"30%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"149CWSVSZ","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 355 ₽ от 1555 ₽ в приложении Перекрёсток Доставка для тех, кто не делал заказ более 180 дней","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"355 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"153JNW5GG","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 500 ₽ на первый заказ от 2000 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"500 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"UYSKUGV","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 30% на первый заказ от 1000 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"30%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"PRU8CPL","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 300 ₽ на первый заказ от 1200 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"HSHF66Y","areaServed":"Россия"},{"@type":"Offer","name":"Okko","description":"Подписка на 60 дней за 1 ₽, далее 399 ₽ по промокоду для пользователей, не совершавших платных покупок. Предусмотрено автопродление","url":"https://okko1.prfl.me/sites/s3y0o0?source=json","category":"развлечения","priceCurrency":"RUB","discount":"399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «Окко», г. Санкт-Петербург, ОГРН 1167847381130. Сервис Okko 18+"},"image":"https://s3sc.perfluence.net/logos/16946977597549.png","availability":"https://schema.org/InStock","couponCode":"836252124321","areaServed":"Россия"},{"@type":"Offer","name":"Ёбидоёби","description":"Скидка 20% от 1 299 ₽ на первый заказ","url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","category":"еда","priceCurrency":"RUB","discount":"20%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Вкусные технологии\". ИНН 2465359759"},"image":"https://s3sc.perfluence.net/logos/17025512612501.png","availability":"https://schema.org/InStock","couponCode":"COAOR","areaServed":"Россия"},{"@type":"Offer","name":"Ёбидоёби","description":"Ролл \"Цезарь темпура\" за 1 ₽ при одном любом повторном заказе от 1 299 ₽","url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","category":"еда","priceCurrency":"RUB","discount":"1299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Вкусные технологии\". ИНН 2465359759"},"image":"https://s3sc.perfluence.net/logos/17025512612501.png","availability":"https://schema.org/InStock","couponCode":"CXASF","areaServed":"Россия"},{"@type":"Offer","name":"Start.ru","description":"30 дней доступа на START за ₽ для новых пользователей + 50% скидки на первое продление","url":"https://start.prfl.me/sites/5us1qr?source=json","category":"развлечения","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"СТАРТ.РУ\", ИНН 7728374780."},"image":"https://s3sc.perfluence.net/logos/2/a/8/2a8df8cd-d3ae-4405-abfd-ea026e9d70c8.png","availability":"https://schema.org/InStock","couponCode":"pf10mr3kkj","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 15% на первый заказ от 1500 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"LTP56114","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Ролл Столичный в подарок на один любой заказ от 1490 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"1490 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"MMM98151","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 600 ₽ на первый заказ от 1990 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"NTX68969","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 15% на один любой заказ от 2290 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"ZKB26743","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 25% при каждом заказе от 1399 ₽ на самовывоз (Красная Поляна, Эсто-Садок, по адресам ул.Эстонская, 65; ул.Турчинского, 91А)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"E42GP","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 20% при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог), и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"20%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"POQHN5","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 25% на первый заказ (Воронеж, Ростов-на-Дону, Таганрог, Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"Y1JL6","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Пицца «Песто» 25 см в подарок при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог) и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"1399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"UCFBT","areaServed":"Россия"},{"@type":"Offer","name":"KION","description":"Месяц бесплатного доступа к подписке КИОН или скидка 50% на подписку 3/6/12 месяцев для новых пользователей","url":"https://kion.prfl.me/sites/ojmvge?source=json","category":"развлечения","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель ООО «КИОН», ОГРН 1197746576060, ИНН 7707434100"},"image":"https://s3sc.perfluence.net/logos/2/8/c/28c69966-6e15-465a-8d34-54e2f27e4337.png","availability":"https://schema.org/InStock","couponCode":"NEKTFKRGTMK3706","areaServed":"Грузия"},{"@type":"Offer","name":"Ситидрайв","description":"Скидка 50% на первые 2 поездки, максимум 500 ₽ на каждую","url":"https://citydrive.prfl.me/sites/lryd5t?source=json","category":"услуги","priceCurrency":"RUB","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+"},"image":"https://s3sc.perfluence.net/logos/16511548706573.png","availability":"https://schema.org/InStock","couponCode":"SAVE1098","areaServed":"Россия"},{"@type":"Offer","name":"Ситидрайв","description":"Скидка 600 ₽ на первую поездку","url":"https://citydrive.prfl.me/sites/lryd5t?source=json","category":"услуги","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+"},"image":"https://s3sc.perfluence.net/logos/16511548706573.png","availability":"https://schema.org/InStock","couponCode":"AVTO712","areaServed":"Россия"},{"@type":"Offer","name":"Делимобиль","description":"200 бонусов на повторную поездку пользователям, которые не совершали поездки более 60 дней","url":"https://delimobil.prfl.me/sites/5fmkk8?source=json","category":"услуги","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ПАО \"Каршеринг Руссия\" 107023, г. Москва, ул. Электрозаводская, дом 27, строение 1А. ИНН 9718236471 ОГРН 1237700701534"},"image":"https://s3sc.perfluence.net/logos/17035315171212.png","availability":"https://schema.org/InStock","couponCode":"ms39je","areaServed":"Грузия"},{"@type":"Offer","name":"SOKOLOV Offline","description":"Бесплатная подвеска в подарок при предъявлении штрихкода на кассе магазина","url":"https://sokolov.prfl.me/sites/gcr3y7?source=json","category":"товары","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"СВ Ритейл\", ИНН 7716918034."},"image":"https://barcode.tec-it.com/barcode.ashx?data=T6KRVDJF&code=Code128","availability":"https://schema.org/InStock","couponCode":"T6KRVDJF","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Еда Беларусь","description":"Скидка 18 BYN на первый заказ от 30 BYN из любого ресторана или магазина","url":"https://go-yandex.prfl.me/sites/3i3ohb?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Еда Беларусь"},"image":"https://s3sc.perfluence.net/logos/0/2/d/02dccd30-a3d5-49b6-9140-3948edefe3c4.png","availability":"https://schema.org/InStock","couponCode":"BLRDQU","areaServed":"Россия"},{"@type":"Offer","name":"Yandex Eats Армения","description":"Скидка 2700֏ на первый заказ в приложении от 4500֏ из любого ресторана","url":"https://go-yandex.prfl.me/sites/mjj2ym?source=json","category":"продукты","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Yandex Eats Армения"},"image":"https://s3sc.perfluence.net/logos/1/6/e/16e5aeed-367f-4f83-a99a-ea94864dfbab.png","availability":"https://schema.org/InStock","couponCode":"AM1D8A","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Запеченный ролл Угорь в подарок при каждом заказе от 3 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"3999 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"УГОРЬ253","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Фреш ролл с креветкой и авокадо в подарок при каждом заказе от 4 299 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"4299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"FRESH1738","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Скидка 15% при каждом заказе от 3 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"SPTB36","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Фреш ролл с креветкой и лаймом в подарок при каждом заказе от 4 299 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"4299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"ЛАЙМ370","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Ролл с креветкой темпура и соусом манго в подарок при первом заказе от 2 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"2999 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"ТЕМПУРА370","areaServed":"Россия"},{"@type":"Offer","name":"Tefal","description":"Скидка 13% на все товары Tefal на первый и все повторные заказы на сайте","url":"https://tefal.prfl.me/sites/a885w6?source=json","category":"товары","discount":"13%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель ЗАО \"Группа СЕБ-Восток\", ИНН 7714108299"},"image":"https://s3sc.perfluence.net/logos/a/6/c/a6cc8406-1720-44a2-93fd-49e033d8ca62.png","availability":"https://schema.org/InStock","couponCode":"13perf377","areaServed":"Россия"},{"@type":"Offer","name":"М.Косметик - Новое приложение","description":"Скидка 51% на первый заказ от 1500 ₽ в приложении \"Магнит Доставка\"","url":"https://mgntksm1.prfl.me/sites/aa0pho?source=json","category":"еда","priceCurrency":"RUB","discount":"51%","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО \"Тандер\", ИНН 2310031475."},"image":"https://s3sc.perfluence.net/logos/c/2/a/c2a51260-7355-4f04-8ee5-87ee38871cc8.jpeg","availability":"https://schema.org/InStock","couponCode":"PK4JOGUZN","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 350 ₽ от 2500 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"350 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"35VA2PXT","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 600 ₽ от 3000 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSZYSEJ","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 200 ₽ от 1000 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"200 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSSLK1D","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 300 ₽ от 1500 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"30VHRDME","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 250 ₽ от 1250 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"250 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSBKKST","areaServed":"Россия"},{"@type":"Offer","name":"Yandex Go Узбекистан","description":"Скидка 45 000 сум на первый заказ из приложения в разделе \"Еда\" из ресторанов и магазинов от 90 000 сум","url":"https://go-yandex.prfl.me/sites/edhmsv?source=json","category":"продукты","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Yandex Go Узбекистан"},"image":"https://s3sc.perfluence.net/logos/2/c/4/2c4b5e72-50bc-4840-8393-a26013205552.jpg","availability":"https://schema.org/InStock","couponCode":"UKHAL5","areaServed":"Узбекистан"},{"@type":"Offer","name":"Яндекс Go Кыргызстан","description":"Скидка 330 сом на первый заказ от 650 сом из любого ресторана или магазина","url":"https://yandex.prfl.me/sites/p7sxqn?source=json","category":"еда","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Go Кыргызстан"},"image":"https://s3sc.perfluence.net/logos/a/6/5/a651e132-2ce5-4bd9-8e3d-51cf8b40fe0b.jpg","availability":"https://schema.org/InStock","couponCode":"KGYAHG","areaServed":"Россия"}]
+        "@graph": [{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 10% на первую и все повторные покупки от 3 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"10%","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"VD399967","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 750 ₽ от 5 000 ₽ для новых пользователей в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"750 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"FL044282","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 100% на сервисный сбор на первую и все повторные покупки билетов от 3 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"100%","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"ND164996","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 400 ₽ на первую покупку билетов от 3000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"400 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"KD904683","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Афиша","description":"Скидка 300 ₽ на первую покупку билетов от 2 000 ₽ в приложении","url":"https://yandafisha.prfl.me/sites/1makqv?source=json","category":"развлечения","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-11-06T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040."},"image":"https://s3sc.perfluence.net/logos/16748253656362.png","availability":"https://schema.org/InStock","couponCode":"FA900953","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 25% (не более 3 000 ₽) на бронирование отелей и иного жилья в эмирате Шарджа для всех пользователей в приложении и на сайте","url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","category":"другие","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"SHARJAH26","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 1 000 ₽ от 10 000 ₽ для всех пользователей в приложении и на сайте","url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","category":"другие","priceCurrency":"RUB","discount":"1000 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"PF-ALLIOOO-OQKHU","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Путешествия","description":"Скидка 2 500 ₽ от 25 000 ₽ на одно бронирование из подборки для всех пользователей в приложении и на сайте","url":"https://yandextravel.prfl.me/sites/ua00gq?source=json","category":"другие","priceCurrency":"RUB","discount":"2500 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327."},"image":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","availability":"https://schema.org/InStock","couponCode":"PF-PREMIUMPRO-EC42T","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 55% от 800 ₽ на первый заказ, максимальная скидка 600 ₽, действует в Новосибирске и Ростове-на-Дону","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"55%","validThrough":"2026-10-15T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"55REG673","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 300 ₽ от 600 ₽ на первый заказ","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-10-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"300DS354","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 50% от 800 ₽ на первый заказ, максимальная скидка 600 ₽","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"50%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"50LUT268","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка","description":"Скидка 40% от 800 ₽ на один заказ для тех, кто не пользовался сервисом более года, максимальная скидка 600 ₽","url":"https://yalavka.prfl.me/sites/krbphd?source=json","category":"продукты","priceCurrency":"RUB","discount":"40%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Яндекс.Лавка\", ИНН 9718101499."},"image":"https://s3sc.perfluence.net/logos/17035038665166.png","availability":"https://schema.org/InStock","couponCode":"40ASD268","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Лавка Казахстан","description":"Скидка 35% на первый заказ, но не более 2500 ₸","url":"https://lavkakzx.prfl.me/sites/q1yljc?source=json","category":"продукты","discount":"35%","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Лавка Казахстан"},"image":"https://s3sc.perfluence.net/logos/e/2/5/e25bd065-43e7-403c-9480-644e0020eafa.png","availability":"https://schema.org/InStock","couponCode":"otum9553858","areaServed":"Казахстан"},{"@type":"Offer","name":"Яндекс Плюс","description":"Розыгрыш денежных призов и сертификатов за оформление Яндекс Плюса: 45 дней бесплатно новым пользователям или 30 дней за 1 ₽ без активной мультиподписки","url":"https://plus-gift.prfl.me/sites/q52b71?source=json","category":"другие","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «ЯНДЕКС», ИНН 7736207543"},"image":"https://s3sc.perfluence.net/logos/17035055247727.png","availability":"https://schema.org/InStock","couponCode":"LT24ARX5PX","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Плюс BY","description":"90 дней доступа к Яндекс Плюс бесплатно для новых пользователей и 60 дней бесплатного доступа для тех, у кого мультиподписка закончилась более месяца назад","url":"https://plus90.prfl.me/sites/sm1fjx?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс BY"},"image":"https://s3sc.perfluence.net/logos/6/5/d/65d37d06-c17c-4ad3-8f9d-6d312ebe80ae.png","availability":"https://schema.org/InStock","couponCode":"39SXJSRUL9","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Плюс KZ","description":"45 дней бесплатного доступа к Яндекс Музыке для новых пользователей","url":"https://yndxmusic2.prfl.me/sites/8zwb6g?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс KZ"},"image":"https://s3sc.perfluence.net/logos/9/f/e/9fecf87a-2930-49c9-869e-9e527bf56b3a.jpg","availability":"https://schema.org/InStock","couponCode":"49Z55UZAN9","areaServed":"Казахстан"},{"@type":"Offer","name":"Яндекс Плюс UZ","description":"30 дней бесплатного доступа к Кинопоиску для новых пользователей","url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс UZ"},"image":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","availability":"https://schema.org/InStock","couponCode":"27BHB4FGJY","areaServed":"Узбекистан"},{"@type":"Offer","name":"Яндекс Плюс UZ","description":"Подписка Плюс на 30 дней для новых пользователей","url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Плюс UZ"},"image":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","availability":"https://schema.org/InStock","couponCode":"8RDDDKLPWY","areaServed":"Узбекистан"},{"@type":"Offer","name":"PREMIER","description":"45 дней доступа к сервисам RUTUBE + PREMIER за 1 ₽ для пользователей без активной подписки более полугода или подписка на один месяц за 99 ₽ для неактивных пользователей менее полугода, далее 399 ₽","url":"https://premier.prfl.me/sites/b0khal?source=json","category":"развлечения","priceCurrency":"RUB","discount":"99 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО \"ПРЕМЬЕР\" 16+ ИНН 9702011190"},"image":"https://s3sc.perfluence.net/logos/17103376638461.png","availability":"https://schema.org/InStock","couponCode":"zsq3jh9a","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Музыка","description":"45 дней доступа к Яндекс Музыке бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","url":"https://yamuz45.prfl.me/sites/e4sy6n?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «ЯНДЕКС», ИНН 7736207543"},"image":"https://s3sc.perfluence.net/logos/17035837474639.png","availability":"https://schema.org/InStock","couponCode":"FKK9LRD6RB","areaServed":"Узбекистан"},{"@type":"Offer","name":"Кинопоиск","description":"45 дней доступа к Кинопоиску бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","url":"https://kp45.prfl.me/sites/mf78q8?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «ЯНДЕКС», ИНН 7736207543"},"image":"https://s3sc.perfluence.net/logos/17035055659741.png","availability":"https://schema.org/InStock","couponCode":"AFG95YEHQ9","areaServed":"Россия"},{"@type":"Offer","name":"Кинопоиск KZ","description":"30 дней бесплатного доступа к Кинопоиску по промокоду для новых пользователей + бесплатная доставка из раздела Еда в Яндекс Go.","url":"https://kinipoisc.prfl.me/sites/8yo0ke?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Кинопоиск KZ"},"image":"https://s3sc.perfluence.net/logos/f/1/e/f1e8fccf-6311-43f7-9418-67321db61ecb.png","availability":"https://schema.org/InStock","couponCode":"SA3NFHWSCK","areaServed":"Казахстан"},{"@type":"Offer","name":"Freedom Афиша","description":"Скидка 1000 ₸ на билеты на мероприятия для новых пользователей","url":"https://freedombank.prfl.me/sites/yh1nbm?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Freedom Афиша"},"image":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","availability":"https://schema.org/InStock","couponCode":"PERF-A56J","areaServed":"Казахстан"},{"@type":"Offer","name":"Freedom Афиша","description":"Скидка 500 ₸ на билеты в кино для новых пользователей","url":"https://freedombank.prfl.me/sites/9mhdx8?source=json","category":"развлечения","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Freedom Афиша"},"image":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","availability":"https://schema.org/InStock","couponCode":"PERF-Z59E","areaServed":"Казахстан"},{"@type":"Offer","name":"Elementaree","description":"Скидка 33% на первый заказ от 3000 ₽ или 12% на все повторные заказы от 3000 ₽","url":"https://elementareenw.prfl.me/sites/u6i8gk?source=json","category":"продукты","priceCurrency":"RUB","discount":"33%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ОЛИМП\", ИНН 7724417578."},"image":"https://s3sc.perfluence.net/logos/16451119437056.jpg","availability":"https://schema.org/InStock","couponCode":"eeweb21","areaServed":"Россия"},{"@type":"Offer","name":"Rutube","description":"2 месяца доступа к сервисам RUTUBE + PREMIER по цене одного - за 399 ₽ для всех пользователей без активной подписки более полугода, далее 399 ₽ в месяц","url":"https://rutube.prfl.me/sites/2umgzm?source=json","category":"услуги","priceCurrency":"RUB","discount":"399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО \"Руформ\" 16+ ИНН 7714886605"},"image":"https://s3sc.perfluence.net/logos/3/8/d/38dc11ee-7a6d-4395-93bb-00cf46b18629.png","availability":"https://schema.org/InStock","couponCode":"j74r4287","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 25% при заказе от 1800 ₽ на первые два заказа в приложении Перекрёсток Доставка","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"151978QZE","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 30% на первый заказ от 2400 ₽ в приложении Перекрёсток Доставка","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"30%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"149CWSVSZ","areaServed":"Россия"},{"@type":"Offer","name":"Перекрёсток Доставка","description":"Скидка 355 ₽ от 1555 ₽ в приложении Перекрёсток Доставка для тех, кто не делал заказ более 180 дней","url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","category":"продукты","priceCurrency":"RUB","discount":"355 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808"},"image":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","availability":"https://schema.org/InStock","couponCode":"153JNW5GG","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 500 ₽ на первый заказ от 2000 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"500 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"UYSKUGV","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 30% на первый заказ от 1000 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"30%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"PRU8CPL","areaServed":"Россия"},{"@type":"Offer","name":"Самокат","description":"Скидка 300 ₽ на первый заказ от 1200 ₽","url":"https://samokat.prfl.me/sites/243y8e?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Умный Ритейл\", ИНН 7811657720."},"image":"https://s3sc.perfluence.net/logos/17035034035169.png","availability":"https://schema.org/InStock","couponCode":"HSHF66Y","areaServed":"Россия"},{"@type":"Offer","name":"Okko","description":"Подписка на 60 дней за 1 ₽, далее 399 ₽ по промокоду для пользователей, не совершавших платных покупок. Предусмотрено автопродление","url":"https://okko1.prfl.me/sites/s3y0o0?source=json","category":"развлечения","priceCurrency":"RUB","discount":"399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «Окко», г. Санкт-Петербург, ОГРН 1167847381130. Сервис Okko 18+"},"image":"https://s3sc.perfluence.net/logos/16946977597549.png","availability":"https://schema.org/InStock","couponCode":"836252124321","areaServed":"Россия"},{"@type":"Offer","name":"Ёбидоёби","description":"Скидка 20% от 1 299 ₽ на первый заказ","url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","category":"еда","priceCurrency":"RUB","discount":"20%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Вкусные технологии\". ИНН 2465359759"},"image":"https://s3sc.perfluence.net/logos/17025512612501.png","availability":"https://schema.org/InStock","couponCode":"COAOR","areaServed":"Россия"},{"@type":"Offer","name":"Ёбидоёби","description":"Ролл \"Цезарь темпура\" за 1 ₽ при одном любом повторном заказе от 1 299 ₽","url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","category":"еда","priceCurrency":"RUB","discount":"1299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Вкусные технологии\". ИНН 2465359759"},"image":"https://s3sc.perfluence.net/logos/17025512612501.png","availability":"https://schema.org/InStock","couponCode":"CXASF","areaServed":"Россия"},{"@type":"Offer","name":"Start.ru","description":"30 дней доступа на START за ₽ для новых пользователей + 50% скидки на первое продление","url":"https://start.prfl.me/sites/5us1qr?source=json","category":"развлечения","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"СТАРТ.РУ\", ИНН 7728374780."},"image":"https://s3sc.perfluence.net/logos/2/a/8/2a8df8cd-d3ae-4405-abfd-ea026e9d70c8.png","availability":"https://schema.org/InStock","couponCode":"pf10mr3kkj","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 25% при каждом заказе от 1399 ₽ на самовывоз (Красная Поляна, Эсто-Садок, по адресам ул.Эстонская, 65; ул.Турчинского, 91А)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"E42GP","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 20% при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог), и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"20%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"POQHN5","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Скидка 25% на первый заказ (Воронеж, Ростов-на-Дону, Таганрог, Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","discount":"25%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"Y1JL6","areaServed":"Россия"},{"@type":"Offer","name":"Додо пицца Юг","description":"Пицца «Песто» 25 см в подарок при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог) и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","url":"https://dodo1.prfl.me/sites/a24n5j?source=json","category":"еда","priceCurrency":"RUB","discount":"1399 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595."},"image":"https://s3sc.perfluence.net/logos/17035048282497.jpg","availability":"https://schema.org/InStock","couponCode":"UCFBT","areaServed":"Россия"},{"@type":"Offer","name":"KION","description":"Месяц бесплатного доступа к подписке КИОН или скидка 50% на подписку 3/6/12 месяцев для новых пользователей","url":"https://kion.prfl.me/sites/ojmvge?source=json","category":"развлечения","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель ООО «КИОН», ОГРН 1197746576060, ИНН 7707434100"},"image":"https://s3sc.perfluence.net/logos/2/8/c/28c69966-6e15-465a-8d34-54e2f27e4337.png","availability":"https://schema.org/InStock","couponCode":"NEKTFKRGTMK3706","areaServed":"Грузия"},{"@type":"Offer","name":"Ситидрайв","description":"Скидка 50% на первые 2 поездки, максимум 500 ₽ на каждую","url":"https://citydrive.prfl.me/sites/lryd5t?source=json","category":"услуги","priceCurrency":"RUB","discount":"50%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+"},"image":"https://s3sc.perfluence.net/logos/16511548706573.png","availability":"https://schema.org/InStock","couponCode":"SAVE1098","areaServed":"Россия"},{"@type":"Offer","name":"Ситидрайв","description":"Скидка 600 ₽ на первую поездку","url":"https://citydrive.prfl.me/sites/lryd5t?source=json","category":"услуги","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+"},"image":"https://s3sc.perfluence.net/logos/16511548706573.png","availability":"https://schema.org/InStock","couponCode":"AVTO712","areaServed":"Россия"},{"@type":"Offer","name":"Делимобиль","description":"200 бонусов на повторную поездку пользователям, которые не совершали поездки более 60 дней","url":"https://delimobil.prfl.me/sites/5fmkk8?source=json","category":"услуги","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ПАО \"Каршеринг Руссия\" 107023, г. Москва, ул. Электрозаводская, дом 27, строение 1А. ИНН 9718236471 ОГРН 1237700701534"},"image":"https://s3sc.perfluence.net/logos/17035315171212.png","availability":"https://schema.org/InStock","couponCode":"ms39je","areaServed":"Грузия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 15% на первый заказ от 1500 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"LTP56114","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Ролл Столичный в подарок на один любой заказ от 1490 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"1490 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"MMM98151","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 600 ₽ на первый заказ от 1990 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"NTX68969","areaServed":"Россия"},{"@type":"Offer","name":"FARFOR","description":"Скидка 15% на один любой заказ от 2290 ₽","url":"https://farfor2.prfl.me/sites/iv59c1?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339."},"image":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","availability":"https://schema.org/InStock","couponCode":"ZKB26743","areaServed":"Россия"},{"@type":"Offer","name":"SOKOLOV Offline","description":"Бесплатная подвеска в подарок при предъявлении штрихкода на кассе магазина","url":"https://sokolov.prfl.me/sites/gcr3y7?source=json","category":"товары","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО \"СВ Ритейл\", ИНН 7716918034."},"image":"https://barcode.tec-it.com/barcode.ashx?data=T6KRVDJF&code=Code128","availability":"https://schema.org/InStock","couponCode":"T6KRVDJF","areaServed":"Россия"},{"@type":"Offer","name":"Яндекс Еда Беларусь","description":"Скидка 18 BYN на первый заказ от 30 BYN из любого ресторана или магазина","url":"https://go-yandex.prfl.me/sites/3i3ohb?source=json","category":"еда","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Еда Беларусь"},"image":"https://s3sc.perfluence.net/logos/0/2/d/02dccd30-a3d5-49b6-9140-3948edefe3c4.png","availability":"https://schema.org/InStock","couponCode":"BLRDQU","areaServed":"Россия"},{"@type":"Offer","name":"Yandex Eats Армения","description":"Скидка 2700֏ на первый заказ в приложении от 4500֏ из любого ресторана","url":"https://go-yandex.prfl.me/sites/mjj2ym?source=json","category":"продукты","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Yandex Eats Армения"},"image":"https://s3sc.perfluence.net/logos/1/6/e/16e5aeed-367f-4f83-a99a-ea94864dfbab.png","availability":"https://schema.org/InStock","couponCode":"AM1D8A","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Запеченный ролл Угорь в подарок при каждом заказе от 3 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"3999 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"УГОРЬ253","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Фреш ролл с креветкой и авокадо в подарок при каждом заказе от 4 299 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"4299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"FRESH1738","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Скидка 15% при каждом заказе от 3 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"15%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"SPTB36","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Фреш ролл с креветкой и лаймом в подарок при каждом заказе от 4 299 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"4299 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"ЛАЙМ370","areaServed":"Россия"},{"@type":"Offer","name":"Важная Рыба","description":"Ролл с креветкой темпура и соусом манго в подарок при первом заказе от 2 999 ₽","url":"https://vipfish1.prfl.me/sites/04kt38?source=json","category":"еда","priceCurrency":"RUB","discount":"2999 RUB","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213."},"image":"https://s3sc.perfluence.net/logos/17035052263751.png","availability":"https://schema.org/InStock","couponCode":"ТЕМПУРА370","areaServed":"Россия"},{"@type":"Offer","name":"Tefal","description":"Скидка 13% на все товары Tefal на первый и все повторные заказы на сайте","url":"https://tefal.prfl.me/sites/a885w6?source=json","category":"товары","discount":"13%","validThrough":"2026-09-30T23:59:59","offeredBy":{"@type":"Organization","name":"Рекламодатель ЗАО \"Группа СЕБ-Восток\", ИНН 7714108299"},"image":"https://s3sc.perfluence.net/logos/a/6/c/a6cc8406-1720-44a2-93fd-49e033d8ca62.png","availability":"https://schema.org/InStock","couponCode":"13perf377","areaServed":"Россия"},{"@type":"Offer","name":"М.Косметик - Новое приложение","description":"Скидка 51% на первый заказ от 1500 ₽ в приложении \"Магнит Доставка\"","url":"https://mgntksm1.prfl.me/sites/aa0pho?source=json","category":"еда","priceCurrency":"RUB","discount":"51%","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО \"Тандер\", ИНН 2310031475."},"image":"https://s3sc.perfluence.net/logos/c/2/a/c2a51260-7355-4f04-8ee5-87ee38871cc8.jpeg","availability":"https://schema.org/InStock","couponCode":"PK4JOGUZN","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 350 ₽ от 2500 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"350 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"35VA2PXT","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 600 ₽ от 3000 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"600 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSZYSEJ","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 200 ₽ от 1000 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"200 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSSLK1D","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 300 ₽ от 1500 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"300 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"30VHRDME","areaServed":"Россия"},{"@type":"Offer","name":"ВкусВилл Доставка","description":"Скидка 250 ₽ от 1250 ₽ на первую покупку","url":"https://vksvl.prfl.me/sites/xswaug?source=json","category":"продукты","priceCurrency":"RUB","discount":"250 RUB","validThrough":"2026-10-31T23:59:59","offeredBy":{"@type":"Organization","name":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru"},"image":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","availability":"https://schema.org/InStock","couponCode":"VSBKKST","areaServed":"Россия"},{"@type":"Offer","name":"Yandex Go Узбекистан","description":"Скидка 45 000 сум на первый заказ из приложения в разделе \"Еда\" из ресторанов и магазинов от 90 000 сум","url":"https://go-yandex.prfl.me/sites/edhmsv?source=json","category":"продукты","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Yandex Go Узбекистан"},"image":"https://s3sc.perfluence.net/logos/2/c/4/2c4b5e72-50bc-4840-8393-a26013205552.jpg","availability":"https://schema.org/InStock","couponCode":"UKHAL5","areaServed":"Узбекистан"},{"@type":"Offer","name":"Яндекс Go Кыргызстан","description":"Скидка 330 сом на первый заказ от 650 сом из любого ресторана или магазина","url":"https://yandex.prfl.me/sites/p7sxqn?source=json","category":"еда","validThrough":"2026-12-31T23:59:59","offeredBy":{"@type":"Organization","name":"Яндекс Go Кыргызстан"},"image":"https://s3sc.perfluence.net/logos/a/6/5/a651e132-2ce5-4bd9-8e3d-51cf8b40fe0b.jpg","availability":"https://schema.org/InStock","couponCode":"KGYAHG","areaServed":"Россия"}]
     }
     </script>
     
 
-    <script id="promo-bootstrap" type="application/json">{"stats":{"total":64,"active":64,"totalPromocodes":64,"activePromocodes":64,"lastUpdate":"2026-09-24T23:37:56.772Z","lastUpdateFormatted":"25.09.2026, 02:37:56","countries":["Россия","Казахстан","Узбекистан","Грузия"]},"categories":["развлечения","другие","продукты","еда","услуги","товары"],"data":[{"id":22751117,"title":"Яндекс Афиша","description":"Скидка 10% на первую и все повторные покупки от 3 000 ₽ в приложении","promocode":"VD399967","discount_percent":10,"discount_amount":3000,"bonus_description":"Скидка 10% на первую и все повторные покупки от 3 000 ₽ в приложении","valid_until":"2026-11-06T23:59:59","landing_url":"https://yandafisha.prfl.me/sites/1makqv?source=json","image_url":"https://s3sc.perfluence.net/logos/16748253656362.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040.","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.776Z","groupDescription":"Яндекс Афиша - площадка для поиска билетов на развлекательные мероприятия: выставки, концерты исполнителей всех жанров, театры, мюзиклы, шоу и даже катки.","sort_group":0},{"id":22755617,"title":"Яндекс Афиша","description":"Скидка 750 ₽ от 5 000 ₽ для новых пользователей в приложении","promocode":"FL044282","discount_percent":null,"discount_amount":750,"bonus_description":"Скидка 750 ₽ от 5 000 ₽ для новых пользователей в приложении","valid_until":"2026-11-06T23:59:59","landing_url":"https://yandafisha.prfl.me/sites/1makqv?source=json","image_url":"https://s3sc.perfluence.net/logos/16748253656362.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040.","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.777Z","groupDescription":"Яндекс Афиша - площадка для поиска билетов на развлекательные мероприятия: выставки, концерты исполнителей всех жанров, театры, мюзиклы, шоу и даже катки.","sort_group":0},{"id":22749617,"title":"Яндекс Афиша","description":"Скидка 100% на сервисный сбор на первую и все повторные покупки билетов от 3 000 ₽ в приложении","promocode":"ND164996","discount_percent":100,"discount_amount":3000,"bonus_description":"Скидка 100% на сервисный сбор на первую и все повторные покупки билетов от 3 000 ₽ в приложении","valid_until":"2026-11-06T23:59:59","landing_url":"https://yandafisha.prfl.me/sites/1makqv?source=json","image_url":"https://s3sc.perfluence.net/logos/16748253656362.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040.","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.777Z","groupDescription":"Яндекс Афиша - площадка для поиска билетов на развлекательные мероприятия: выставки, концерты исполнителей всех жанров, театры, мюзиклы, шоу и даже катки.","sort_group":0},{"id":22754117,"title":"Яндекс Афиша","description":"Скидка 400 ₽ на первую покупку билетов от 3000 ₽ в приложении","promocode":"KD904683","discount_percent":null,"discount_amount":400,"bonus_description":"Скидка 400 ₽ на первую покупку билетов от 3000 ₽ в приложении","valid_until":"2026-11-06T23:59:59","landing_url":"https://yandafisha.prfl.me/sites/1makqv?source=json","image_url":"https://s3sc.perfluence.net/logos/16748253656362.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040.","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.777Z","groupDescription":"Яндекс Афиша - площадка для поиска билетов на развлекательные мероприятия: выставки, концерты исполнителей всех жанров, театры, мюзиклы, шоу и даже катки.","sort_group":0},{"id":22752617,"title":"Яндекс Афиша","description":"Скидка 300 ₽ на первую покупку билетов от 2 000 ₽ в приложении","promocode":"FA900953","discount_percent":null,"discount_amount":300,"bonus_description":"Скидка 300 ₽ на первую покупку билетов от 2 000 ₽ в приложении","valid_until":"2026-11-06T23:59:59","landing_url":"https://yandafisha.prfl.me/sites/1makqv?source=json","image_url":"https://s3sc.perfluence.net/logos/16748253656362.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС МУЗЫКА\", ИНН 9705121040.","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.777Z","groupDescription":"Яндекс Афиша - площадка для поиска билетов на развлекательные мероприятия: выставки, концерты исполнителей всех жанров, театры, мюзиклы, шоу и даже катки.","sort_group":0},{"id":22592302,"title":"Яндекс Путешествия","description":"Скидка 25% (не более 3 000 ₽) на бронирование отелей и иного жилья в эмирате Шарджа для всех пользователей в приложении и на сайте","promocode":"SHARJAH26","discount_percent":25,"discount_amount":3000,"bonus_description":"Скидка 25% (не более 3 000 ₽) на бронирование отелей и иного жилья в эмирате Шарджа для всех пользователей в приложении и на сайте","valid_until":"2026-09-30T23:59:59","landing_url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","image_url":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","conditions":null,"advertiser_info":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327.","category":"другие","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Яндекс Путешествия — один из самых удобных сервисов для онлайн-бронирования жилья, по мнению пользователей.Здесь можно забронировать номер и оплатить его без комиссии и переплаты, а еще купить авиа и ж/д билеты на разные направления.","sort_group":1},{"id":19219110,"title":"Яндекс Путешествия","description":"Скидка 1 000 ₽ от 10 000 ₽ для всех пользователей в приложении и на сайте","promocode":"PF-ALLIOOO-OQKHU","discount_percent":null,"discount_amount":1000,"bonus_description":"Скидка 1 000 ₽ от 10 000 ₽ для всех пользователей в приложении и на сайте","valid_until":"2026-09-30T23:59:59","landing_url":"https://travelyandex.prfl.me/sites/gs8nxk?source=json","image_url":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","conditions":"Одно применение на аккаунтДействует на сайте и в приложенииБаллы Яндекс Плюс не начисляются","advertiser_info":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327.","category":"другие","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Яндекс Путешествия — один из самых удобных сервисов для онлайн-бронирования жилья, по мнению пользователей.Здесь можно забронировать номер и оплатить его без комиссии и переплаты, а еще купить авиа и ж/д билеты на разные направления.","sort_group":1},{"id":21752132,"title":"Яндекс Путешествия","description":"Скидка 2 500 ₽ от 25 000 ₽ на одно бронирование из подборки для всех пользователей в приложении и на сайте","promocode":"PF-PREMIUMPRO-EC42T","discount_percent":null,"discount_amount":2500,"bonus_description":"Скидка 2 500 ₽ от 25 000 ₽ на одно бронирование из подборки для всех пользователей в приложении и на сайте","valid_until":"2026-09-30T23:59:59","landing_url":"https://yandextravel.prfl.me/sites/ua00gq?source=json","image_url":"https://s3sc.perfluence.net/logos/1/7/c/17c94af5-81f0-4083-b5dd-760e3ac6c1dc.png","conditions":"Действует на отели из подборкиСкидка 2 500 ₽ от 25 000 ₽Действует при бронировании отелей и иного жилья на сайте и в мобильном приложении Яндекс ПутешествийОдно применение на аккаунт","advertiser_info":"ООО \"ЯНДЕКС.ВЕРТИКАЛИ\", ИНН 7704340327.","category":"другие","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Яндекс Путешествия — один из самых удобных сервисов для онлайн-бронирования жилья, по мнению пользователей.Здесь можно забронировать номер и оплатить его без комиссии и переплаты, а еще купить авиа и ж/д билеты на разные направления.","sort_group":1},{"id":22655362,"title":"Яндекс Лавка","description":"Скидка 55% от 800 ₽ на первый заказ, максимальная скидка 600 ₽, действует в Новосибирске и Ростове-на-Дону","promocode":"55REG673","discount_percent":55,"discount_amount":800,"bonus_description":"Скидка 55% от 800 ₽ на первый заказ, максимальная скидка 600 ₽, действует в Новосибирске и Ростове-на-Дону","valid_until":"2026-10-15T23:59:59","landing_url":"https://yalavka.prfl.me/sites/krbphd?source=json","image_url":"https://s3sc.perfluence.net/logos/17035038665166.png","conditions":null,"advertiser_info":"ООО \"Яндекс.Лавка\", ИНН 9718101499.","category":"продукты","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.778Z","groupDescription":"Яндекс Лавка – это быстрая доставка продуктов, готовой еды и товаров для дома. Ждать курьера с покупками недолго — от 15 минут. Многие Яндекс Лавки работают 24/7, даже ночью.","sort_group":3},{"id":21933213,"title":"Яндекс Лавка","description":"Скидка 300 ₽ от 600 ₽ на первый заказ","promocode":"300DS354","discount_percent":null,"discount_amount":300,"bonus_description":"Скидка 300 ₽ от 600 ₽ на первый заказ","valid_until":"2026-10-30T23:59:59","landing_url":"https://yalavka.prfl.me/sites/krbphd?source=json","image_url":"https://s3sc.perfluence.net/logos/17035038665166.png","conditions":null,"advertiser_info":"ООО \"Яндекс.Лавка\", ИНН 9718101499.","category":"продукты","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.778Z","groupDescription":"Яндекс Лавка – это быстрая доставка продуктов, готовой еды и товаров для дома. Ждать курьера с покупками недолго — от 15 минут. Многие Яндекс Лавки работают 24/7, даже ночью.","sort_group":3},{"id":22689640,"title":"Яндекс Лавка","description":"Скидка 50% от 800 ₽ на первый заказ, максимальная скидка 600 ₽","promocode":"50LUT268","discount_percent":50,"discount_amount":800,"bonus_description":"Скидка 50% от 800 ₽ на первый заказ, максимальная скидка 600 ₽","valid_until":"2026-12-31T23:59:59","landing_url":"https://yalavka.prfl.me/sites/krbphd?source=json","image_url":"https://s3sc.perfluence.net/logos/17035038665166.png","conditions":null,"advertiser_info":"ООО \"Яндекс.Лавка\", ИНН 9718101499.","category":"продукты","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.778Z","groupDescription":"Яндекс Лавка – это быстрая доставка продуктов, готовой еды и товаров для дома. Ждать курьера с покупками недолго — от 15 минут. Многие Яндекс Лавки работают 24/7, даже ночью.","sort_group":3},{"id":22691839,"title":"Яндекс Лавка","description":"Скидка 40% от 800 ₽ на один заказ для тех, кто не пользовался сервисом более года, максимальная скидка 600 ₽","promocode":"40ASD268","discount_percent":40,"discount_amount":800,"bonus_description":"Скидка 40% от 800 ₽ на один заказ для тех, кто не пользовался сервисом более года, максимальная скидка 600 ₽","valid_until":"2026-12-31T23:59:59","landing_url":"https://yalavka.prfl.me/sites/krbphd?source=json","image_url":"https://s3sc.perfluence.net/logos/17035038665166.png","conditions":null,"advertiser_info":"ООО \"Яндекс.Лавка\", ИНН 9718101499.","category":"продукты","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.778Z","groupDescription":"Яндекс Лавка – это быстрая доставка продуктов, готовой еды и товаров для дома. Ждать курьера с покупками недолго — от 15 минут. Многие Яндекс Лавки работают 24/7, даже ночью.","sort_group":3},{"id":22739409,"title":"Яндекс Лавка Казахстан ","description":"Скидка 35% на первый заказ, но не более 2500 ₸","promocode":"otum9553858","discount_percent":35,"discount_amount":null,"bonus_description":"Скидка 35% на первый заказ, но не более 2500 ₸","valid_until":"2026-12-31T23:59:59","landing_url":"https://lavkakzx.prfl.me/sites/q1yljc?source=json","image_url":"https://s3sc.perfluence.net/logos/e/2/5/e25bd065-43e7-403c-9480-644e0020eafa.png","conditions":null,"advertiser_info":"Яндекс Лавка Казахстан","category":"продукты","country":"Казахстан","is_top":true,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Яндекс Лавка – это сервис быстрой доставки продуктов, готовой еды и товаров для дома. Ждать курьера с покупками недолго — от 15 минут. Многие Яндекс Лавки работают 24/7, даже ночью.","sort_group":3},{"id":18608580,"title":"Яндекс Плюс BY","description":"90 дней доступа к Яндекс Плюс бесплатно для новых пользователей и 60 дней бесплатного доступа для тех, у кого мультиподписка закончилась более месяца назад","promocode":"39SXJSRUL9","discount_percent":null,"discount_amount":null,"bonus_description":"90 дней доступа к Яндекс Плюс бесплатно для новых пользователей и 60 дней бесплатного доступа для тех, у кого мультиподписка закончилась более месяца назад","valid_until":"2026-09-30T23:59:59","landing_url":"https://plus90.prfl.me/sites/sm1fjx?source=json","image_url":"https://s3sc.perfluence.net/logos/6/5/d/65d37d06-c17c-4ad3-8f9d-6d312ebe80ae.png","conditions":null,"advertiser_info":"Яндекс Плюс BY","category":"еда","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Яндекс Плюс - единая подписка на сервисы Яндекса, включая Кинопоиск, Яндекс Музыку, Яндекс Книги. Подписка позволяет копить и тратить баллы Плюса. Баллами можно оплатить как часть, так и полную стоимость товаров, услуг и билетов в сервисах Яндекса: Яндекс Go (такси и самокаты), Яндекс Афиша, Кинопоиск, Еда, Путешествия.","sort_group":5},{"id":22410020,"title":"Яндекс Плюс KZ","description":"45 дней бесплатного доступа к Яндекс Музыке для новых пользователей","promocode":"49Z55UZAN9","discount_percent":null,"discount_amount":null,"bonus_description":"45 дней бесплатного доступа к Яндекс Музыке для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://yndxmusic2.prfl.me/sites/8zwb6g?source=json","image_url":"https://s3sc.perfluence.net/logos/9/f/e/9fecf87a-2930-49c9-869e-9e527bf56b3a.jpg","conditions":"Для пользователей, ранее имевших подписку, 30 дней - 99 ₸.","advertiser_info":"Яндекс Плюс KZ","category":"развлечения","country":"Казахстан","is_top":true,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Яндекс Плюс - единая подписка на сервисы Яндекса, включая Кинопоиск и Яндекс Музыку. Подписка позволяет копить и тратить баллы Плюса. Баллами можно оплатить как часть, так и полную стоимость товаров, услуг и билетов в сервисах Яндекса: Яндекс Go (такси и самокаты), Яндекс Афиша, Яндекс Еда, Путешествия.","sort_group":5},{"id":21236715,"title":"Яндекс Плюс UZ","description":"30 дней бесплатного доступа к Кинопоиску для новых пользователей","promocode":"27BHB4FGJY","discount_percent":null,"discount_amount":null,"bonus_description":"30 дней бесплатного доступа к Кинопоиску для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","image_url":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","conditions":"Для пользователей, ранее имевших подписку 30 дней — 20999 soʻm.","advertiser_info":"Яндекс Плюс UZ","category":"развлечения","country":"Узбекистан","is_top":true,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Яндекс Плюс - единая подписка на сервисы Яндекса, включая Кинопоиск и Яндекс Музыку. Подписка позволяет копить и тратить баллы Плюса. Баллами можно оплатить как часть, так и полную стоимость товаров, услуг и билетов в сервисах Яндекса: Yandex Go (такси, самокаты и еда), Кинопоиск.","sort_group":5},{"id":16172944,"title":"Яндекс Плюс UZ","description":"Подписка Плюс на 30 дней для новых пользователей","promocode":"8RDDDKLPWY","discount_percent":null,"discount_amount":null,"bonus_description":"Подписка Плюс на 30 дней для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://ypls-eats.prfl.me/sites/0bhzrl?source=json","image_url":"https://s3sc.perfluence.net/logos/2/9/9/29959671-b435-4e9b-a269-4e58145e8a2e.jpg","conditions":"Для пользователей, ранее имевших подписку 30 дней — 20999 soʻm.","advertiser_info":"Яндекс Плюс UZ","category":"развлечения","country":"Узбекистан","is_top":true,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Яндекс Плюс - единая подписка на сервисы Яндекса, включая Кинопоиск и Яндекс Музыку. Подписка позволяет копить и тратить баллы Плюса. Баллами можно оплатить как часть, так и полную стоимость товаров, услуг и билетов в сервисах Яндекса: Yandex Go (такси, самокаты и еда), Кинопоиск.","sort_group":5},{"id":22633683,"title":"PREMIER","description":"45 дней доступа к сервисам RUTUBE + PREMIER за 1 ₽ для пользователей без активной подписки более полугода или подписка на один месяц за 99 ₽ для неактивных пользователей менее полугода, далее 399 ₽","promocode":"zsq3jh9a","discount_percent":null,"discount_amount":99,"bonus_description":"45 дней доступа к сервисам RUTUBE + PREMIER за 1 ₽ для пользователей без активной подписки более полугода или подписка на один месяц за 99 ₽ для неактивных пользователей менее полугода, далее 399 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://premier.prfl.me/sites/b0khal?source=json","image_url":"https://s3sc.perfluence.net/logos/17103376638461.png","conditions":null,"advertiser_info":"Рекламодатель: ООО \"ПРЕМЬЕР\" 16+ ИНН 9702011190","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Онлайн-кинотеатр с любовью к российской уникальности, который создаёт оригинальный контент и показывает его первым. Новинки и сериалы собственного производства PREMIER каждую неделю.","sort_group":9},{"id":21534661,"title":"Яндекс Музыка","description":"45 дней доступа к Яндекс Музыке бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","promocode":"FKK9LRD6RB","discount_percent":null,"discount_amount":null,"bonus_description":"45 дней доступа к Яндекс Музыке бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","valid_until":"2026-09-30T23:59:59","landing_url":"https://yamuz45.prfl.me/sites/e4sy6n?source=json","image_url":"https://s3sc.perfluence.net/logos/17035837474639.png","conditions":"30 дней доступа для тех, кто не пользовался сервисом более 30 дней и ранее не использовал услугу реактивации за 1 ₽","advertiser_info":"ООО «ЯНДЕКС», ИНН 7736207543","category":"развлечения","country":"Узбекистан","is_top":true,"created_at":"2026-09-24T23:37:56.780Z","groupDescription":"Яндекс Музыка — сервис для поиска и прослушивания музыки и подкастов с рекомендациями для каждого пользователя. Можно слушать готовые подборки, или Моя Волна подберет музыку по вашим предпочтениям и фильтрам. Есть доступ к детским песням, сказкам и подкастам.","sort_group":10},{"id":21534176,"title":"Кинопоиск","description":"45 дней доступа к Кинопоиску бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","promocode":"AFG95YEHQ9","discount_percent":null,"discount_amount":null,"bonus_description":"45 дней доступа к Кинопоиску бесплатно для новых пользователей или 30 дней за 1 ₽ для пользователей без активной мультиподписки Яндекс Плюс","valid_until":"2026-09-30T23:59:59","landing_url":"https://kp45.prfl.me/sites/mf78q8?source=json","image_url":"https://s3sc.perfluence.net/logos/17035055659741.png","conditions":"30 дней доступа для тех, кто не пользовался сервисом более 30 дней и ранее не использовал услугу реактивации за 1 ₽","advertiser_info":"ООО «ЯНДЕКС», ИНН 7736207543","category":"развлечения","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.781Z","groupDescription":"Кинопоиск — онлайн-кинотеатр с доступом к тысячам фильмов, сериалов, мультфильмов и шоу. В сервисе представлены оригинальные проекты: \"Красная поляна\", \"Беспринципные в Питере\", \"Триггер\", \"Проект Анна Николаевна\", \"Мажор\".","sort_group":11},{"id":16119071,"title":"Кинопоиск KZ","description":"30 дней бесплатного доступа к Кинопоиску по промокоду для новых пользователей + бесплатная доставка из раздела Еда в Яндекс Go.","promocode":"SA3NFHWSCK","discount_percent":null,"discount_amount":null,"bonus_description":"30 дней бесплатного доступа к Кинопоиску по промокоду для новых пользователей + бесплатная доставка из раздела Еда в Яндекс Go.","valid_until":"2026-09-30T23:59:59","landing_url":"https://kinipoisc.prfl.me/sites/8yo0ke?source=json","image_url":"https://s3sc.perfluence.net/logos/f/1/e/f1e8fccf-6311-43f7-9418-67321db61ecb.png","conditions":null,"advertiser_info":"Кинопоиск KZ","category":"еда","country":"Казахстан","is_top":true,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Кинопоиск - онлайн-кинотеатр с доступом к тысяче фильмов и сериалов. В каталоге представлены сериалы, фильмы, мультфильмы и шоу, а также премьеры казахстанских и зарубежных новинок в числе первых.","sort_group":11},{"id":22592165,"title":"Freedom Афиша","description":"Скидка 1000 ₸ на билеты на мероприятия для новых пользователей","promocode":"PERF-A56J","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 1000 ₸ на билеты на мероприятия для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://freedombank.prfl.me/sites/yh1nbm?source=json","image_url":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","conditions":"промокод работает только в приложении Freedom SuperApp;не суммируется со скидками;минимальная сумма заказа 5000 тг.Новый пользователь - это пользователь, который ранее не приобретал билеты в Ticketon и в Freedom SuperApp.","advertiser_info":"Freedom Афиша","category":"развлечения","country":"Казахстан","is_top":false,"created_at":"2026-09-24T23:37:56.779Z","groupDescription":"Freedom Ticketon — крупнейший онлайн-сервис продажи билетов в Казахстане: кино, концерты, театр, стендап, спорт, фестивали и мероприятия.","sort_group":14},{"id":21521579,"title":"Freedom Афиша","description":"Скидка 500 ₸ на билеты в кино для новых пользователей","promocode":"PERF-Z59E","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 500 ₸ на билеты в кино для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://freedombank.prfl.me/sites/9mhdx8?source=json","image_url":"https://s3sc.perfluence.net/logos/1/8/b/18bce010-d27e-430f-b98e-c60a0a2598f6.png","conditions":"промокод работает только в приложении Freedom SuperApp;не суммируется со скидками;минимальная сумма заказа 2000 тг.Новый пользователь - это пользователь, который ранее не приобретал билеты в Ticketon и в Freedom SuperApp.","advertiser_info":"Freedom Афиша","category":"развлечения","country":"Казахстан","is_top":false,"created_at":"2026-09-24T23:37:56.780Z","groupDescription":"Freedom Ticketon — крупнейший онлайн-сервис продажи билетов в Казахстане: кино, концерты, театр, стендап, спорт, фестивали и мероприятия.","sort_group":14},{"id":18230705,"title":"Elementaree","description":"Скидка 33% на первый заказ от 3000 ₽ или 12% на все повторные заказы от 3000 ₽","promocode":"eeweb21","discount_percent":33,"discount_amount":3000,"bonus_description":"Скидка 33% на первый заказ от 3000 ₽ или 12% на все повторные заказы от 3000 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://elementareenw.prfl.me/sites/u6i8gk?source=json","image_url":"https://s3sc.perfluence.net/logos/16451119437056.jpg","conditions":null,"advertiser_info":"ООО \"ОЛИМП\", ИНН 7724417578.","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.781Z","groupDescription":"Elementaree – онлайн-сервис по доставке продуктовых наборов для приготовления ресторанных блюд по Москве, Санкт-Петербургу, Казани, Нижнему Новгороду, Туле, Ярославлю, Владимиру, Рязани, Калуге, Твери и Воронежу.  В наборе уже почищенные и порезанные ингредиенты, а также необходимые соусы и приправы. Следуйте пошаговому рецепту и получайте ужин как в ресторане всего за 15 минут!","sort_group":14},{"id":22625901,"title":"Rutube","description":"2 месяца доступа к сервисам RUTUBE + PREMIER по цене одного - за 399 ₽ для всех пользователей без активной подписки более полугода, далее 399 ₽ в месяц","promocode":"j74r4287","discount_percent":null,"discount_amount":399,"bonus_description":"2 месяца доступа к сервисам RUTUBE + PREMIER по цене одного - за 399 ₽ для всех пользователей без активной подписки более полугода, далее 399 ₽ в месяц","valid_until":"2026-09-30T23:59:59","landing_url":"https://rutube.prfl.me/sites/2umgzm?source=json","image_url":"https://s3sc.perfluence.net/logos/3/8/d/38dc11ee-7a6d-4395-93bb-00cf46b18629.png","conditions":null,"advertiser_info":"Рекламодатель: ООО \"Руформ\" 16+ ИНН 7714886605","category":"услуги","country":"Россия","is_top":true,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"RUTUBE - российская видеоплатформа для просмотра сериалов, шоу, блогов и новостей. Здесь можно смотреть эксклюзивный контент, недоступный на других платформах, есть доступ к премьерам сериалов, шоу или фильмов до официальных премьер. Работает без ВПН!","sort_group":14},{"id":22669892,"title":"Перекрёсток Доставка","description":"Скидка 25% при заказе от 1800 ₽ на первые два заказа в приложении Перекрёсток Доставка","promocode":"151978QZE","discount_percent":25,"discount_amount":1800,"bonus_description":"Скидка 25% при заказе от 1800 ₽ на первые два заказа в приложении Перекрёсток Доставка","valid_until":"2026-09-30T23:59:59","landing_url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","image_url":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","conditions":null,"advertiser_info":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Перекрёсток Доставка продуктов — мобильное приложение, где можно заказать доставку или оформить самовывоз продуктов, готовой еды, товаров для дома и зоотоваров из более чем 900 магазинов России. Внутри — более 35 000 позиций, бонусная карта системы лояльности «Х5 Клуба», а также персональные предложения и акции.","sort_group":14},{"id":22670892,"title":"Перекрёсток Доставка","description":"Скидка 30% на первый заказ от 2400 ₽ в приложении Перекрёсток Доставка","promocode":"149CWSVSZ","discount_percent":30,"discount_amount":2400,"bonus_description":"Скидка 30% на первый заказ от 2400 ₽ в приложении Перекрёсток Доставка","valid_until":"2026-09-30T23:59:59","landing_url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","image_url":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","conditions":"Максимальная сумма скидки 800 ₽","advertiser_info":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Перекрёсток Доставка продуктов — мобильное приложение, где можно заказать доставку или оформить самовывоз продуктов, готовой еды, товаров для дома и зоотоваров из более чем 900 магазинов России. Внутри — более 35 000 позиций, бонусная карта системы лояльности «Х5 Клуба», а также персональные предложения и акции.","sort_group":14},{"id":22671769,"title":"Перекрёсток Доставка","description":"Скидка 355 ₽ от 1555 ₽ в приложении Перекрёсток Доставка для тех, кто не делал заказ более 180 дней","promocode":"153JNW5GG","discount_percent":null,"discount_amount":355,"bonus_description":"Скидка 355 ₽ от 1555 ₽ в приложении Перекрёсток Доставка для тех, кто не делал заказ более 180 дней","valid_until":"2026-09-30T23:59:59","landing_url":"https://perekrestok.prfl.me/sites/mdmn99?source=json","image_url":"https://s3sc.perfluence.net/logos/e/d/9/ed9eb153-dc6d-46a4-acf6-53327ea91866.png","conditions":"Акция действует для пользователей, не делавших заказ в приложении Перекрёсток Доставка более 180 днейПромокод не суммируется со скидками и с товарами со знаком \"Низкая цена\"","advertiser_info":"ООО \"ИКС 5 ДИДЖИТАЛ\", ИНН 9722010808","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"Перекрёсток Доставка продуктов — мобильное приложение, где можно заказать доставку или оформить самовывоз продуктов, готовой еды, товаров для дома и зоотоваров из более чем 900 магазинов России. Внутри — более 35 000 позиций, бонусная карта системы лояльности «Х5 Клуба», а также персональные предложения и акции.","sort_group":14},{"id":21812165,"title":"Самокат","description":"Скидка 500 ₽ на первый заказ от 2000 ₽","promocode":"UYSKUGV","discount_percent":null,"discount_amount":500,"bonus_description":"Скидка 500 ₽ на первый заказ от 2000 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://samokat.prfl.me/sites/243y8e?source=json","image_url":"https://s3sc.perfluence.net/logos/17035034035169.png","conditions":null,"advertiser_info":"ООО \"Умный Ритейл\", ИНН 7811657720.","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Самокат — онлайн‑магазин с доставкой от 15 минут, в каждом районе есть свой даркстор. Сервис работает в 127 городах России.","sort_group":14},{"id":21823165,"title":"Самокат","description":"Скидка 30% на первый заказ от 1000 ₽","promocode":"PRU8CPL","discount_percent":30,"discount_amount":1000,"bonus_description":"Скидка 30% на первый заказ от 1000 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://samokat.prfl.me/sites/243y8e?source=json","image_url":"https://s3sc.perfluence.net/logos/17035034035169.png","conditions":"Максимальная скидка – 500₽","advertiser_info":"ООО \"Умный Ритейл\", ИНН 7811657720.","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Самокат — онлайн‑магазин с доставкой от 15 минут, в каждом районе есть свой даркстор. Сервис работает в 127 городах России.","sort_group":14},{"id":21818165,"title":"Самокат","description":"Скидка 300 ₽ на первый заказ от 1200 ₽","promocode":"HSHF66Y","discount_percent":null,"discount_amount":300,"bonus_description":"Скидка 300 ₽ на первый заказ от 1200 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://samokat.prfl.me/sites/243y8e?source=json","image_url":"https://s3sc.perfluence.net/logos/17035034035169.png","conditions":null,"advertiser_info":"ООО \"Умный Ритейл\", ИНН 7811657720.","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Самокат — онлайн‑магазин с доставкой от 15 минут, в каждом районе есть свой даркстор. Сервис работает в 127 городах России.","sort_group":14},{"id":21120161,"title":"Okko","description":"Подписка на 60 дней за 1 ₽, далее 399 ₽ по промокоду для пользователей, не совершавших платных покупок. Предусмотрено автопродление","promocode":"836252124321","discount_percent":null,"discount_amount":399,"bonus_description":"Подписка на 60 дней за 1 ₽, далее 399 ₽ по промокоду для пользователей, не совершавших платных покупок. Предусмотрено автопродление","valid_until":"2026-09-30T23:59:59","landing_url":"https://okko1.prfl.me/sites/s3y0o0?source=json","image_url":"https://s3sc.perfluence.net/logos/16946977597549.png","conditions":null,"advertiser_info":"Рекламодатель: ООО «Окко», г. Санкт-Петербург, ОГРН 1167847381130. Сервис Okko 18+","category":"развлечения","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Okko — один из крупнейших российских онлайн-кинотеатров. Здесь смотрят российские и зарубежные фильмы, сериалы, мультфильмы, ТВ-каналы, спорт и многое другое, в том числе оригинальный контент собственного производства.","sort_group":14},{"id":22594696,"title":"Ёбидоёби","description":"Скидка 20% от 1 299 ₽ на первый заказ","promocode":"COAOR","discount_percent":20,"discount_amount":1299,"bonus_description":"Скидка 20% от 1 299 ₽ на первый заказ","valid_until":"2026-09-30T23:59:59","landing_url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","image_url":"https://s3sc.perfluence.net/logos/17025512612501.png","conditions":null,"advertiser_info":"ООО \"Вкусные технологии\". ИНН 2465359759","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Ёбидоёби, что в переводе с японского означает «День недели – суббота» — международная сеть доставки суши и роллов, которая ломает стереотипы! Здесь вы найдёте небанальные сеты вроде \"Ку и Ли\" \"БиЧ\", \" Чпо Ки\", \"Тити Тоси\" и другие по демократичным ценам с доставкой от 40 минут.","sort_group":14},{"id":22596696,"title":"Ёбидоёби","description":"Ролл \"Цезарь темпура\" за 1 ₽ при одном любом повторном заказе от 1 299 ₽","promocode":"CXASF","discount_percent":null,"discount_amount":1299,"bonus_description":"Ролл \"Цезарь темпура\" за 1 ₽ при одном любом повторном заказе от 1 299 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://yobidoyobi1.prfl.me/sites/1pyahl?source=json","image_url":"https://s3sc.perfluence.net/logos/17025512612501.png","conditions":null,"advertiser_info":"ООО \"Вкусные технологии\". ИНН 2465359759","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Ёбидоёби, что в переводе с японского означает «День недели – суббота» — международная сеть доставки суши и роллов, которая ломает стереотипы! Здесь вы найдёте небанальные сеты вроде \"Ку и Ли\" \"БиЧ\", \" Чпо Ки\", \"Тити Тоси\" и другие по демократичным ценам с доставкой от 40 минут.","sort_group":14},{"id":22620803,"title":"Start.ru","description":"30 дней доступа на START за ₽ для новых пользователей + 50% скидки на первое продление","promocode":"pf10mr3kkj","discount_percent":50,"discount_amount":null,"bonus_description":"30 дней доступа на START за ₽ для новых пользователей + 50% скидки на первое продление","valid_until":"2026-09-30T23:59:59","landing_url":"https://start.prfl.me/sites/5us1qr?source=json","image_url":"https://s3sc.perfluence.net/logos/2/a/8/2a8df8cd-d3ae-4405-abfd-ea026e9d70c8.png","conditions":null,"advertiser_info":"ООО \"СТАРТ.РУ\", ИНН 7728374780.","category":"развлечения","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"Онлайн-кинотеатр START — это оригинальные сериалы, более 200 телеканалов, кино и мультфильмы. Активируйте подписку и наслаждайтесь лучшими премьерами сезона: «Папины дочки. Новые», «Инспектор Гаврилов 3», «Вампиры средней полосы 3» и многими другими.","sort_group":14},{"id":21948013,"title":"FARFOR","description":"Скидка 15% на первый заказ от 1500 ₽","promocode":"LTP56114","discount_percent":15,"discount_amount":1500,"bonus_description":"Скидка 15% на первый заказ от 1500 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://farfor2.prfl.me/sites/iv59c1?source=json","image_url":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","conditions":null,"advertiser_info":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"FARFOR — сеть ресторанов доставки готовой еды. Здесь можно заказать всё и сразу в одном месте: от роллов и пиццы до поке и супов.","sort_group":14},{"id":21949014,"title":"FARFOR","description":"Ролл Столичный в подарок на один любой заказ от 1490 ₽","promocode":"MMM98151","discount_percent":null,"discount_amount":1490,"bonus_description":"Ролл Столичный в подарок на один любой заказ от 1490 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://farfor2.prfl.me/sites/iv59c1?source=json","image_url":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","conditions":null,"advertiser_info":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"FARFOR — сеть ресторанов доставки готовой еды. Здесь можно заказать всё и сразу в одном месте: от роллов и пиццы до поке и супов.","sort_group":14},{"id":21966360,"title":"FARFOR","description":"Скидка 600 ₽ на первый заказ от 1990 ₽","promocode":"NTX68969","discount_percent":null,"discount_amount":600,"bonus_description":"Скидка 600 ₽ на первый заказ от 1990 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://farfor2.prfl.me/sites/iv59c1?source=json","image_url":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","conditions":null,"advertiser_info":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"FARFOR — сеть ресторанов доставки готовой еды. Здесь можно заказать всё и сразу в одном месте: от роллов и пиццы до поке и супов.","sort_group":14},{"id":21953017,"title":"FARFOR","description":"Скидка 15% на один любой заказ от 2290 ₽","promocode":"ZKB26743","discount_percent":15,"discount_amount":2290,"bonus_description":"Скидка 15% на один любой заказ от 2290 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://farfor2.prfl.me/sites/iv59c1?source=json","image_url":"https://s3sc.perfluence.net/logos/1/6/8/1683f7ba-0c46-4e81-bb29-1cecc344e29c.jpg","conditions":null,"advertiser_info":"ООО \"Фарфор Франчайзинг\", ИНН 0276147339.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"FARFOR — сеть ресторанов доставки готовой еды. Здесь можно заказать всё и сразу в одном месте: от роллов и пиццы до поке и супов.","sort_group":14},{"id":19066610,"title":"Додо пицца Юг","description":"Скидка 25% при каждом заказе от 1399 ₽ на самовывоз (Красная Поляна, Эсто-Садок, по адресам ул.Эстонская, 65; ул.Турчинского, 91А)","promocode":"E42GP","discount_percent":25,"discount_amount":1399,"bonus_description":"Скидка 25% при каждом заказе от 1399 ₽ на самовывоз (Красная Поляна, Эсто-Садок, по адресам ул.Эстонская, 65; ул.Турчинского, 91А)","valid_until":"2026-09-30T23:59:59","landing_url":"https://dodo1.prfl.me/sites/a24n5j?source=json","image_url":"https://s3sc.perfluence.net/logos/17035048282497.jpg","conditions":null,"advertiser_info":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"Описание недоступно","sort_group":14},{"id":21219870,"title":"Додо пицца Юг","description":"Скидка 20% при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог), и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","promocode":"POQHN5","discount_percent":20,"discount_amount":1399,"bonus_description":"Скидка 20% при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог), и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","valid_until":"2026-09-30T23:59:59","landing_url":"https://dodo1.prfl.me/sites/a24n5j?source=json","image_url":"https://s3sc.perfluence.net/logos/17035048282497.jpg","conditions":null,"advertiser_info":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"Описание недоступно","sort_group":14},{"id":19067609,"title":"Додо пицца Юг","description":"Скидка 25% на первый заказ (Воронеж, Ростов-на-Дону, Таганрог, Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","promocode":"Y1JL6","discount_percent":25,"discount_amount":null,"bonus_description":"Скидка 25% на первый заказ (Воронеж, Ростов-на-Дону, Таганрог, Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","valid_until":"2026-09-30T23:59:59","landing_url":"https://dodo1.prfl.me/sites/a24n5j?source=json","image_url":"https://s3sc.perfluence.net/logos/17035048282497.jpg","conditions":null,"advertiser_info":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"Описание недоступно","sort_group":14},{"id":22656723,"title":"Додо пицца Юг","description":"Пицца «Песто» 25 см в подарок при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог) и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","promocode":"UCFBT","discount_percent":null,"discount_amount":1399,"bonus_description":"Пицца «Песто» 25 см в подарок при каждом заказе от 1399 ₽ (Воронеж, Ростов-на-Дону), от 1299 ₽ (Таганрог) и от 1499 ₽ (Сочи, Адлер, Лазаревское, Красная Поляна, Эсто-Садок)","valid_until":"2026-09-30T23:59:59","landing_url":"https://dodo1.prfl.me/sites/a24n5j?source=json","image_url":"https://s3sc.perfluence.net/logos/17035048282497.jpg","conditions":null,"advertiser_info":"Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"Описание недоступно","sort_group":14},{"id":22684448,"title":"KION","description":"Месяц бесплатного доступа к подписке КИОН или скидка 50% на подписку 3/6/12 месяцев для новых пользователей","promocode":"NEKTFKRGTMK3706","discount_percent":50,"discount_amount":null,"bonus_description":"Месяц бесплатного доступа к подписке КИОН или скидка 50% на подписку 3/6/12 месяцев для новых пользователей","valid_until":"2026-09-30T23:59:59","landing_url":"https://kion.prfl.me/sites/ojmvge?source=json","image_url":"https://s3sc.perfluence.net/logos/2/8/c/28c69966-6e15-465a-8d34-54e2f27e4337.png","conditions":null,"advertiser_info":"Рекламодатель ООО «КИОН», ОГРН 1197746576060, ИНН 7707434100","category":"развлечения","country":"Грузия","is_top":false,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"КИОН – российская мультимедийная онлайн-платформа, созданная компанией МТС. Здесь вы найдете коллекцию фильмов и сериалов любых жанров, классики и новинок в сочетании с прямой трансляцией любимых телепередач или ток-шоу, а также уникальный собственный контент.","sort_group":14},{"id":20565670,"title":"Ситидрайв","description":"Скидка 50% на первые 2 поездки, максимум 500 ₽ на каждую","promocode":"SAVE1098","discount_percent":50,"discount_amount":500,"bonus_description":"Скидка 50% на первые 2 поездки, максимум 500 ₽ на каждую","valid_until":"2026-09-30T23:59:59","landing_url":"https://citydrive.prfl.me/sites/lryd5t?source=json","image_url":"https://s3sc.perfluence.net/logos/16511548706573.png","conditions":"Скидка 50% на 2 первые поездки в каршеринге  «Ситидрайв», но не более 500 ₽ на каждую. Скидка предоставляется только для новых пользователей.","advertiser_info":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+","category":"услуги","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Ситидрайв — каршеринг, который предлагает аренду автомобилей с различными тарифами - от поминутного до суточного. Большое количество машин в хорошем состоянии по всему городу, что делает передвижение по крупным мегаполисам максимально удобным, а, главное, быстрым. Представлен в нескольких  городах страны — Москва, МО,  Санкт-Петербург, Сочи, Екатеринбург,  Нижний Новгород, Ростов-на-Дону, Краснодар.","sort_group":14},{"id":18931095,"title":"Ситидрайв","description":"Скидка 600 ₽ на первую поездку","promocode":"AVTO712","discount_percent":null,"discount_amount":600,"bonus_description":"Скидка 600 ₽ на первую поездку","valid_until":"2026-09-30T23:59:59","landing_url":"https://citydrive.prfl.me/sites/lryd5t?source=json","image_url":"https://s3sc.perfluence.net/logos/16511548706573.png","conditions":null,"advertiser_info":"Рекламодатель: ООО «НТС», Москва, вн. тер. г. м. о. Филевский парк, пр-д Береговой, д. 5А, к. 1, помещ. 1/13 ИНН 7704314221, ОГРН 1157746368999, citydrive.ru — «Ситидрайв» сервис аренды автомобилей. 0+","category":"услуги","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Ситидрайв — каршеринг, который предлагает аренду автомобилей с различными тарифами - от поминутного до суточного. Большое количество машин в хорошем состоянии по всему городу, что делает передвижение по крупным мегаполисам максимально удобным, а, главное, быстрым. Представлен в нескольких  городах страны — Москва, МО,  Санкт-Петербург, Сочи, Екатеринбург,  Нижний Новгород, Ростов-на-Дону, Краснодар.","sort_group":14},{"id":18650832,"title":"Делимобиль","description":"200 бонусов на повторную поездку пользователям, которые не совершали поездки более 60 дней","promocode":"ms39je","discount_percent":null,"discount_amount":null,"bonus_description":"200 бонусов на повторную поездку пользователям, которые не совершали поездки более 60 дней","valid_until":"2026-09-30T23:59:59","landing_url":"https://delimobil.prfl.me/sites/5fmkk8?source=json","image_url":"https://s3sc.perfluence.net/logos/17035315171212.png","conditions":null,"advertiser_info":"ПАО \"Каршеринг Руссия\" 107023, г. Москва, ул. Электрозаводская, дом 27, строение 1А. ИНН 9718236471 ОГРН 1237700701534","category":"услуги","country":"Грузия","is_top":false,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Делимобиль — крупнейший онлайн-сервис каршеринга в России, работает в 16 городах. В парке почти 30 тысяч авто: от привычных Polo и Solaris, веселых Smart и MINI, спортивного Stinger, и до презентабельных Audi, BMW, Mercedes.","sort_group":14},{"id":21685247,"title":"SOKOLOV Offline","description":"Бесплатная подвеска в подарок при предъявлении штрихкода на кассе магазина","promocode":"T6KRVDJF","discount_percent":null,"discount_amount":null,"bonus_description":"Бесплатная подвеска в подарок при предъявлении штрихкода на кассе магазина","valid_until":"2026-09-30T23:59:59","landing_url":"https://sokolov.prfl.me/sites/gcr3y7?source=json","image_url":"https://barcode.tec-it.com/barcode.ashx?data=T6KRVDJF&code=Code128","conditions":null,"advertiser_info":"ООО \"СВ Ритейл\", ИНН 7716918034.","category":"товары","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"SOKOLOV – это международный ювелирный бренд с офисами в России и Европе, известный не только в нашей стране, но и далеко за ее пределами. Сегодня украшения SOKOLOV можно приобрести в более чем 8 тыс. ювелирных магазинов по всему миру. Огромный ассортимент - более 42 000 самых актуальных и модных моделей.","sort_group":14},{"id":21021413,"title":"Яндекс Еда Беларусь","description":"Скидка 18 BYN на первый заказ от 30 BYN из любого ресторана или магазина","promocode":"BLRDQU","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 18 BYN на первый заказ от 30 BYN из любого ресторана или магазина","valid_until":"2026-09-30T23:59:59","landing_url":"https://go-yandex.prfl.me/sites/3i3ohb?source=json","image_url":"https://s3sc.perfluence.net/logos/0/2/d/02dccd30-a3d5-49b6-9140-3948edefe3c4.png","conditions":null,"advertiser_info":"Яндекс Еда Беларусь","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Яндекс Go Еда — сервис заказа быстрой доставки еды из кафе и ресторанов.","sort_group":14},{"id":22705905,"title":"Yandex Eats Армения","description":"Скидка 2700֏ на первый заказ в приложении от 4500֏ из любого ресторана","promocode":"AM1D8A","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 2700֏ на первый заказ в приложении от 4500֏ из любого ресторана","valid_until":"2026-09-30T23:59:59","landing_url":"https://go-yandex.prfl.me/sites/mjj2ym?source=json","image_url":"https://s3sc.perfluence.net/logos/1/6/e/16e5aeed-367f-4f83-a99a-ea94864dfbab.png","conditions":null,"advertiser_info":"Yandex Eats Армения","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.786Z","groupDescription":"Yandex Go, раздел \"Еда\" — сервис от Яндекса по доставке готовой еды и продуктов из \r\nлюбимых кафе и ресторанов Еревана, Гюмри и Ванадзора, где можно просто отбирать \r\nзаведения по времени доставки.","sort_group":14},{"id":21058042,"title":"Важная Рыба","description":"Запеченный ролл Угорь в подарок при каждом заказе от 3 999 ₽","promocode":"УГОРЬ253","discount_percent":null,"discount_amount":3999,"bonus_description":"Запеченный ролл Угорь в подарок при каждом заказе от 3 999 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://vipfish1.prfl.me/sites/04kt38?source=json","image_url":"https://s3sc.perfluence.net/logos/17035052263751.png","conditions":null,"advertiser_info":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Важная Рыба — быстрая доставка японской еды по Санкт-Петербургу и области! Получите заказ от 30 минут. В меню — более 200 блюд японской кухни, приготовленных из отборных ингредиентов с авторским подходом к вкусу.","sort_group":14},{"id":15282342,"title":"Важная Рыба","description":"Фреш ролл с креветкой и авокадо в подарок при каждом заказе от 4 299 ₽","promocode":"FRESH1738","discount_percent":null,"discount_amount":4299,"bonus_description":"Фреш ролл с креветкой и авокадо в подарок при каждом заказе от 4 299 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://vipfish1.prfl.me/sites/04kt38?source=json","image_url":"https://s3sc.perfluence.net/logos/17035052263751.png","conditions":null,"advertiser_info":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Важная Рыба — быстрая доставка японской еды по Санкт-Петербургу и области! Получите заказ от 30 минут. В меню — более 200 блюд японской кухни, приготовленных из отборных ингредиентов с авторским подходом к вкусу.","sort_group":14},{"id":17326053,"title":"Важная Рыба","description":"Скидка 15% при каждом заказе от 3 999 ₽","promocode":"SPTB36","discount_percent":15,"discount_amount":3999,"bonus_description":"Скидка 15% при каждом заказе от 3 999 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://vipfish1.prfl.me/sites/04kt38?source=json","image_url":"https://s3sc.perfluence.net/logos/17035052263751.png","conditions":null,"advertiser_info":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Важная Рыба — быстрая доставка японской еды по Санкт-Петербургу и области! Получите заказ от 30 минут. В меню — более 200 блюд японской кухни, приготовленных из отборных ингредиентов с авторским подходом к вкусу.","sort_group":14},{"id":21913687,"title":"Важная Рыба","description":"Фреш ролл с креветкой и лаймом в подарок при каждом заказе от 4 299 ₽","promocode":"ЛАЙМ370","discount_percent":null,"discount_amount":4299,"bonus_description":"Фреш ролл с креветкой и лаймом в подарок при каждом заказе от 4 299 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://vipfish1.prfl.me/sites/04kt38?source=json","image_url":"https://s3sc.perfluence.net/logos/17035052263751.png","conditions":null,"advertiser_info":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Важная Рыба — быстрая доставка японской еды по Санкт-Петербургу и области! Получите заказ от 30 минут. В меню — более 200 блюд японской кухни, приготовленных из отборных ингредиентов с авторским подходом к вкусу.","sort_group":14},{"id":21913187,"title":"Важная Рыба","description":"Ролл с креветкой темпура и соусом манго в подарок при первом заказе от 2 999 ₽","promocode":"ТЕМПУРА370","discount_percent":null,"discount_amount":2999,"bonus_description":"Ролл с креветкой темпура и соусом манго в подарок при первом заказе от 2 999 ₽","valid_until":"2026-09-30T23:59:59","landing_url":"https://vipfish1.prfl.me/sites/04kt38?source=json","image_url":"https://s3sc.perfluence.net/logos/17035052263751.png","conditions":null,"advertiser_info":"ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Важная Рыба — быстрая доставка японской еды по Санкт-Петербургу и области! Получите заказ от 30 минут. В меню — более 200 блюд японской кухни, приготовленных из отборных ингредиентов с авторским подходом к вкусу.","sort_group":14},{"id":21798371,"title":"Tefal","description":"Скидка 13% на все товары Tefal на первый и все повторные заказы на сайте","promocode":"13perf377","discount_percent":13,"discount_amount":null,"bonus_description":"Скидка 13% на все товары Tefal на первый и все повторные заказы на сайте","valid_until":"2026-09-30T23:59:59","landing_url":"https://tefal.prfl.me/sites/a885w6?source=json","image_url":"https://s3sc.perfluence.net/logos/a/6/c/a6cc8406-1720-44a2-93fd-49e033d8ca62.png","conditions":null,"advertiser_info":"Рекламодатель ЗАО \"Группа СЕБ-Восток\", ИНН 7714108299","category":"товары","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Описание недоступно","sort_group":14},{"id":22512966,"title":"М.Косметик - Новое приложение","description":"Скидка 51% на первый заказ от 1500 ₽ в приложении \"Магнит Доставка\"","promocode":"PK4JOGUZN","discount_percent":51,"discount_amount":1500,"bonus_description":"Скидка 51% на первый заказ от 1500 ₽ в приложении \"Магнит Доставка\"","valid_until":"2026-10-31T23:59:59","landing_url":"https://mgntksm1.prfl.me/sites/aa0pho?source=json","image_url":"https://s3sc.perfluence.net/logos/c/2/a/c2a51260-7355-4f04-8ee5-87ee38871cc8.jpeg","conditions":"Предложение не распространяется на товары из раздела «Аптека», на товары с отметкой «Финальная цена». Максимальный размер скидки - 1500 ₽.","advertiser_info":"АО \"Тандер\", ИНН 2310031475.","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.782Z","groupDescription":"М.Косметик — одна из ведущих розничных сетей по продаже косметики, бытовой химии и товаров для дома в России. В ассортименте представлены популярные бюджетные бренды и эксклюзивные марки уходовой и декоративной косметики, также есть товары для детей, мужчин, животных, товары для дома, товары для здоровья и автотовары. В каталоге более 13 тысяч наименований товаров, среди которых популярные бренды декоративной косметики:  L'Oreal, Maybelline, LAF (собственная торговая марка Магнит Косметик), Beauty Bomb и многие другие.","sort_group":14},{"id":17186998,"title":"ВкусВилл Доставка","description":"Скидка 350 ₽ от 2500 ₽ на первую покупку","promocode":"35VA2PXT","discount_percent":null,"discount_amount":350,"bonus_description":"Скидка 350 ₽ от 2500 ₽ на первую покупку","valid_until":"2026-10-31T23:59:59","landing_url":"https://vksvl.prfl.me/sites/xswaug?source=json","image_url":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","conditions":null,"advertiser_info":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"ВкусВилл — сеть магазинов вкусных и полезных продуктов с честным составом для здорового питания. Сейчас в сети более 1800 торговых точек в 157 городах России. Здесь продаются натуральные продукты, уходовая косметика, товары для дома, детей и животных, которые можно заказать с быстрой и бесплатной доставкой от 2х часов на дом. Также сервис бесплатно доставляет продукты за город!","sort_group":14},{"id":22240049,"title":"ВкусВилл Доставка","description":"Скидка 600 ₽ от 3000 ₽ на первую покупку","promocode":"VSZYSEJ","discount_percent":null,"discount_amount":600,"bonus_description":"Скидка 600 ₽ от 3000 ₽ на первую покупку","valid_until":"2026-10-31T23:59:59","landing_url":"https://vksvl.prfl.me/sites/xswaug?source=json","image_url":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","conditions":null,"advertiser_info":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.783Z","groupDescription":"ВкусВилл — сеть магазинов вкусных и полезных продуктов с честным составом для здорового питания. Сейчас в сети более 1800 торговых точек в 157 городах России. Здесь продаются натуральные продукты, уходовая косметика, товары для дома, детей и животных, которые можно заказать с быстрой и бесплатной доставкой от 2х часов на дом. Также сервис бесплатно доставляет продукты за город!","sort_group":14},{"id":17410513,"title":"ВкусВилл Доставка","description":"Скидка 200 ₽ от 1000 ₽ на первую покупку","promocode":"VSSLK1D","discount_percent":null,"discount_amount":200,"bonus_description":"Скидка 200 ₽ от 1000 ₽ на первую покупку","valid_until":"2026-10-31T23:59:59","landing_url":"https://vksvl.prfl.me/sites/xswaug?source=json","image_url":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","conditions":null,"advertiser_info":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"ВкусВилл — сеть магазинов вкусных и полезных продуктов с честным составом для здорового питания. Сейчас в сети более 1800 торговых точек в 157 городах России. Здесь продаются натуральные продукты, уходовая косметика, товары для дома, детей и животных, которые можно заказать с быстрой и бесплатной доставкой от 2х часов на дом. Также сервис бесплатно доставляет продукты за город!","sort_group":14},{"id":17184544,"title":"ВкусВилл Доставка","description":"Скидка 300 ₽ от 1500 ₽ на первую покупку","promocode":"30VHRDME","discount_percent":null,"discount_amount":300,"bonus_description":"Скидка 300 ₽ от 1500 ₽ на первую покупку","valid_until":"2026-10-31T23:59:59","landing_url":"https://vksvl.prfl.me/sites/xswaug?source=json","image_url":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","conditions":null,"advertiser_info":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"ВкусВилл — сеть магазинов вкусных и полезных продуктов с честным составом для здорового питания. Сейчас в сети более 1800 торговых точек в 157 городах России. Здесь продаются натуральные продукты, уходовая косметика, товары для дома, детей и животных, которые можно заказать с быстрой и бесплатной доставкой от 2х часов на дом. Также сервис бесплатно доставляет продукты за город!","sort_group":14},{"id":17191654,"title":"ВкусВилл Доставка","description":"Скидка 250 ₽ от 1250 ₽ на первую покупку","promocode":"VSBKKST","discount_percent":null,"discount_amount":250,"bonus_description":"Скидка 250 ₽ от 1250 ₽ на первую покупку","valid_until":"2026-10-31T23:59:59","landing_url":"https://vksvl.prfl.me/sites/xswaug?source=json","image_url":"https://s3sc.perfluence.net/logos/3/c/8/3c81cd39-b0c6-4b40-98fd-35b70dbdc178.png","conditions":null,"advertiser_info":"АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru","category":"продукты","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.784Z","groupDescription":"ВкусВилл — сеть магазинов вкусных и полезных продуктов с честным составом для здорового питания. Сейчас в сети более 1800 торговых точек в 157 городах России. Здесь продаются натуральные продукты, уходовая косметика, товары для дома, детей и животных, которые можно заказать с быстрой и бесплатной доставкой от 2х часов на дом. Также сервис бесплатно доставляет продукты за город!","sort_group":14},{"id":19132140,"title":"Yandex Go Узбекистан","description":"Скидка 45 000 сум на первый заказ из приложения в разделе \"Еда\" из ресторанов и магазинов от 90 000 сум","promocode":"UKHAL5","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 45 000 сум на первый заказ из приложения в разделе \"Еда\" из ресторанов и магазинов от 90 000 сум","valid_until":"2026-12-31T23:59:59","landing_url":"https://go-yandex.prfl.me/sites/edhmsv?source=json","image_url":"https://s3sc.perfluence.net/logos/2/c/4/2c4b5e72-50bc-4840-8393-a26013205552.jpg","conditions":null,"advertiser_info":"Yandex Go Узбекистан","category":"продукты","country":"Узбекистан","is_top":false,"created_at":"2026-09-24T23:37:56.785Z","groupDescription":"Yandex Go — сервис от Яндекса по доставке готовой еды и продуктов из \r\nлюбимых кафе и ресторанов.","sort_group":14},{"id":20638015,"title":"Яндекс Go Кыргызстан","description":"Скидка 330 сом на первый заказ от 650 сом из любого ресторана или магазина","promocode":"KGYAHG","discount_percent":null,"discount_amount":null,"bonus_description":"Скидка 330 сом на первый заказ от 650 сом из любого ресторана или магазина","valid_until":"2026-12-31T23:59:59","landing_url":"https://yandex.prfl.me/sites/p7sxqn?source=json","image_url":"https://s3sc.perfluence.net/logos/a/6/5/a651e132-2ce5-4bd9-8e3d-51cf8b40fe0b.jpg","conditions":null,"advertiser_info":"Яндекс Go Кыргызстан","category":"еда","country":"Россия","is_top":false,"created_at":"2026-09-24T23:37:56.787Z","groupDescription":"Яндекс Go Еда — сервис от Яндекса по доставке готовой еды и продуктов из любимых кафе и ресторанов.","sort_group":14}],"version":"2026-09-24T23:37:56.772Z"}</script>
+    <script id="promo-bootstrap" type="application/json">{"stats":{"total":65,"active":65,"totalPromocodes":65,"activePromocodes":65,"lastUpdate":"2026-09-26T01:49:37.123Z","lastUpdateFormatted":"26.09.2026, 04:49:37","countries":["Россия","Казахстан","Узбекистан","Грузия"]},"categories":["развлечения","другие","продукты","еда","услуги","товары"],"version":"2026-09-26T01:49:37.123Z"}</script>
 
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
     

@@ -11,8 +11,20 @@ eleventyComputed:
 {% from "partials/promo-card-ssr.njk" import renderPromoCard %}
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}" data-themes="light dark" data-langs="{% for loc, _ in localesPromocodes %}{{ loc }}{% if not loop.last %} {% endif %}{% endfor %}">
 <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('spn_theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.colorScheme = t;
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
@@ -25,7 +37,7 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ localesPromocodes[locale].promoCodes.ogTitle }}">
     <meta property="og:description" content="{{ localesPromocodes[locale].promoCodes.ogDescription }}">
-    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/og-promocodes.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
 
@@ -33,7 +45,7 @@ eleventyComputed:
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ localesPromocodes[locale].promoCodes.ogTitle }}">
     <meta name="twitter:description" content="{{ localesPromocodes[locale].promoCodes.twitterDescription }}">
-    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/og-promocodes.png">
 
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
@@ -56,10 +68,46 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
 
     <!-- Стили -->
-    <link rel="preload" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=48" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=48"></noscript>
-    <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/frontend/styles/accessibility.css"></noscript>
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css?v=sn11">
+    <link rel="stylesheet" href="/frontend/fonts/manrope.css?v=1">
+    <link rel="stylesheet" href="/frontend/fonts/source-serif-4.css?v=1">
+    <link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=82">
+    <style id="promo-theme-bg">
+      /* Фон как на лендинге Serpmonn App — инлайн, чтобы не перебивался styles.css / кэшем */
+      :root {
+        --bg: #eef1f5;
+        --text: #141820;
+        --muted: #5a6472;
+        --accent: #d92c2c;
+        --font: "Manrope", system-ui, sans-serif;
+        --display: "Source Serif 4", Georgia, serif;
+        --page-bg:
+          radial-gradient(1100px 640px at 8% -14%, rgba(217, 44, 44, 0.18), transparent 58%),
+          radial-gradient(900px 560px at 92% 0%, rgba(32, 112, 240, 0.12), transparent 55%),
+          radial-gradient(700px 480px at 60% 100%, rgba(217, 44, 44, 0.06), transparent 62%),
+          linear-gradient(180deg, #fbfcfd 0%, var(--bg) 38%, #e8ecf2 100%);
+      }
+      html[data-theme="dark"] {
+        --bg: #12161e;
+        --text: #d5dae3;
+        --muted: #8b93a3;
+        --accent: #e35d5d;
+        --page-bg:
+          radial-gradient(900px 520px at 10% -10%, rgba(227, 93, 93, 0.14), transparent 55%),
+          radial-gradient(800px 480px at 90% 0%, rgba(63, 173, 120, 0.07), transparent 52%),
+          linear-gradient(180deg, #0e1218 0%, var(--bg) 45%, #0c1016 100%);
+      }
+      html, body {
+        background: var(--page-bg) !important;
+        background-attachment: fixed !important;
+        color: var(--text);
+        font-family: var(--font);
+      }
+      @media (max-width: 768px) {
+        html, body { background-attachment: scroll !important; }
+      }
+    </style>
 
     <!-- Скрипты -->
     <script>
@@ -119,7 +167,7 @@ eleventyComputed:
     <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
     <!-- /Top.Mail.Ru counter -->
     
-    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=58" defer></script>
+    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=63" defer></script>
     <script>
   (function () {
     function loadMailAds() {
@@ -147,29 +195,36 @@ eleventyComputed:
         <nav id="main-nav" aria-label="{{ localesPromocodes[locale].promoCodes.mainNavLabel }}"></nav>
     </header>
     
+    {% set pc = localesPromocodes[locale].promoCodes %}
+    {% set brand = pc.brandName or ( 'Серпмонн' if locale == 'ru' else 'Serpmonn' ) %}
+    {% set codesCount = promocodesBuild.stats.active or promocodesBuild.stats.total or 0 %}
+    {% set codesTotal = promocodesBuild.stats.total or 0 %}
     <main class="container">
         <section class="stats-controls" aria-labelledby="overview-title">
-            <div class="stats-head">
-                <h1 id="overview-title">{{ localesPromocodes[locale].promoCodes.heroTitle }}</h1>
-                <div class="stats-summary" aria-live="polite">
-                    <span class="stat-chip">
-                        <span class="stat-number" id="activePromos">{{ promocodesBuild.stats.active | default(0) }}</span>
-                        <span class="stat-label">{{ localesPromocodes[locale].promoCodes.activePromos }}</span>
-                    </span>
-                    <span class="stat-chip stat-chip--total" id="totalStatChip">
-                        <span class="stat-number" id="totalPromos">{{ promocodesBuild.stats.total | default(0) }}</span>
-                        <span class="stat-label">{{ localesPromocodes[locale].promoCodes.totalPromos }}</span>
-                    </span>
-                    <span class="stats-updated">
-                        {{ localesPromocodes[locale].promoCodes.lastUpdated }}
-                        <span id="lastUpdate">{{ promocodesBuild.stats.lastUpdateFormatted | default('-') }}</span>
-                    </span>
+            <div class="stats-bar">
+                <img class="brand-logo" src="/frontend/images/serpmonn-512.png?v=4" width="28" height="28" alt="" decoding="async">
+                <span class="brand-name">{{ brand }}</span>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <h1 id="overview-title">{{ pc.heroTitle }}</h1>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <span
+                    id="codesMetaText"
+                    data-codes-template="{{ pc.codesMeta }}"
+                    data-codes-active-total-template="{{ pc.codesMetaActiveTotal }}"
+                >{% if codesCount == codesTotal %}{{ pc.codesMeta | replace('{count}', codesCount) }}{% else %}{{ pc.codesMetaActiveTotal | replace('{active}', codesCount) | replace('{total}', codesTotal) }}{% endif %}</span>
+                <span class="meta-sep" aria-hidden="true">·</span>
+                <span class="stats-updated">
+                    {{ pc.lastUpdated }}
+                    <span id="lastUpdate">{{ promocodesBuild.stats.lastUpdateFormatted | default('-') }}</span>
+                </span>
+                <span id="activePromos" hidden>{{ codesCount }}</span>
+                <span id="totalPromos" hidden>{{ codesTotal }}</span>
+                <span id="totalStatChip" hidden></span>
+                <div class="controls toolbar-actions">
+                    <button id="toggleFilters" class="submit-btn toolbar-mobile-only" type="button" aria-expanded="false" aria-controls="filtersContent" aria-label="{{ pc.toggleFilters }}">{{ pc.toggleFilters }}</button>
+                    <button id="sortByExpiryBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="{{ pc.sortByExpiry }}">{{ pc.sortByExpiry }}</button>
+                    <button id="resetFiltersBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="{{ pc.resetFilters }}">{{ pc.resetFilters }}</button>
                 </div>
-            </div>
-            <div class="controls toolbar-actions">
-                <button id="toggleFilters" class="submit-btn toolbar-mobile-only" type="button" aria-expanded="false" aria-controls="filtersContent" aria-label="{{ localesPromocodes[locale].promoCodes.toggleFilters }}">{{ localesPromocodes[locale].promoCodes.toggleFilters }}</button>
-                <button id="sortByExpiryBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="{{ localesPromocodes[locale].promoCodes.sortByExpiry }}">{{ localesPromocodes[locale].promoCodes.sortByExpiry }}</button>
-                <button id="resetFiltersBtn" type="button" class="submit-btn toolbar-desktop-only" aria-label="{{ localesPromocodes[locale].promoCodes.resetFilters }}">{{ localesPromocodes[locale].promoCodes.resetFilters }}</button>
             </div>
         </section>
 
@@ -218,6 +273,18 @@ eleventyComputed:
             </div>
         </section>
 
+        <div id="promoStickyBar" class="promo-sticky-bar" hidden>
+            <input
+                type="search"
+                id="stickySearchInput"
+                class="promo-sticky-search"
+                placeholder="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}"
+                aria-label="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}"
+                enterkeyhint="search"
+            >
+            <button id="stickyToggleFilters" class="submit-btn" type="button" aria-expanded="false" aria-controls="filtersContent">{{ localesPromocodes[locale].promoCodes.toggleFilters }}</button>
+        </div>
+
         <section class="bonus" aria-labelledby="bonus-title">
             <div class="bonus-inner">
                 <div class="bonus-copy">
@@ -264,6 +331,30 @@ eleventyComputed:
                 <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq2Question }}</summary>
                 <p>{{ localesPromocodes[locale].promoCodes.faq2Answer | safe }}</p>
             </details>
+            {% if localesPromocodes[locale].promoCodes.faq3Question %}
+            <details>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq3Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq3Answer | safe }}</p>
+            </details>
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq4Question %}
+            <details>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq4Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq4Answer | safe }}</p>
+            </details>
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq5Question %}
+            <details>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq5Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq5Answer | safe }}</p>
+            </details>
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq6Question %}
+            <details>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq6Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq6Answer | safe }}</p>
+            </details>
+            {% endif %}
         </section>
     </main>
     
@@ -303,6 +394,71 @@ eleventyComputed:
     }
     </script>
 
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq1Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq1Answer | striptags | dump | safe }}
+                }
+            },
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq2Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq2Answer | striptags | dump | safe }}
+                }
+            }
+            {% if localesPromocodes[locale].promoCodes.faq3Question %},
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq3Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq3Answer | striptags | dump | safe }}
+                }
+            }
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq4Question %},
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq4Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq4Answer | striptags | dump | safe }}
+                }
+            }
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq5Question %},
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq5Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq5Answer | striptags | dump | safe }}
+                }
+            }
+            {% endif %}
+            {% if localesPromocodes[locale].promoCodes.faq6Question %},
+            {
+                "@type": "Question",
+                "name": {{ localesPromocodes[locale].promoCodes.faq6Question | dump | safe }},
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ localesPromocodes[locale].promoCodes.faq6Answer | striptags | dump | safe }}
+                }
+            }
+            {% endif %}
+        ]
+    }
+    </script>
+
     {% if promocodesBuild.schemaOffers.length %}
     <script type="application/ld+json" id="promo-offers-schema">
     {
@@ -315,7 +471,6 @@ eleventyComputed:
     <script id="promo-bootstrap" type="application/json">{{ {
         stats: promocodesBuild.stats,
         categories: promocodesBuild.categories,
-        data: promocodesBuild.data,
         version: promocodesBuild.version
     } | dump | safe }}</script>
 

@@ -168,7 +168,10 @@ const elements = {
     resetFiltersBtnMobile: document.getElementById('resetFiltersBtnMobile'),
     loadingSpinner: document.getElementById('loadingSpinner'),
     toggleFilters: document.getElementById('toggleFilters'),
-    filtersContent: document.getElementById('filtersContent')
+    filtersContent: document.getElementById('filtersContent'),
+    stickyBar: document.getElementById('promoStickyBar'),
+    stickySearchInput: document.getElementById('stickySearchInput'),
+    stickyToggleFilters: document.getElementById('stickyToggleFilters')
 };
 
 let currentPage = 1;
@@ -988,6 +991,20 @@ function updateStats(stats) {
     if (totalChip) {
         totalChip.hidden = total === active;
     }
+    const meta = document.getElementById('codesMetaText');
+    if (meta) {
+        const one = meta.dataset.codesTemplate || '{count}';
+        const both = meta.dataset.codesActiveTotalTemplate || '{active} / {total}';
+        if (active === total) {
+            meta.textContent = one.includes('{count}')
+                ? one.replace('{count}', String(active))
+                : String(active);
+        } else {
+            meta.textContent = both
+                .replace('{active}', String(active))
+                .replace('{total}', String(total));
+        }
+    }
 }
 
 function showToast(message, type = 'success') {
@@ -1188,14 +1205,67 @@ function sortByExpiry() {
 
 function toggleFilters(button) {
     const content = elements.filtersContent;
-    if (!content || !button) {
+    if (!content) {
         return;
     }
 
-    const isExpanded = content.style.display === 'flex';
-    content.style.display = isExpanded ? 'none' : 'flex';
-    button.setAttribute('aria-expanded', String(!isExpanded));
-    button.textContent = isExpanded ? t('promo.filters') : t('promo.hideFilters');
+    const isExpanded = content.classList.contains('is-open');
+    const nextExpanded = !isExpanded;
+
+    content.classList.toggle('is-open', nextExpanded);
+    content.style.display = nextExpanded ? 'flex' : 'none';
+    content.setAttribute('aria-hidden', nextExpanded ? 'false' : 'true');
+
+    const label = nextExpanded
+        ? t('promo.hideFilters')
+        : t('promo.filters');
+    const safeLabel = (!label || label.startsWith('promo.'))
+        ? (nextExpanded ? 'Скрыть фильтры' : 'Фильтры')
+        : label;
+
+    [elements.toggleFilters, elements.stickyToggleFilters].filter(Boolean).forEach((btn) => {
+        btn.setAttribute('aria-expanded', String(nextExpanded));
+        btn.textContent = safeLabel;
+    });
+
+    if (nextExpanded) {
+        content.scrollTop = 0;
+    }
+}
+
+function initPromoStickyBar() {
+    const bar = elements.stickyBar;
+    const stickySearch = elements.stickySearchInput;
+    const stickyToggle = elements.stickyToggleFilters;
+    const mainSearch = elements.searchInput;
+    if (!bar || !stickySearch || !mainSearch) {
+        return;
+    }
+
+    const syncStickyFromMain = () => {
+        if (stickySearch.value !== mainSearch.value) {
+            stickySearch.value = mainSearch.value;
+        }
+    };
+    const syncMainFromSticky = () => {
+        if (mainSearch.value !== stickySearch.value) {
+            mainSearch.value = stickySearch.value;
+            mainSearch.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    };
+
+    stickySearch.value = mainSearch.value || '';
+    mainSearch.addEventListener('input', syncStickyFromMain);
+    stickySearch.addEventListener('input', syncMainFromSticky);
+
+    if (stickyToggle) {
+        stickyToggle.addEventListener('click', () => toggleFilters(stickyToggle));
+    }
+
+    // Always on — mobile and desktop
+    bar.hidden = false;
+    bar.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('promo-sticky-visible');
 }
 
 function lazyLoadImages() {
@@ -1265,14 +1335,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   t = await getPageT('promo');
 
   const bootstrap = readPromoBootstrap();
-  if (bootstrap?.data?.length) {
-    allPromocodes = bootstrap.data.map(normalizePromo);
-    filteredPromocodes = [...allPromocodes];
+  if (bootstrap) {
     updateStats(bootstrap.stats || { total: 0, active: 0 });
     if (Array.isArray(bootstrap.categories) && bootstrap.categories.length) {
       updateCategorySelect(bootstrap.categories);
     }
+  }
+  if (bootstrap?.data?.length) {
+    allPromocodes = bootstrap.data.map(normalizePromo);
+    filteredPromocodes = [...allPromocodes];
     initSSRCatalogState();
+  } else if (document.querySelector('#catalog .promo-card[data-ssr]')) {
+    // SSR cards visible; wire after API fills allPromocodes
+    preferSSRUntilInteraction = true;
+    ssrCardCount = document.querySelectorAll('#catalog .promo-card[data-ssr]').length;
   }
 
   isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
@@ -1303,6 +1379,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   filterPromos();
   mountPromoAdsAfterBoot();
+  initPromoStickyBar();
 
   const bindClick = (el, handler) => {
     if (el) el.addEventListener('click', handler);
