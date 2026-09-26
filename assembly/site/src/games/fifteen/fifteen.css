@@ -1,163 +1,217 @@
-/* fifteen.css - Стили для игры "Пятнашки" */
+/* fifteen.css — Пятнашки Serpmonn (dark + light) */
 
-/* CSS переменные для цветовой схемы игры */
-:root { 
-    --bg: #0e0f12;           /* Основной фон страницы */
-    --board: #1a1d23;        /* Фон игрового поля */
-    --tile-bg: #2a2e38;      /* Фон плиток с числами */
-    --tile-text: #ffffff;    /* Цвет текста на плитках */
-    --tile-hover: #3a3f4d;   /* Цвет плитки при наведении */
-    --empty-tile: #14171b;   /* Цвет пустой плитки */
-    --text: #f2f2f2;         /* Цвет текста */
-    --accent: #4CAF50;       /* Акцентный цвет для решенного состояния */
+:root,
+html[data-theme="dark"] {
+  --bg: #0e0f12;
+  --board: #1a1d23;
+  --tile-bg: #2a2e38;
+  --tile-text: #ffffff;
+  --tile-hover: #3a3f4d;
+  --empty-tile: #14171b;
+  --text: #f2f2f2;
+  --muted: #9aa3ad;
+  --accent: #4caf50;
+  --panel: #121417;
+  --panel-border: #23262a;
+  --stat-bg: #15181c;
+  --stat-border: #232a33;
+  --btn-bg: #16202a;
+  --btn-border: #243241;
+  --btn-text: #eee;
+  --input-bg: #0f1216;
+  --input-border: #2a3340;
+  --shadow: rgba(0, 0, 0, 0.25);
 }
 
-/* Базовые стили для html и body */
-html, body { 
-    width: 100%;             /* Полная ширина */
-    height: 100%;            /* Полная высота */
-    background: var(--bg);   /* Фон из CSS переменной */
-    overflow: hidden;        /* Скрываем прокрутку */
+html[data-theme="light"] {
+  --bg: #ebe6dc;
+  --board: #d4cfc4;
+  --tile-bg: #f7f3ea;
+  --tile-text: #1c1a16;
+  --tile-hover: #fffdf8;
+  --empty-tile: #c8c2b6;
+  --text: #1c1a16;
+  --muted: #5c564c;
+  --accent: #2f7d32;
+  --panel: #f4efe6;
+  --panel-border: #cfc7b8;
+  --stat-bg: #ebe4d8;
+  --stat-border: #cfc7b8;
+  --btn-bg: #e4ddd0;
+  --btn-border: #c4bbaa;
+  --btn-text: #1c1a16;
+  --input-bg: #fffdf8;
+  --input-border: #c4bbaa;
+  --shadow: rgba(40, 30, 10, 0.12);
 }
 
-/* Стили основного body */
-body { 
-    margin: 0;               /* Убираем внешние отступы */
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* Системные шрифты */
-    color: var(--text);      /* Цвет текста из переменной */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
 }
 
-/* Основной контейнер контента */
-.page { 
-    max-width: 1000px;       /* Максимальная ширина контента */
-    margin: 0 auto;          /* Центрирование по горизонтали */
-    padding: 16px;           /* Внутренние отступы */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
 }
 
-/* Стили шапки страницы */
-header { 
-    display: flex;           /* Flexbox для выравнивания */
-    align-items: center;     /* Вертикальное выравнивание по центру */
-    gap: 12px;               /* Расстояние между элементами */
-    margin: 10px 0 16px;     /* Внешние отступы */
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-/* Заголовок в шапке */
-header h1 { 
-    font-size: 1.6rem;       /* Размер шрифта */
-    margin: 0;               /* Убираем отступы */
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 16px;
 }
 
-/* Основная сетка страницы */
-.wrap { 
-    display: grid;           /* CSS Grid для раскладки */
-    grid-template-columns: 1fr 320px; /* Две колонки: игровое поле и панель управления */
-    gap: 16px;               /* Расстояние между колонками */
-    align-items: start;      /* Выравнивание по верху */
+header h1 {
+  font-size: 1.6rem;
+  margin: 0;
 }
 
-/* Стили панелей (игровое поле и управление) */
-.panel { 
-    background: #121417;     /* Темный фон панели */
-    border: 1px solid #23262a; /* Граница панели */
-    border-radius: 10px;     /* Скругленные углы */
-    padding: 12px 14px;      /* Внутренние отступы */
+.wrap {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  align-items: start;
 }
 
-/* Стили игрового поля */
-.game-board { 
-    background: var(--board); /* Фон из переменной */
-    width: 400px;            /* Фиксированная ширина */
-    height: 400px;           /* Фиксированная высота */
-    border-radius: 10px;     /* Скругленные углы */
-    border: 1px solid #23262a; /* Граница */
-    box-shadow: 0 8px 30px rgba(0,0,0,.25); /* Тень для глубины */
-    display: grid;           /* CSS Grid для плиток */
-    grid-template-columns: repeat(4, 1fr); /* 4 колонки */
-    grid-template-rows: repeat(4, 1fr);    /* 4 строки */
-    gap: 4px;                /* Расстояние между плитками */
-    padding: 8px;            /* Внутренние отступы */
-    margin: 0 auto;          /* Центрирование */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 12px 14px;
 }
 
-/* Стили отдельной плитки */
-.tile { 
-    background: var(--tile-bg);     /* Фон плитки */
-    color: var(--tile-text);        /* Цвет текста */
-    border-radius: 6px;             /* Скругленные углы */
-    display: flex;                  /* Flexbox для центрирования */
-    align-items: center;            /* Вертикальное центрирование */
-    justify-content: center;        /* Горизонтальное центрирование */
-    font-size: 1.5rem;              /* Размер шрифта */
-    font-weight: bold;              /* Жирный шрифт */
-    cursor: pointer;                /* Курсор-указатель */
-    transition: all 0.2s ease;      /* Плавные анимации */
-    user-select: none;              /* Запрет выделения текста */
+.game-board {
+  position: relative;
+  background: var(--board);
+  width: 400px;
+  height: 400px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 8px 30px var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px;
+  margin: 0 auto;
+  touch-action: none;
 }
 
-/* Стили плитки при наведении */
-.tile:hover { 
-    background: var(--tile-hover);  /* Изменение фона при наведении */
-    transform: scale(1.02);         /* Легкое увеличение */
+.tile {
+  background: var(--tile-bg);
+  color: var(--tile-text);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  will-change: transform;
 }
 
-/* Стили пустой плитки (пробела) */
-.tile.empty { 
-    background: var(--empty-tile);  /* Темный фон для пустой плитки */
-    cursor: default;                /* Обычный курсор */
+.tile:hover:not(.empty):not(.sliding) {
+  background: var(--tile-hover);
 }
 
-/* Стили плитки при перетаскивании */
-.tile.dragging { 
-    opacity: 0.7;                   /* Полупрозрачность */
-    transform: scale(1.1);          /* Увеличение при перетаскивании */
+.tile.empty {
+  background: var(--empty-tile);
+  cursor: default;
 }
 
-/* Стили для решенной головоломки */
-.tile.solved { 
-    background: var(--accent);      /* Зеленый фон для решенной плитки */
+.tile.sliding {
+  transition: transform 0.18s ease-out;
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* Сетка для блока статистики */
-.stats { 
-    display: grid;           /* CSS Grid */
-    grid-template-columns: repeat(3, 1fr); /* Три колонки одинаковой ширины */
-    gap: 10px;               /* Расстояние между элементами */
-    margin-bottom: 20px;     /* Отступ снизу */
+.tile.solved {
+  background: var(--accent);
+  color: #fff;
 }
 
-/* Стили отдельного элемента статистики */
-.stat { 
-    background: #15181c;     /* Темный фон */
-    border: 1px solid #232a33; /* Граница */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px 10px;       /* Внутренние отступы */
-    text-align: center;      /* Выравнивание текста по центру */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-/* Контейнер для кнопок управления */
-.controls { 
-    display: flex;           /* Flexbox для кнопок */
-    gap: 8px;                /* Расстояние между кнопками */
-    justify-content: center; /* Центрирование по горизонтали */
-    margin-bottom: 20px;     /* Отступ снизу */
+.stat {
+  background: var(--stat-bg);
+  border: 1px solid var(--stat-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
 }
 
-/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.nick-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.nick-line strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.mode-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.game-board.size-3 .tile {
+  font-size: 1.7rem;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
 .btn,
 .btn:hover,
 .btn:focus,
 .btn:focus-visible,
 .btn:active {
-    background: #16202a;
-    border: 1px solid #243241;
-    color: #eee;
-    border-radius: 8px;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: var(--btn-text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
 }
 
 .btn.primary,
@@ -165,72 +219,111 @@ header h1 {
 .btn.primary:focus,
 .btn.primary:focus-visible,
 .btn.primary:active {
-    background: linear-gradient(90deg, #dc3545, #c82333);
-    border: none;
-    color: #fff;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border: none;
+  color: #fff;
+}
+
+.btn.ghost {
+  background: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow);
+  }
 }
 
-/* Стили сообщения о решении */
-.solved-message { 
-    background: var(--accent);     /* Зеленый фон */
-    color: white;                  /* Белый текст */
-    border-radius: 8px;            /* Скругленные углы */
-    padding: 16px;                 /* Внутренние отступы */
-    text-align: center;            /* Выравнивание по центру */
-    animation: celebrate 0.5s ease; /* Анимация появления */
+.nickname-panel {
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--stat-bg);
 }
 
-/* Анимация празднования решения */
+.nickname-panel[hidden] {
+  display: none !important;
+}
+
+.nickname-panel label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+
+.nickname-panel input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.nick-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.solved-message {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  animation: celebrate 0.5s ease;
+}
+
 @keyframes celebrate {
-    0% { transform: scale(0.8); opacity: 0; }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-/* Стили подсказки */
-.hint { 
-    color: #cfcfcf;          /* Серый цвет текста */
-    font-size: .95rem;       /* Размер шрифта */
-    text-align: center;      /* Выравнивание по центру */
-    margin-top: 10px;        /* Отступ сверху */
-    line-height: 1.4;        /* Межстрочный интервал */
+.hint {
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.4;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 960px) { 
-    .wrap {
-        grid-template-columns: 1fr; /* Одна колонка на мобильных */
-    }
-    
-    .game-board {
-        width: 300px;        /* Уменьшаем размер поля */
-        height: 300px;       /* Уменьшаем размер поля */
-    }
-    
-    .tile {
-        font-size: 1.2rem;   /* Уменьшаем размер шрифта */
-    }
+@media (max-width: 960px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .game-board {
+    width: 300px;
+    height: 300px;
+  }
+
+  .tile {
+    font-size: 1.2rem;
+  }
 }
 
-/* Адаптивность для очень маленьких экранов */
-@media (max-width: 480px) { 
-    .game-board {
-        width: 280px;        /* Еще меньше для маленьких экранов */
-        height: 280px;       /* Еще меньше для маленьких экранов */
-    }
-    
-    .stats {
-        grid-template-columns: 1fr; /* Одна колонка для статистики */
-    }
-    
-    .controls {
-        flex-direction: column; /* Кнопки в колонку */
-    }
+@media (max-width: 480px) {
+  .game-board {
+    width: 280px;
+    height: 280px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
 }

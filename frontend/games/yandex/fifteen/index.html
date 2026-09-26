@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Пятнашки Serpmonn</title>
   <meta name="description" content="Собери плитки 1–15 по порядку.">
   <link rel="icon" href="icon.png" type="image/png">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('fifteen_theme_yg_v1') || 'dark';
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="fifteen.css">
   <script src="/sdk.js"></script>
   <script src="locales.js"></script>
@@ -19,7 +28,7 @@
     </header>
     <div class="wrap">
       <div class="panel board-wrap">
-        <div id="game" class="game-board" aria-label="Board"></div>
+        <div id="game" class="game-board size-4" aria-label="Board"></div>
         <div id="end-overlay" class="end-overlay hidden"><div id="end-message" class="end-message"></div></div>
         <div class="hint" data-i18n="hint">Стрелки / WASD / свайп — ход · клик по плитке · R — заново</div>
       </div>
@@ -29,9 +38,15 @@
           <div class="stat" data-i18n-time>Время<br><b id="time">0</b></div>
           <div class="stat" data-i18n-best>Рекорд<br><b id="best">0</b></div>
         </div>
+        <div class="mode-label" id="modeLabel"></div>
         <div class="controls">
           <button type="button" class="btn primary" id="btnNewGame" data-i18n="newGame">Новая игра</button>
           <button type="button" class="btn" id="btnReset" data-i18n="reset">Сбросить</button>
+          <button type="button" class="btn" id="btnUndo" data-i18n="undo">Отмена</button>
+          <button type="button" class="btn" id="btnDaily" data-i18n="daily">День</button>
+          <button type="button" class="btn" id="btnMode" data-i18n="modeEasy">3×3</button>
+          <button type="button" class="btn" id="btnSound" data-i18n="soundOff">Звук: выкл</button>
+          <button type="button" class="btn" id="btnTheme" data-i18n-theme>Тема</button>
         </div>
       </div>
     </div>
