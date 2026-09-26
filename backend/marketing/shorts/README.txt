@@ -18,6 +18,7 @@
 - 2048 — Almost 2048… — https://youtube.com/shorts/Jhh5IUx2eRg
 - Neli — Almost out… — https://youtube.com/shorts/dZI6JZdV7VA
 - Fat Rat — One more bite… — https://youtube.com/shorts/wM6dgM0l0fE
+- Fat Rat update — She wouldn't stop. | Она не остановилась. — https://youtube.com/shorts/BiaXouW1wnY
 - Square Escape — Too close… — https://youtube.com/shorts/zyz8MrvR45Y
 - Coins — One more coin… — https://youtube.com/shorts/CP8Mn226CLk
 - Minesweeper — Almost clear… — https://youtube.com/shorts/HikhSJfTtqw
