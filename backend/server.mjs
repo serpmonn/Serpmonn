@@ -3,7 +3,7 @@ import { resolve } from 'path';                                                 
 
 const nodeEnv = process.env.NODE_ENV || 'development';                                                                           // Определяем текущее окружение: production, test или development
 const envPath = nodeEnv === 'production'
-    ? '/etc/serpmonn/backend.env'                                                                                        // Продакшен: используем основной .env на сервере
+    ? '/etc/serpmonn/backend-dev.env'                                                                                        // Продакшен: используем основной .env на сервере
     : nodeEnv === 'test'
         ? resolve(process.cwd(), 'backend/.env.test')                                                                            // Тесты: используем отдельный тестовый .env.test
         : resolve(process.cwd(), 'backend/.env');                                                                                // Разработка: используем обычный backend/.env

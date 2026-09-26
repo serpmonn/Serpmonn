@@ -18,7 +18,7 @@
 import dotenv from 'dotenv';
 import { createInterface } from 'readline';
 
-dotenv.config({ path: '/etc/serpmonn/backend.env' });
+dotenv.config({ path: '/etc/serpmonn/backend-dev.env' });
 
 const clientId = process.env.MARKETING_YOUTUBE_CLIENT_ID;
 const clientSecret = process.env.MARKETING_YOUTUBE_CLIENT_SECRET;

@@ -12,7 +12,7 @@ module.exports = {                                      // Экспорт кон
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Формат времени в логах (MSK если сервер в Europe/Moscow)
       env: {
         NODE_ENV: 'production',                         // Окружение процесса
-        SKIP_AI_SEARCH: '1',                            // Поиск на search-server :3500
+        SKIP_AI_SEARCH: '1',                            // Поиск на search-server :3501
         SKIP_AGENTS: '1'                                // Агенты/gateway на agents-server :3510
       }
     },
@@ -28,7 +28,7 @@ module.exports = {                                      // Экспорт кон
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       env: {
         NODE_ENV: 'production',
-        AI_SEARCH_PORT: '3500'
+        AI_SEARCH_PORT: '3501'
       }
     },
 

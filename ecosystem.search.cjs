@@ -10,7 +10,7 @@ module.exports = {
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     env: {
       NODE_ENV: 'production',
-      AI_SEARCH_PORT: '3500'
+      AI_SEARCH_PORT: '3501'
     }
   }]
 };
