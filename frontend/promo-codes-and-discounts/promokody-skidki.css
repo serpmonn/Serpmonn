@@ -1,54 +1,52 @@
-/* Serpmonn App theme tokens — light/dark; layout unchanged */
+/* Тёплая аналоговая палитра (кирпич ↔ олив) — финальный выбор */
 :root {
-    --bg: #eef1f5;
-    --text: #141820;
-    --muted: #5a6472;
-    --accent: #d92c2c;
-    --accent-soft: #e84545;
-    --accent-deep: #b82525;
-    --ok: #1a7f37;
-    --ok-hover: #156530;
-    --panel: rgba(255, 255, 255, 0.78);
+    --bg: #f1efec;
+    --text: #1c1917;
+    --muted: #6f6a64;
+    --accent: #b85c56;
+    --accent-soft: #c9706a;
+    --accent-deep: #9e4e49;
+    --ok: #6b7358;
+    --ok-hover: #5a6149;
+    --panel: rgba(255, 255, 255, 0.88);
     --panel-strong: #ffffff;
-    --card: #f7f8fa;
-    --line: rgba(20, 24, 32, 0.1);
-    --shadow: 0 8px 20px rgba(20, 24, 32, 0.1);
-    --shadow-sm: 0 3px 8px rgba(20, 24, 32, 0.08);
+    --card: #faf9f7;
+    --line: rgba(28, 25, 23, 0.1);
+    --shadow: 0 8px 20px rgba(28, 25, 23, 0.1);
+    --shadow-sm: 0 3px 8px rgba(28, 25, 23, 0.08);
     --font: "Manrope", system-ui, sans-serif;
     --display: "Source Serif 4", Georgia, serif;
     --page-bg:
-        radial-gradient(1100px 640px at 8% -14%, rgba(217, 44, 44, 0.18), transparent 58%),
-        radial-gradient(900px 560px at 92% 0%, rgba(32, 112, 240, 0.12), transparent 55%),
-        radial-gradient(700px 480px at 60% 100%, rgba(217, 44, 44, 0.06), transparent 62%),
-        linear-gradient(180deg, #fbfcfd 0%, var(--bg) 38%, #e8ecf2 100%);
+        radial-gradient(1100px 640px at 8% -14%, rgba(184, 92, 86, 0.1), transparent 58%),
+        radial-gradient(900px 560px at 92% 0%, rgba(107, 115, 88, 0.08), transparent 55%),
+        radial-gradient(700px 480px at 60% 100%, rgba(184, 92, 86, 0.05), transparent 62%),
+        linear-gradient(180deg, #faf9f7 0%, var(--bg) 38%, #ebe8e4 100%);
     --input-bg: #ffffff;
-    --chip-bg: rgba(217, 44, 44, 0.1);
+    --chip-bg: rgba(184, 92, 86, 0.1);
 }
 
 html[data-theme="dark"] {
     color-scheme: dark;
-    /* Спокойнее поверхностей — меньше «шахмат» panel/card/page */
-    --bg: #12161e;
-    --text: #d5dae3;
-    --muted: #8b93a3;
-    /* Чище коралл / нефрит — без блёклого «пыльного» красного и зелёного */
-    --accent: #e35d5d;
-    --accent-soft: #eb7373;
-    --accent-deep: #c94a4a;
-    --ok: #3fad78;
-    --ok-hover: #35986a;
-    --panel: #161b24;
-    --panel-strong: #181e28;
-    --card: #1a202b;
-    --line: rgba(213, 218, 227, 0.08);
+    --bg: #141210;
+    --text: #e8e4df;
+    --muted: #9a948c;
+    --accent: #c48882;
+    --accent-soft: #d09a94;
+    --accent-deep: #a8726c;
+    --ok: #8a9178;
+    --ok-hover: #7a8168;
+    --panel: #1a1816;
+    --panel-strong: #1e1c19;
+    --card: #221f1c;
+    --line: rgba(232, 228, 223, 0.08);
     --shadow: none;
     --shadow-sm: none;
     --page-bg:
-        radial-gradient(900px 520px at 10% -10%, rgba(227, 93, 93, 0.14), transparent 55%),
-        radial-gradient(800px 480px at 90% 0%, rgba(63, 173, 120, 0.07), transparent 52%),
-        linear-gradient(180deg, #0e1218 0%, var(--bg) 45%, #0c1016 100%);
-    --input-bg: #141920;
-    --chip-bg: rgba(227, 93, 93, 0.16);
+        radial-gradient(900px 520px at 10% -10%, rgba(196, 136, 130, 0.09), transparent 55%),
+        radial-gradient(800px 480px at 90% 0%, rgba(138, 145, 120, 0.06), transparent 52%),
+        linear-gradient(180deg, #100e0c 0%, var(--bg) 45%, #0f0d0b 100%);
+    --input-bg: #161412;
+    --chip-bg: rgba(196, 136, 130, 0.12);
 }
 
 html[data-theme="light"] {
@@ -152,7 +150,7 @@ body {
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(217, 44, 44, 0.22);
+    box-shadow: 0 3px 10px rgba(184, 92, 86, 0.18);
 }
 
 .brand-name {
@@ -436,7 +434,7 @@ body.promo-sticky-visible {
 
 .refresh-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(217, 44, 44, 0.28);
+    box-shadow: 0 4px 15px rgba(184, 92, 86, 0.2);
 }
 
 .refresh-btn:disabled {
@@ -512,7 +510,7 @@ body.promo-sticky-visible {
 .filters input:focus, .filters select:focus {
     border-color: var(--accent);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(217, 44, 44, 0.12);
+    box-shadow: 0 0 0 2px rgba(184, 92, 86, 0.1);
 }
 
 .toggle-filters {
@@ -535,19 +533,19 @@ body.promo-sticky-visible {
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 3px 8px rgba(217, 44, 44, 0.28);
+    box-shadow: 0 3px 8px rgba(184, 92, 86, 0.2);
     text-align: center;
 }
 
 .submit-btn:hover {
     background: linear-gradient(90deg, var(--accent-deep), var(--accent-deep));
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(217, 44, 44, 0.38);
+    box-shadow: 0 4px 10px rgba(184, 92, 86, 0.26);
 }
 
 .submit-btn:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(217, 44, 44, 0.2);
+    box-shadow: 0 2px 5px rgba(184, 92, 86, 0.16);
 }
 
 .promo-grid {
@@ -626,14 +624,14 @@ body.promo-sticky-visible {
     /* цветовая схема, которая сочетается с твоим фоном и submit-btn */
     background: linear-gradient(135deg, var(--accent), var(--accent-soft));
     color: #ffffff;
-    box-shadow: 0 3px 8px rgba(217, 44, 44, 0.4);
+    box-shadow: 0 3px 8px rgba(184, 92, 86, 0.28);
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
 
 .promo-share-button:hover {
     filter: brightness(1.06);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(217, 44, 44, 0.55);
+    box-shadow: 0 4px 12px rgba(184, 92, 86, 0.32);
 }
 
 .promo-share-button:active {
@@ -651,7 +649,7 @@ body.promo-sticky-visible {
     object-fit: cover;
     border-radius: 50%;
     background: var(--panel-strong);
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(28, 25, 23, 0.1);
 }
 
 .promo-header img {
@@ -1814,7 +1812,7 @@ footer p {
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--muted);
-    background: #f7f7f7;
+    background: #f5f3f0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1925,7 +1923,7 @@ footer p {
 .bonus button,
 .share-popup__copy-btn {
     background: linear-gradient(180deg, var(--accent-soft), var(--accent));
-    box-shadow: 0 6px 16px rgba(217, 44, 44, 0.28);
+    box-shadow: 0 6px 16px rgba(184, 92, 86, 0.2);
 }
 
 .submit-btn:hover,
@@ -2014,7 +2012,7 @@ footer,
 
 html[data-theme="dark"] .promo-header img,
 html[data-theme="dark"] .promo-card img {
-    background: #2a313c;
+    background: #2a2724;
     border-color: var(--line);
 }
 
@@ -2053,7 +2051,7 @@ html[data-theme="dark"] .code button {
 html[data-theme="dark"] .promo-card:hover {
     transform: none;
     box-shadow: none;
-    border-color: rgba(213, 218, 227, 0.14);
+    border-color: rgba(232, 228, 223, 0.14);
 }
 
 html[data-theme="dark"] .stat-chip .stat-number {
@@ -2082,8 +2080,8 @@ html[data-theme="dark"] .promo-card.travel-highlight::after {
 }
 
 html[data-theme="dark"] .promo-card {
-    background: #1a202b;
-    border-color: rgba(213, 218, 227, 0.12);
+    background: #221f1c;
+    border-color: rgba(232, 228, 223, 0.12);
 }
 
 html[data-theme="dark"] .promo-header h3,
@@ -2103,13 +2101,13 @@ html[data-theme="dark"] .promo-card small {
 }
 
 html[data-theme="dark"] .promo-sticky-bar {
-    background: rgba(24, 30, 40, 0.94);
+    background: rgba(30, 28, 25, 0.94);
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
 }
 
 html[data-theme="dark"] .promo-sticky-search {
-    background: #12161e;
-    border-color: rgba(213, 218, 227, 0.14);
+    background: #141210;
+    border-color: rgba(232, 228, 223, 0.14);
     color: var(--text);
 }
 
