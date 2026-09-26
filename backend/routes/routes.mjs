@@ -18,7 +18,9 @@ import voiceRoutes from '../voice/voiceRoutes.mjs';                             
 import aiSearchRouter from '../ai-search/ai-search.mjs';                                                                         // Импорт маршрута AI-поиска через SearxNG
 import i18nRoute from './i18n-route.mjs';                                                                                        // Импорт маршрута переводов для бэка
 import { outRoutes } from '../games/outRoutes.mjs';                                                                              // Импорт маршрута партнёрских редиректов /out
-import { storeGoRoutes } from '../marketing/storeGoRoutes.mjs';                                                                   // Клики RuStore / Play → /out/store/:app/:store
+import { existsSync } from 'fs';                                                                                                 // Проверка наличия приватного /out/store на сервере
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import agentsRouter from '../agents/agents.routes.mjs';                                                                          // Импорт маршрутов агентов
 import subscriptionsRouter from '../agents/subscriptions.routes.mjs';                                                            // Импорт маршрутов подписок на агентов
 import logsRouter from '../agents/logs.routes.mjs';                                                                              // Импорт маршрутов логов агентов
@@ -28,6 +30,9 @@ import newsRoutes from '../news/newsRoutes.mjs';                                
 import findingsRoutes from '../findings/findings.routes.mjs';                                                                   // Находки AI-поиска
 import dmRoutes from '../dm/dm.routes.mjs';                                                                                     // Личные сообщения
 import pushRoutes from '../push/push.routes.mjs';                                                                               // Web Push подписки
+
+const __routesDir = dirname(fileURLToPath(import.meta.url));
+const storeGoPrivatePath = join(__routesDir, '../marketing/store-private/storeGoRoutes.mjs');
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
@@ -86,5 +91,12 @@ export function connectRoutes(app, authLimiter) {                               
     }
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
     outRoutes(app);                                                                                                              // Подключаем партнёрские редиректы /out
-    storeGoRoutes(app);                                                                                                          // Клики в RuStore / Play
+    // /out/store — только на сервере (store-private), не в публичном git
+    if (existsSync(storeGoPrivatePath)) {
+        import('../marketing/store-private/storeGoRoutes.mjs')
+            .then(({ storeGoRoutes }) => storeGoRoutes(app))
+            .catch((err) => console.error('[routes] /out/store mount failed', err?.message || err));
+    } else {
+        console.warn('[routes] /out/store disabled — backend/marketing/store-private/storeGoRoutes.mjs missing');
+    }
 }
